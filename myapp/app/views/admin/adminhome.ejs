@@ -1,0 +1,154 @@
+<% include template/head %>
+<% include template/subheader %>
+<div class="content-wrapper">
+	<!-- Page header -->
+	<div class="page-header page-header-default">
+		<div class="page-header-content">
+			<div class="page-title">
+				<h4><i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Home</span> - Dashboard</h4>
+			</div>
+		</div>
+
+		<div class="breadcrumb-line">
+			<ul class="breadcrumb">
+				<li><a href="home"><i class="icon-home2 position-left"></i> Home</a></li>
+				<li class="active">Dashboard</li>
+			</ul>
+		</div>
+	</div>
+	<!-- /page header -->
+	<!-- Content area -->
+	<div class="content">
+		<!-- Dashboard content -->
+		<div class="row">
+			<div class="col-lg-12">
+			<!-- Quick stats boxes -->
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="panel bg-teal-400">
+							<div class="panel-body">
+								<h3 class="no-margin"><%= property_count %></h3>
+								Locations!
+							</div>
+							<div class="panel-footer text-center">
+							<a class="text-teal" href="locations">
+  								<span class="float-left">View Details</span>
+							</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="panel bg-pink-400">
+							<div class="panel-body">
+								<h3 class="no-margin"><%= business_count %></h3>
+								Businesses!
+							</div>
+							<div class="panel-footer text-center">
+							<a class="text-pink" href="business-users">
+  								<span class="float-left">View Details</span>
+							</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="panel bg-violet-400">
+							<div class="panel-body">
+								<h3 class="no-margin"><%= user_count %></h3>
+								Users!
+							</div>
+							<div class="panel-footer text-center">
+								<a class="text-violet" href="users">
+      								<span class="float-left">View Details</span>
+    							</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-3">
+						<div class="panel bg-blue-400">
+							<div class="panel-body">
+								<h3 class="no-margin"><%= review_count %></h3>
+								Flagged Reviews!
+							</div>
+							<div class="panel-footer text-center">
+								<a class="text-blue" href="flagged-reviews">
+      								<span class="float-left">View Details</span>
+    							</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /quick stats boxes -->
+				<div class="row">
+		<div class="col-md-6">
+			<div class="panel panel-default panel-info">
+		    	<div class="panel-heading">
+		    		<i class="fa fa-bell-o"></i> Recently Joined Regular Users  (Last 5)
+		    	</div>
+		    	<div class="panel-body">
+		    		<ul class="media-list">
+		    			<% if (regular_users) {
+		                    regular_users.forEach((user) => { 
+		                    %>
+						<li class="media">
+							<div class="media-body">
+								<div class="d-flex justify-content-between">
+									<a href="#"><%= user.first_name %> <%= user.last_name %></a>
+								</div>
+								<%= user.mail %>
+							</div>
+						</li>
+						<%
+			              })
+			            } %>
+			            <li class="media">
+			            	<div class="media-body">
+								<div class="d-flex justify-content-between text-center">
+		            				<a href="users">View All Users</a>             
+								</div>
+							</div>
+			            </li>
+					</ul>
+		    	</div>
+		    </div>
+		</div>
+
+		<div class="col-md-6">
+			<div class="panel panel-default panel-info">
+		    	<div class="panel-heading"><i class="fa fa-bell-o"></i> Recently Joined Business Users (Last 5)</div>
+		    	<div class="panel-body">
+		    		<ul class="media-list">
+		    			<% if (business_users) {
+		                    business_users.forEach((user) => {                    
+		                    %>
+						<li class="media">
+							<div class="media-body">
+								<div class="d-flex justify-content-between">
+									<a href="#"><%= user.first_name %> <%= user.last_name %></a>
+								</div>
+								<%= user.mail %>
+							</div>
+						</li>
+						<%
+			              })
+			            } %>
+			            <li class="media">
+			            	<div class="media-body">
+								<div class="d-flex justify-content-between text-center">
+		            				<a href="business-users">View All Users</a>             
+								</div>
+							</div>
+			            </li>
+					</ul>
+		    	</div>
+		    </div>
+		</div>
+	</div>
+			</div>
+		</div>
+		<!-- /dashboard content -->
+<% include template/subfooter%>		
+<% include template/footer%>
+			

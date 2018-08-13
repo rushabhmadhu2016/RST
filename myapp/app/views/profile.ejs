@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+ <html lang="en">
+   <head>
+     <% include frontend/template/head %>
+     
+   </head>
+   <body>
+     <!-- Navigation -->
+    <% include frontend/template/subnav %>
+     <!-- Masthead -->
+ <section class="testimonial-section text-justify">
+   <div class="container">
+   <div class="row">
+     <div class="col-md-8 offset-md-2">
+       <div class="panel panel-default listing-page-inner">
+         <div class="panel-heading">EDIT PROFILE</div>
+           <div class="panel-body">
+             <% include frontend/template/error %>
+             <form role="form" action="/updateprofile" role="form" method="post" class="login-form edit-profile" <%if(session.user.user_type==2){%>name="businessprofileform"<%}else{%>name="userprofileform"<%}%>>
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 row full">
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+               <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 float-left">
+                 <%if(session.user.user_type==2){%>
+                   <div class="form-group form-group-material">
+                   <label class="control-label animate" for="business_name">Business Name</label>
+                   <input type="text" class="form-control" id="business_name" placeholder="Business Name" name="business_name" value="<%= user.business_name %>" readonly="readonly">
+                   </div>
+                 <%}%>
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="first_name">First Name*</label>
+                   <input type="text" class="form-control" id="first_name" placeholder="Enter First Name *" name="first_name" value="<%= user.first_name %>">
+                 </div>
+ 
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="last_name">Last Name*</label>
+                   <input type="text" class="form-control" id="last_name" placeholder="Enter Last Name *" name="last_name" value="<%= user.last_name %>">
+                 </div>
+ 
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="email_address">Email Address*</label>
+                 <input type="text" class="form-control" id="email_address" placeholder="Enter Email Address *" name="email_address" value="<%= user.mail %>" readonly="readonly">                 </div>
+ 
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="contact_number">Contact Number<%if(session.user.user_type==2){%>*<% }%></label>
+                   <input type="text" class="form-control" id="contact_number" placeholder="Enter Contact Number <%if(session.user.user_type==2){%>*<% }%>" name="contact_number" value="<%= user.contact_number %>">
+                 </div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 float-left">
+
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="address1">Address Line 1<%if(session.user.user_type==2){%>*<% }%></label>
+                   <input type="text" class="form-control" id="address1" placeholder="Enter Address Line 1 <%if(session.user.user_type==2){%>*<% }%>" name="address1" value="<%= user.address1 %>">
+                 </div>              
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="address2">Address Line 2<%if(session.user.user_type==2){%>*<% }%></label>
+                   <input type="text" class="form-control" id="address2" placeholder="Enter Address Line 2 <%if(session.user.user_type==2){%>*<% }%>" name="address2" value="<%= user.address2 %>">
+                 </div>
+ 
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="city_name">City</label>
+                   <input type="text" class="form-control" id="city_name" placeholder="Enter City Name" name="city_name" value="<%= user.city %>">
+                 </div>
+ 
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="country_name">Country </label>
+                   <input type="text" class="form-control" id="country_name" placeholder="Enter Country Name" name="country_name" value="<%= user.country %>">
+                 </div>
+ 
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="post_code">Post Code<%if(session.user.user_type==2){%>*<% }%></label>
+                   <input type="text" class="form-control" id="post_code" placeholder="Enter Postal Code <%if(session.user.user_type==2){%>*<% }%>" name="post_code" value="<%= user.postcode %>">
+                 </div>
+              </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-sm-12 col-lg-12 text-center">
+            <div class="col-md-12 col-sm-12 col-lg-12">                
+               <div class="submit-div text-center">
+                   <button type="submit" class="btn btn-primary btn-rounded btn-outline">Update</button>
+                   <a href="/MyListing" class="btn btn-danger btn-rounded">Cancel</a>
+               </div>
+              </div>
+            </div>
+             </form>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+   </div>
+ </section>
+ 
+   <!-- Footer -->
+   <% include frontend/template/subfooter %>
+   <script src="/js/validation/profilevalidation.js"></script>
+   <script>
+   var onClass = "on";
+   var showClass = "is-visible";
+   
+   // Setup
+   $("input:not(.token-input):not(.bootstrap-tagsinput > input), textarea, select").on("checkval change", function () {
+       // Define label
+       var label = $(this).parents('.form-group-material').children(".control-label");
+   
+       // Toggle label
+       if (this.value !== "") {
+           label.addClass(showClass);
+       }
+       else {
+           label.removeClass(showClass).addClass('animate');
+       }
+   }).on("keyup", function () {
+       $(this).trigger("checkval");
+   }).trigger("checkval").trigger('change');
+   </script>
+   </body>
+ </html> 

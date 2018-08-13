@@ -1,0 +1,103 @@
+    <header>
+     <nav id="navbar" class="navbar navbar-expand-lg navbar-light fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/"><img src="../frontend_assets/img/revstance-logo.png" alt="revstance"></a>   
+           <ul class="navbar-nav">
+            <% if(!session.user){%>
+                <li class="nav-item">
+                    <a href="/signup" class="navbar-right">Are you a Business ?</a>
+                </li>
+            <% }else{
+                    if(session.user.user_type==2){ 
+                      if(session.user.status==2) {%>
+                        <li class="nav-item dropdown show">
+                    <a href="JavaScript:void(0);"  class="navbar-right dropdown-toggle"  role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Location</a>
+                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="../Mylisting">My Locations</a>
+                        <a class="dropdown-item" href="../addListing">Add Location</a>
+                        <a class="dropdown-item" href="../myclaimedlocations">Claimed Locations</a>
+                      </div> 
+                </li>
+                    <%} }else{ %>
+                    <li class="nav-item dropdown show">
+                        <a href="JavaScript:void(0);"  class="navbar-right dropdown-toggle"  role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Location</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                          <a class="dropdown-item" href="../Mylisting">My Locations</a>
+                        </div>
+                        </li>
+                    <% } %>
+                    
+                <li class="nav-item dropdown show">
+                    <a href="JavaScript:void(0);"  class="navbar-right dropdown-toggle"  role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My Account</a>
+                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="../MyProfile">My Profile</a>
+                        <a class="dropdown-item" href="../changepassword">Change Password</a>
+                      </div> 
+                </li>
+            <% } %>
+                <li class="nav-item">
+                    <form id="logout-form" action="/logout" style="display: none;"></form>
+
+                    <% if(session.user){%>
+                    <a onclick="logout(); event.preventDefault();" href="javascript:void(0)" class="btn btn-default login-btn">Logout</a>
+                    <% }else{ %>
+                    <a class="btn btn-default login-btn" href="/login">Login</a>
+                    <% } %>
+                    
+                </li>
+                <a href="" class="toggle" data-toggle="modal" data-target="#myModal"> 
+                <li class="nav-item">
+                        <div class="toggle-line"></div>
+                        <div class="toggle-line"></div>
+                        <div class="toggle-line"></div>
+                </li>
+                </a>
+            </ul>
+      </div>
+    </nav>
+    <div class="modal fade show" id="mod-menu" tabindex="-1" role="dialog" aria-labelledby="MenuModal">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <div class="row">
+               <div class="col col-xs-12 modal-left">
+                   <div class="modal-logo">
+                      <img src="assets/images/logo.png" alt="revstance">
+                   </div>
+                      <ul class="modal-menu">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Developer Help</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Terms and Conditions</a></li>
+                     </ul>
+               </div>
+                <div class="col col-xs-12 modal-right">
+                  <div class="modal-info">
+                    <div class="number">
+                      <i class="number-icon"></i>
+                      <p>+44 9876543210</p>
+                    </div>
+                    <div class="email">
+                      <i class="email-icon"></i>
+                      <p>info@revstance.com</p>                
+                    </div>
+                  </div>
+                   <div class="row">
+                   <ul class="social-media">
+                     <li><a class="links" href="JavaScript:void(0);"><i class="fa fa-facebook"></i></a></li>
+                     <li><a class="links" href="JavaScript:void(0);"><i class="fa fa-twitter"></i></a></li>
+                     <li><a class="links" href="JavaScript:void(0);"><i class="fa fa-pinterest"></i></a></li>
+                     <li><a class="links" href="JavaScript:void(0);"><i class="fa fa-instagram"></i></a></li>
+                     <li><a class="links" href="JavaScript:void(0);"><i class="fa fa-google plus"></i></a></li>
+                   </ul>
+                </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</header>
