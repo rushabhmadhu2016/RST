@@ -285,8 +285,8 @@ exports.sendForgotPasswordLinkPage = function(req, res) {
 	            	}
 
 	            	dynamicmail.sendMail(sendmail);
-	            	//req.flash('success', 'Password activation link sent to your email');
-					//res.redirect('/login');
+	            	req.flash('success', 'Password activation link sent to your email');
+					res.redirect('/login');
 	             });
 				}				
 			}
@@ -301,8 +301,19 @@ exports.sendForgotPasswordLinkPage = function(req, res) {
 }
 
 exports.sendContactUsMailPage = function(req, res) {
-   	var contactus = require('../../lib/contactus.js');
-   	contactus.contact_email(req.body.contact_name,req.body.contact_email,req.body.contact_subject,req.body.contact_desc);
+   	//var contactus = require('../../lib/contactus.js');
+   	//contactus.contact_email(req.body.contact_name,req.body.contact_email,req.body.contact_subject,req.body.contact_desc);
+
+   	var sendmail = {
+		receiver_name: req.body.contact_name,
+		receiver_email: req.body.contact_email,
+		contact_subject: req.body.contact_subject,
+		contact_subject: req.body.contact_desc,
+		email_type: 4
+	}
+
+	dynamicmail.sendMail(sendmail);
+
    	req.flash('success', 'We will contact you soon');
 	res.redirect('/contactus');
 }

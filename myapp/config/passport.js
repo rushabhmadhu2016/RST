@@ -9,6 +9,7 @@ var constant        = require('../config/constants');
 var dateFormat      = require('dateformat');
 var fs              = require('fs');
 var bcrypt          = require('bcrypt-nodejs');
+var dynamicmail  = require('../app/controllers/dynamicMailController');
 
 //expose this function to our app using module.exports
 module.exports = function(passport) {
@@ -64,6 +65,7 @@ module.exports = function(passport) {
                     newUser.user_type = req.body.user_type;
                     newUser.status = 0;
                     if(req.body.user_type==2){
+                        var email_type = 3;
                         newUser.address1 = req.body.address1;
                         newUser.address2 = req.body.address2;
                         newUser.city = '';
@@ -72,6 +74,7 @@ module.exports = function(passport) {
                         newUser.contact_number = req.body.business_contact;
                         newUser.business_name = req.body.business_name;
                     }else{
+                        var email_type = 2;
                         newUser.address1 = '';
                         newUser.address2 = '';
                         newUser.city = '';
@@ -94,8 +97,17 @@ module.exports = function(passport) {
                         req.flash('User registration failed');
                         res.redirect('/errorpage');
                     }                  
-                    var email            = require('../lib/email.js');
-                    email.activate_email(req.body.user_type,req.body.first_name,req.body.email,active_code);
+                    //var email            = require('../lib/email.js');
+                    //email.activate_email(req.body.user_type,req.body.first_name,req.body.email,active_code);
+
+                    var sendmail = {
+                        receiver_name: req.body.first_name,
+                        receiver_email: req.body.email,
+                        activation_code: active_code,
+                        user_type: req.body.user_type,
+                        email_type: email_type
+                    }
+                    dynamicmail.sendMail(sendmail);
                     return done(null, newUser,req.flash('success', 'Account created successfully, please check your email for account confirmation.'));                    
                     req.session.destroy();                
                 });                

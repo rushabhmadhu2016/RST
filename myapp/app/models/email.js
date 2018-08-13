@@ -8,6 +8,7 @@ var userSchema = mongoose.Schema({
 	id:{ type: Number, default: 1 },	
 	email_type: String,
 	email_name: String,
+	email_keys: String,
 	email_subject: String,
 	email_message: String,
 	created_date: String,

@@ -61,6 +61,7 @@ exports.updateemailPage = function(req, res) {
 
                 var day = getDate();
                 emil.email_name = req.body.email_name;
+                emil.email_keys = req.body.email_keys;
                 emil.email_subject = req.body.email_subject;
                 emil.email_message = req.body.email_message; 
                 emil.updated_date = day;
@@ -109,6 +110,7 @@ exports.storeemail = function(req, res) {
             var newEmail = new Email();
             var day = getDate();
             newEmail.email_name = req.body.email_name;
+            newEmail.email_keys = req.body.email_keys;
             newEmail.email_subject = req.body.email_subject;
             newEmail.email_message = req.body.email_message; 
             newEmail.created_date = day;
