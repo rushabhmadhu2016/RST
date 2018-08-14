@@ -2,6 +2,7 @@ module.exports = {
      'project_name':'express-mvc-generator',
 	'adminname': 'Rajaram',
 	'adminmail': 'test@gmail.com',
+	'adminemail': 'akash.patel@innvonix.com',
 	'host':"http://revstance.com",
 	//'host':"http://localhost:8080",
 	'email_smtp_host':'smtp.gmail.com',

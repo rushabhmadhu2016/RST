@@ -60,16 +60,17 @@ exports.sendMail = function(data) {
 				    case 4:
 				    	console.log('Contact Us - Response Mail to User Side');
 				    	var mail_content = emailData.email_message;
-				    	var link = constants.host+`/activate/confirm?email=`+data.receiver_email+`&active_link=`+data.activation_code;				    	
 				    	var email_body = mail_content.replace('{host_url}', constants.host);
 				    	email_body = email_body.replace('{user_name}',data.receiver_name);
 				        break;
 				    case 5:
 				    	console.log('Contact Us - Request Mail to Admin Side');
 				    	var mail_content = emailData.email_message;
-				    	var link = constants.host+`/activate/confirm?email=`+data.receiver_email+`&active_link=`+data.activation_code;				    	
 				    	var email_body = mail_content.replace('{host_url}', constants.host);
-				    	email_body = email_body.replace('{user_name}',data.receiver_name);
+				    	email_body = email_body.replace('{sender_name}',data.sender_name);
+				    	email_body = email_body.replace('{sender_email}',data.sender_email);
+				    	email_body = email_body.replace('{contact_subject}',data.contact_subject);
+				    	email_body = email_body.replace('{contact_desc}',data.contact_desc);
 				        break;
 				    default:
 				    	console.log('default switch case');
@@ -128,7 +129,7 @@ exports.sendMail = function(data) {
 				  vertical-align: top; 
 				}
 
-				.btn-primary td a {
+				div.content a:first-child {
 				  background-color: #348eda;
 				  border: solid 1px #348eda;
 				  border-radius: 25px;
@@ -263,16 +264,17 @@ exports.sendMail = function(data) {
 				    <td class="container" bgcolor="#FFFFFF">
 
 				      <!-- content -->
-				      <div class="content">`+email_body+
-				      `<div class="content">
-				        <table>
+				      <div class="content">
+				      	<!--<table>
 				          <tr>
-				            <td align="center">
-				              <!--<p><small>If you didn’t request a new password, please get in touch with us at admin@revstance.com</small></p>-->
-				            </td>
+				            <td>-->
+				            	`+email_body+`
+				            <!--</td>
 				          </tr>
-				        </table>
+				        </table>-->
 				      </div>
+				        <p>Thanks, have a lovely day! </p>
+	            		<p><a href="`+constants.host+`">The Revstance Team</a></p>
 				      <!-- /content -->
 				      
 				    </td>

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
 var userSchema = mongoose.Schema({	
-	user_id:{ type: Number, default: 1 },
+	id: type: Number,
 	first_name: String,
 	last_name: String,
 	mail: String,

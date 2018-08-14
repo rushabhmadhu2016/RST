@@ -11,6 +11,7 @@ var Review 		= require('../../app/models/review');
 var Claims 		= require('../../app/models/claim');
 var FlaggedReview= require('../../app/models/flagged_review');
 var Like   	     = require('../../app/models/like');
+var constants = require('../../config/constants'); 
 var dynamicmail  = require('../../app/controllers/dynamicMailController');
 
 exports.isLoggedIn = function(req, res, next){
@@ -308,17 +309,18 @@ exports.sendContactUsMailPage = function(req, res) {
 		receiver_name: req.body.contact_name,
 		receiver_email: req.body.contact_email,
 		contact_subject: req.body.contact_subject,
-		contact_subject: req.body.contact_desc,
+		contact_desc: req.body.contact_desc,
 		email_type: 4
 	}
 
 	dynamicmail.sendMail(sendmail);
 
 	var sendadminmail = {
-		receiver_name: req.body.contact_name,
-		receiver_email: req.body.contact_email,
+		receiver_email: constants.adminemail,
+		sender_name: req.body.contact_name,
+		sender_email: req.body.contact_email,
 		contact_subject: req.body.contact_subject,
-		contact_subject: req.body.contact_desc,
+		contact_desc: req.body.contact_desc,
 		email_type: 5
 	}
 
