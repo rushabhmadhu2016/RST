@@ -118,6 +118,10 @@ $(function(){
 				required:true,
                 normalizer: function(value) {return $.trim(value);}
 			},
+            area:{
+                required:true,
+                normalizer: function(value) {return $.trim(value);}
+            },
 			business_contact:{
 				required:true,
                 digits: true,
@@ -196,9 +200,12 @@ $(function(){
                 required:"Please enter business name",
             },
             address1:{
-                required:"Please enter address",
+                required:"Please enter address 1",
             },
             address2:{
+                required:"Please enter address 2",
+            },
+            area:{
                 required:"Please enter area",
             },
             business_contact:{

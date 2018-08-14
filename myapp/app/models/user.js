@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
+var autoIncrement = require('mongodb-autoincrement');
 var userSchema = mongoose.Schema({	
 	user_id:{ type: Number, default: 1 },
 	first_name: String,
@@ -11,15 +12,16 @@ var userSchema = mongoose.Schema({
 	profile_photo: String,
 	ethnicity: String,
 	contact_number: Number,
+	user_type: Number,
 	address1: String,
 	address2: String,
 	area: String,
 	city: String,
 	country: String,
 	postcode: String,
+	business_name: String, 
 	ip_address: String,
 	status: Number,
-	user_type: Number,
 	tag_line: String,
 	is_influencer: Number,
 	wallet_balance: Number,
@@ -29,7 +31,6 @@ var userSchema = mongoose.Schema({
 	auto_renew: Number,
 	referral_id: Number,
 	referral_link: String,
-	business_name: String, 
 	created_date: String,
 	updated_date: String,
 	active_hash: String,

@@ -10,6 +10,8 @@ var dateFormat      = require('dateformat');
 var fs              = require('fs');
 var bcrypt          = require('bcrypt-nodejs');
 var dynamicmail  = require('../app/controllers/dynamicMailController');
+var crypto          = require("crypto");
+
 
 //expose this function to our app using module.exports
 module.exports = function(passport) {
@@ -55,19 +57,44 @@ module.exports = function(passport) {
                 var newUser = new User();
                 // set the user's local credentials                
               //var day =dateFormat(Date.now(), "yyyy-mm-dd HH:MM:ss");
-              var day = getDate();             
-              var active_code=bcrypt.hashSync(Math.floor((Math.random() * 99999999) *54), null, null);                    
+              var day = getDate(); 
+              var id = crypto.randomBytes(3).toString('hex');
+              // console.log(id);
+              // process.exit();
+              User.findOne ({'wallet_id' : id }, function(err, user) {
+                // if there are any errors, return the error
+                if (err)
+                    return done(err);
+                // check to see if theres already a user with that wallet Id
+                if (user) {
+                    var id = crypto.randomBytes(3).toString('hex');  
+                    return done(null, false, req.flash('error', 'Wallet ID already exists.'));
+                }
+              });     
+              var active_code=bcrypt.hashSync(Math.floor((Math.random() * 99999999) *54), null, null);
+              console.log(userdata[0].id);
+              process.exit();
+                    if(userdata.length>0){                        
+                        newUser.id = userdata[0].id+1;                    
+                    }else{
+                        newUser.id = 1;
+                    }  
                     newUser.first_name = req.body.first_name;
                     newUser.last_name = req.body.last_name;
                     newUser.mail    = email;
                     newUser.password = newUser.generateHash(password);
-                    newUser.contact_number = req.body.contact_number;
+                    newUser.dob = '';
+                    newUser.gender = '';
+                    newUser.profile_photo = '';
+                    newUser.ethnicity = '';
+                    newUser.contact_number = '';
                     newUser.user_type = req.body.user_type;
                     newUser.status = 0;
                     if(req.body.user_type==2){
                         var email_type = 3;
                         newUser.address1 = req.body.address1;
                         newUser.address2 = req.body.address2;
+                        newUser.area = req.body.area;
                         newUser.city = '';
                         newUser.country = '';
                         newUser.postcode = req.body.business_postcode;
@@ -77,6 +104,7 @@ module.exports = function(passport) {
                         var email_type = 2;
                         newUser.address1 = '';
                         newUser.address2 = '';
+                        newUser.area = '';
                         newUser.city = '';
                         newUser.country = '';
                         newUser.postcode = '';
@@ -84,19 +112,25 @@ module.exports = function(passport) {
                         newUser.business_name = '';
                     }
                     newUser.ip_address = req.ip;
+                    newUser.tag_line = '';
+                    newUser.is_influencer = 0;
+                    newUser.wallet_balance = 0;
+                    newUser.wallet_id = id;
+                    newUser.membership_id = 1;
+                    newUser.badges = [];
+                    newUser.auto_renew = 1;
+                    referral_id = '';
+                    //referral_link = '';
                     newUser.created_date = day;
                     newUser.updated_date = day;
                     newUser.active_hash = active_code;
-                    if(userdata.length>0){                        
-                        newUser.id = userdata[0].id+1;                    
-                    }else{
-                        newUser.id = 1;
-                    }
+                    
                     newUser.save(function(err) {
                     if (err){
                         req.flash('User registration failed');
                         res.redirect('/errorpage');
-                    }                  
+                    }   
+
                     //var email            = require('../lib/email.js');
                     //email.activate_email(req.body.user_type,req.body.first_name,req.body.email,active_code);
 
@@ -212,6 +246,7 @@ module.exports = function(passport) {
 function getDate(){ var d = new Date(); return d.getFullYear()+ '-'+addZero(d.getMonth()+1)+'-'+addZero(d.getDate())+' '+addZero(d.getHours())+':'+addZero(d.getMinutes())+':'+addZero(d.getSeconds()); } 
 
 function addZero(i) { if (i < 10) { i = "0" + i; } return i; }
+
 
     
     

@@ -2,7 +2,6 @@ Like Operation
 https://stackoverflow.com/questions/3305561/how-to-query-mongodb-with-like?rq=1
 db.users.find({"name": /.*m.*/})
 
-
 Where in Query
 
 model.find({
