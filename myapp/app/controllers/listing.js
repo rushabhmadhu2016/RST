@@ -525,12 +525,7 @@ exports.storePropertyListing = function(req, res) {
 		    newProperty.country = req.body.country;
 		    newProperty.user_id = req.session.user.id;
 		    newProperty.created_by = req.session.user.user_type;
-
-		    if(req.session.user.user_type==2){
-		    	newProperty.status = 0;
-		    }else{
-		    	newProperty.status = 1;	
-		    }
+		    newProperty.status = 0;
 
 		    newProperty.created_date = day;
 		    newProperty.updated_date = day;
@@ -550,13 +545,8 @@ exports.storePropertyListing = function(req, res) {
 						req.flash('error', 'Error : something is wrong while add business user');
 						res.redirect('/errorpage');
 					}else{
-						if(req.session.user.user_type==2){
 			        	req.flash('success', 'Location request submitted successfully, it will be listed after admin approval.');
 			        	res.redirect('/Mylisting');
-				        }else{
-				        	req.flash('success', 'Location added successfully');
-				        	res.redirect('/Mylisting');
-				        }
 					}
 			      });
 			}				 

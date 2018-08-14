@@ -8,6 +8,7 @@ $(function(){
 		rules:{
 			review_desc:{
 				required:true,
+				minlength: 60,
 				normalizer: function(value) {return $.trim(value);}
 			},
 			star:{
@@ -51,6 +52,7 @@ $(function(){
 		messages:{
 			review_desc:{
 				required:"Please enter review description",
+				minlength: jQuery.validator.format("At least {0} characters required"),
 			},
 			star:{
 				required:"Please select rating star",	
