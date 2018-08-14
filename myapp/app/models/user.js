@@ -36,6 +36,7 @@ var userSchema = mongoose.Schema({
 	active_hash: String,
 	forgot_hash: String,
 	forgot_hash_date: String,
+	is_professional_badge: { type: Number, default: 0 },
 });
 
 

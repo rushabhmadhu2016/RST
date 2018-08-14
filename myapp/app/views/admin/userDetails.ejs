@@ -1,4 +1,10 @@
 <% include template/head %>
+<link href="../assets/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="../assets/js/custom/bootstrap-toggle.min.js"></script>
+<style>
+  .toggle.ios, .toggle-on.ios, .toggle-off.ios { border-radius: 20px; }
+  .toggle.ios .toggle-handle { border-radius: 20px; }
+</style>
 <% include template/subheader %>
 <div class="content-wrapper">
   <!-- Page header -->
@@ -59,15 +65,41 @@
                 <tr>
                   <td>Postal Code</td>
                   <td><%=user.postcode %></td>                           
+                </tr>
+                <tr>
+                  <td>Professional Badge</td>
+                  <td>
+                    <input type="checkbox" class="prof-badge-toggle" <%= (user.is_professional_badge==0) ? '' : 'checked'%> data-toggle="toggle" data-on="Yes" data-off="No" data-onstyle="success" data-offstyle="info" data-style="ios" value="<%= user.is_professional_badge%>" userId="<%= user.id %>">
+                  </td>                           
                 </tr>                                             
             </table>
-          <div class="text-center">
+          <div class="text-right">
             <button class="btn btn-primary" onclick="window.history.back();">Back </button>
           </div>
         </div>
     </div>
     
     <!-- /dashboard content -->
-<% include template/subfooter%>   
+<% include template/subfooter%>
+<script type="text/javascript">
+  $(function() {
+      $('.prof-badge-toggle').change(function() {
+          var userId = $(this).attr('userId');
+          var valus = $(this).prop('checked');          
+
+          console.log(userId);
+          console.log(valus);
+          $.ajax({
+              type: "POST",
+              url: '/admin/setprofesstionalbadge',
+              dataType: "json",
+              data: {checked: $(this).prop('checked'), user: userId},
+              success: function(data){
+                console.log('yes'); 
+              }
+          });
+      })
+    })   
+</script>
 <% include template/footer%>
       

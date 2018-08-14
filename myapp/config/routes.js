@@ -200,7 +200,8 @@ module.exports = function (app, passport) {
     app.post('/admin/review/manageLike', ReviewController.manageLike);
     app.post('/admin/review/manageFlag', ReviewController.manageFlag);
     app.post('/admin/review/cancelFlaggedReview', ReviewController.cancelFlaggedReview);
-    app.post('/admin/review/removeReviewReply', ReviewController.removeReviewReply);    
+    app.post('/admin/review/removeReviewReply', ReviewController.removeReviewReply);
+    app.post('/admin/setprofesstionalbadge', AdminHomeController.loggedIn, HomeController.setProfesstionalBadge);    
     /**/
 }
 /*    
