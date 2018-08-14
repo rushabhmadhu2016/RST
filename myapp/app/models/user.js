@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
 var autoIncrement = require('mongodb-autoincrement');
 var userSchema = mongoose.Schema({	
-	user_id:{ type: Number, default: 1 },
+	id:{ type: Number, default: 1 },
 	first_name: String,
 	last_name: String,
 	mail: String,
