@@ -85,17 +85,20 @@
   $(function() {
       $('.prof-badge-toggle').change(function() {
           var userId = $(this).attr('userId');
-          var valus = $(this).prop('checked');          
+          var valus = $(this).val();
+
 
           console.log(userId);
           console.log(valus);
           $.ajax({
               type: "POST",
               url: '/admin/setprofesstionalbadge',
-              dataType: "json",
-              data: {checked: $(this).prop('checked'), user: userId},
+              data: {checked: $(this).prop('checked'), user: userId, valus: valus},
               success: function(data){
                 console.log('yes'); 
+              },
+              error: function(){
+                console.log('error');
               }
           });
       })

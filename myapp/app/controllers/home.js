@@ -137,8 +137,33 @@ exports.UpdateProfile = function(req, res) {
 }
 
 exports.setProfesstionalBadge = function(req, res){
+	User.findOne({id:req.body.userId}, function(err, userData) {
+ 		if(err){
+			req.flash('error', 'Error : something is wrong while updating professtional Badge');
+			res.redirect('/errorpage');
+		}
+		else{
+			if (userData){
+				userData.first_name = req.body.first_name;
+				profile.save(function(err) {
+	                if (err){
+		                req.flash('success', 'Opps. Something went wrong..');
+		                console.log('error');
+	           		}
+            		else
+            		{
+                		req.flash('success', 'Profile updated successfully.');
+                		console.log('success');
+                		res.redirect('/MyProfile');
+                	}
+                });
+			}
+		}
+	});
+	console.log('request comes '+req.body.user);
+	console.log(req.body.checked);
+	console.log(req.body.valus);
 	return true;
-	console.log(req.body);
 }
 
 exports.showHomePage = function(req, res) {
