@@ -314,6 +314,16 @@ exports.sendContactUsMailPage = function(req, res) {
 
 	dynamicmail.sendMail(sendmail);
 
+	var sendadminmail = {
+		receiver_name: req.body.contact_name,
+		receiver_email: req.body.contact_email,
+		contact_subject: req.body.contact_subject,
+		contact_subject: req.body.contact_desc,
+		email_type: 5
+	}
+
+	dynamicmail.sendMail(sendadminmail);
+
    	req.flash('success', 'We will contact you soon');
 	res.redirect('/contactus');
 }

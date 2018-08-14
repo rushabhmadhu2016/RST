@@ -62,7 +62,6 @@ exports.sendMail = function(data) {
 				    	var mail_content = emailData.email_message;
 				    	var link = constants.host+`/activate/confirm?email=`+data.receiver_email+`&active_link=`+data.activation_code;				    	
 				    	var email_body = mail_content.replace('{host_url}', constants.host);
-				    	email_body = email_body.replace('{password_activation_link}',link);
 				    	email_body = email_body.replace('{user_name}',data.receiver_name);
 				        break;
 				    case 5:
