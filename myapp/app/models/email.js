@@ -11,6 +11,7 @@ var userSchema = mongoose.Schema({
 	email_keys: String,
 	email_subject: String,
 	email_message: String,
+	email_status: Number,
 	created_date: String,
 	updated_date: String,
 });

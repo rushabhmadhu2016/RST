@@ -86,16 +86,11 @@
       $('.prof-badge-toggle').change(function() {
           var userId = $(this).attr('userId');
           var toggle_value = $(this).val();
-
-
-          console.log(userId);
-          console.log(valus);
           $.ajax({
               type: "POST",
               url: '/admin/setprofesstionalbadge',
               data: {is_checked: $(this).prop('checked'), userId: userId, toggle_value: toggle_value},
               success: function(data){
-                console.log('yes'); 
               },
               error: function(){
                 console.log('error');
