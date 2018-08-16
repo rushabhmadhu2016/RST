@@ -35,6 +35,31 @@ exports.allUsers = function(req,res) {
 	});
 }
 
+exports.testCall = function(req,res){	
+	var myparams = req.url;
+	if(myparams.indexOf('api')>0){
+		var calltype='api';
+	}else{
+		var calltype='web';
+	}
+	/*All Validation goes here - Start*/
+	if(calltype=='api'){
+		user = User.findOne({'id':1});
+	}else{
+		user = User.findOne({'id':1});
+	}
+	/*All Validation goes here - End*/
+	/*All Logic goes here - Start*/
+	
+
+	/*All Logic goes here - END*/
+	if(calltype=='api'){
+		res.send({"code":req.url});		
+	}else{
+		res.render();		
+	}
+}
+
 /* Get Properties for Admin Side Location Page*/
 exports.allProperties = function(req,res){	
 	var categoryList = [];	    

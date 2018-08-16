@@ -44,7 +44,8 @@ module.exports = function (app, passport) {
         res.locals.res = res;
         next();
     }); 
-      
+
+    /*Globa cache management script*/  
     app.use(function(req, res, next) {
         res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
       next();
@@ -75,7 +76,9 @@ module.exports = function (app, passport) {
     var url = share('facebook', {'title':review,'url':prop_url});
     res.redirect(url);
     });
-
+    
+    app.post('/testCall', AdminHomeController.testCall);    
+    app.post('/api/testCall', AdminHomeController.testCall);    
     app.get('/', HomeController.showIndexPage);
     app.get('/about', HomeController.showAboutPage);
     app.get('/developer-help', HomeController.showDeveloperHelpPage);
@@ -97,6 +100,7 @@ module.exports = function (app, passport) {
     app.get('/location/location-details',HomeController.showPropertyDetailPage);
     /*Front side Operations Routes*/
     app.get('/MyProfile', HomeController.isLoggedIn, HomeController.showProfilePage);
+    app.get('/api/MyProfile', HomeController.showProfilePage);
     app.post('/updateprofile',HomeController.UpdateProfile);
     app.get('/changepassword',HomeController.isLoggedIn,HomeController.changePasswordPage);
     app.post('/updatepassword',HomeController.updatePasswordPage);
