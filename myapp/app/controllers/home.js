@@ -123,6 +123,7 @@ exports.showProfilePage = function(req, res) {
 	});
 }
 
+
 exports.UpdateProfile = function(req, res) {
 	User.findOne({id:req.session.user.id}, function(err, profile) {
  		if(err){
