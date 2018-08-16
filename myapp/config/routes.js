@@ -194,6 +194,7 @@ module.exports = function (app, passport) {
     app.get('/admin/editemail', AdminHomeController.loggedIn, EmailController.editemailPage);
     app.post('/admin/updateemail', EmailController.updateemailPage);
     app.get('/admin/deleteemail', AdminHomeController.loggedIn, EmailController.deleteemailPage);
+    app.get('/admin/nfp', AdminHomeController.loggedIn, AdminHomeController.nfpPage);
 
     /*Adminside Ajax routes*/
     app.post('/admin/review/deleteReview', AdminHomeController.loggedIn, ReviewController.deleteReviewById);

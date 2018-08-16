@@ -144,7 +144,7 @@ exports.setProfesstionalBadge = function(req, res){
 		}
 		else{
 			if (userData){
-				userData.first_name = req.body.first_name;
+				userData.is_professional_badge = req.body.first_name;
 				profile.save(function(err) {
 	                if (err){
 		                req.flash('success', 'Opps. Something went wrong..');
