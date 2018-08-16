@@ -28,7 +28,6 @@ module.exports = function(passport) {
     });
 
     // === LOCAL SIGNUP =
-
     passport.use('local-signup', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
@@ -90,26 +89,21 @@ module.exports = function(passport) {
                     newUser.contact_number = '';
                     newUser.user_type = req.body.user_type;
                     newUser.status = 0;
+                    newUser.address1 = '';
+                    newUser.address2 = '';
+                    newUser.area = '';
+                    newUser.city = '';
+                    newUser.country = '';
+                    newUser.postcode = '';
+                    newUser.contact_number = '';
+                    newUser.business_name = '';
                     if(req.body.user_type==2){
                         var email_type = 3;
-                        newUser.address1 = req.body.address1;
-                        newUser.address2 = req.body.address2;
-                        newUser.area = req.body.area;
-                        newUser.city = '';
-                        newUser.country = '';
                         newUser.postcode = req.body.business_postcode;
                         newUser.contact_number = req.body.business_contact;
                         newUser.business_name = req.body.business_name;
                     }else{
                         var email_type = 2;
-                        newUser.address1 = '';
-                        newUser.address2 = '';
-                        newUser.area = '';
-                        newUser.city = '';
-                        newUser.country = '';
-                        newUser.postcode = '';
-                        newUser.contact_number = '';
-                        newUser.business_name = '';
                     }
                     newUser.ip_address = req.ip;
                     newUser.tag_line = '';

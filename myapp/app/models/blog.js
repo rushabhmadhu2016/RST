@@ -4,7 +4,7 @@
 var mongoose = require('mongoose');
 
 //define the schema for our user model
-var userSchema = mongoose.Schema({
+var blogSchema = mongoose.Schema({
 	id:{ type: Number, default: 1 },	
 	blog_title: String,
 	blog_content: String,
@@ -15,4 +15,4 @@ var userSchema = mongoose.Schema({
 
 
 //create the model for users and expose it to our app
-module.exports = mongoose.model('blogs', userSchema);
+module.exports = mongoose.model('blogs', blogSchema);

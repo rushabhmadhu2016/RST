@@ -81,23 +81,47 @@ exports.checkForAddReviewPage = function(req, res) {
 }
 
 exports.showProfilePage = function(req, res) {
-
-	User.findOne({id:req.session.user.id}, function(err, profile) {
+	var myparams = req.url;
+	var userId;
+	var api_response = {};
+	if(myparams.indexOf('api')>0){
+		var calltype='api';
+		userId = 1;
+	}else{
+		var calltype='web';
+		userId = req.session.user.id
+	}
+	User.findOne({id:userId}, function(err, profile) {
 		if(err){
-			req.flash('error', 'Error : something is wrong with Profile Page');
-			res.redirect('/errorpage');
+			if(calltype=='api'){
+				api_response.message='';
+				api_response.code=302;
+				api_response.status=false;
+				api_response.profile={};
+				res.send(api_response);
+			}else{
+				req.flash('error', 'Error : something is wrong with Profile Page');
+				res.redirect('/errorpage');
+			}
 		}
 		else{
-	    	res.render('profile', {
-			error : req.flash("error"),
-			success: req.flash("success"),
-			session:req.session,
-			user: profile,
-			});
+			if(calltype=='api'){
+				api_response.message='Profile retrived.';
+				api_response.code=200;
+				api_response.status=true;
+				api_response.profile=profile;
+				res.send(api_response);
+			}else{				
+		    	res.render('profile', {
+				error : req.flash("error"),
+				success: req.flash("success"),
+				session: req.session,
+				user: profile,
+				});
+		    }
 		}		
 	});
 }
-
 
 exports.UpdateProfile = function(req, res) {
 	User.findOne({id:req.session.user.id}, function(err, profile) {
