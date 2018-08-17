@@ -508,9 +508,8 @@ exports.storePropertyListing = function(req, res) {
 		    var random_string = randomstring.generate({length: 5,charset: 'alphabetic'})+randomstring.generate({length: 5,charset: 'numeric'})+randomstring.generate({length: 5,charset: 'alphabetic'});
 
 		    Properties.find().sort([['id', 'descending']]).limit(1).exec(function(err, propertydata) { 
-					
+			console.log(req.body.categories);
 			var newProperty = new Properties();
-			//var day =dateFormat(Date.now(), "yyyy-mm-dd HH:MM:ss");
 			var day = getDate();
 			newProperty.property_name = req.body.property_name.trim();
 		    newProperty.address1 = req.body.address1.trim();
@@ -520,7 +519,7 @@ exports.storePropertyListing = function(req, res) {
 			newProperty.category = req.body.categories;
 		    newProperty.property_desc = req.body.property_desc;
 		    newProperty.property_images = uploaded_files;
-		    newProperty.user = req.session.user.id;
+		    newProperty.user = req.session.user._id;
 		    newProperty.bounty = property.bounty;
 		    newProperty.created_by = req.session.user.user_type;
 		    newProperty.status = 0;
@@ -541,6 +540,7 @@ exports.storePropertyListing = function(req, res) {
 			    newProperty.save(function(err) {
 			        if(err){
 			        	console.log('save error');
+			        	console.log(err);
 						req.flash('error', 'Error : something is wrong while add business user');
 						res.redirect('/errorpage');
 					}else{
