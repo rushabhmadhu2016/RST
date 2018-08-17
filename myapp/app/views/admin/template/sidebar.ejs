@@ -1,0 +1,81 @@
+<!-- Main sidebar -->
+	<div class="sidebar sidebar-dark sidebar-main sidebar-expand-md">
+
+		<!-- Sidebar mobile toggler -->
+		<div class="sidebar-mobile-toggler text-center">
+			<a href="#" class="sidebar-mobile-main-toggle">
+				<i class="icon-arrow-left8"></i>
+			</a>
+			Revstance
+			<a href="#" class="sidebar-mobile-expand">
+				<i class="icon-screen-full"></i>
+				<i class="icon-screen-normal"></i>
+			</a>
+		</div>
+		<!-- /sidebar mobile toggler -->
+
+
+		<!-- Sidebar content -->
+		<div class="sidebar-content">
+
+			<!-- Main navigation -->
+			<div class="card card-sidebar-mobile">
+				<ul class="nav nav-sidebar" data-nav-type="accordion">
+
+					<!-- Tables -->
+					<li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Admin Panel</div> <i class="icon-menu" title="Revstance - Admin Panel"></i></li>
+					
+					<li class="nav-item"><a href="home" class="nav-link <% if(req.path=="/admin/home") {%>active<% } %>"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
+
+					<li class="nav-item"><a href="users" class="nav-link <% if(req.path=="/admin/users" || req.path=="/admin/userdetails") {%>active<% } %>"><i class="icon-users4"></i> <span>Users</a></li>
+
+					<li class="nav-item"><a href="business-users" class="nav-link <% if(req.path=="/admin/business-users" || req.path=="/admin/business-detail") {%>active<% } %>"><i class="icon-briefcase"></i> <span>Businesses</span></a></li>
+
+					<li class="nav-item"><a href="locations" class="nav-link <% if(req.path=="/admin/locations" || req.path=="/admin/location-detail") {%>active<% } %>"><i class="icon-office"></i> <span>All Locations</span></a></li>
+
+					<li class="nav-item nav-item-submenu <% if(req.path=="/admin/editcategory") {%>active<% } %>">
+						<a href="#" class="nav-link"><i class="icon-list3"></i> <span>Categories</span></a>
+
+						<ul class="nav nav-group-sub" data-submenu-title="Category">
+							<li class="nav-item <% if(req.path=="/admin/addcategory") {%>active<% } %>"><a href="/admin/addcategory" class="nav-link active"><i class="icon-add"></i><span>Add New Category</span></a></li>
+							<li class="nav-item <% if(req.path=="/admin/categories") {%>active<% } %>"><a href="categories" class="nav-link"><i class="icon-eye8"></i><span>View Category</span></a></li>
+						</ul>
+					</li>
+
+
+					<li class="<% if(req.path=="/admin/claimed-locations") {%>active<% } %>"><a href="claimed-locations" class="nav-link"><i class="icon-price-tags"></i> <span>Claimed Locations</span></a></li>
+
+					<li class="<% if(req.path=="/admin/flagged-reviews") {%>active<% } %>"><a href="flagged-reviews" class="nav-link"><i class="icon-spam"></i> <span>Flagged Reviews</span></a></li>
+
+					<!-- <li class="<% if(req.path=="/admin/blogs") {%>active<% } %>"><a href="blogs" class="nav-link"><i class="icon-blogger2"></i> <span>Blogs</span></a></li> -->
+
+					<li class="nav-item nav-item-submenu <% if(req.path=="/admin/blogs") {%>active<% } %>">
+						<a href="#" class="nav-link"><i class="icon-blogger2"></i> <span>Blogs</span></a>
+
+						<ul class="nav nav-group-sub" data-submenu-title="Blog">
+							<li class="nav-item <% if(req.path=="/admin/addblog") {%>active<% } %>"><a href="/admin/addblog" class="nav-link active"><i class="icon-add"></i><span>Add New Blog</span></a></li>
+							<li class="nav-item <% if(req.path=="/admin/blogs") {%>active<% } %>"><a href="blogs" class="nav-link"><i class="icon-eye8"></i><span>View Blogs</span></a></li>
+						</ul>
+					</li>
+					<!-- /main -->
+
+					<li class="nav-item nav-item-submenu <% if(req.path=="/admin/emails") {%>active<% } %>">
+						<a href="#" class="nav-link"><i class="icon-envelop4"></i> <span>Email Template</span></a>
+
+						<ul class="nav nav-group-sub" data-submenu-title="Email Template">
+							<li class="nav-item <% if(req.path=="/admin/addemail") {%>active<% } %>"><a href="/admin/addemail" class="nav-link active"><i class="icon-add"></i><span>Add New Email</span></a></li>
+							<li class="nav-item <% if(req.path=="/admin/emails") {%>active<% } %>"><a href="emails" class="nav-link"><i class="icon-eye8"></i><span>View Email</span></a></li>
+						</ul>
+					</li>
+
+					<li class="<% if(req.path=="/admin/nfp") {%>active<% } %>"><a href="nfp" class="nav-link"><i class="icon-design"></i> <span>Non Functional Prototype</span></a></li>
+					<!-- /tables -->
+				</ul>
+			</div>
+			<!-- /main navigation -->
+
+		</div>
+		<!-- /sidebar content -->
+		
+	</div>
+<!-- /main sidebar -->
