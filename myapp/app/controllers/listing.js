@@ -450,7 +450,7 @@ exports.editPropertyListingPage = function(req, res) {
 exports.storePropertyListing = function(req, res) {
 	if(req.body.property_name.length!=0 && req.body.categories!=undefined){
 
-	Properties.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i'),address1: new RegExp('^' +req.body.address1.trim() + '$', 'i'),address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),post_code: new RegExp('^' +req.body.postcode.trim() + '$', 'i')}, function(err, property) {
+	Properties.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i'),address1: new RegExp('^' +req.body.address1.trim() + '$', 'i'),address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),area: new RegExp('^' +req.body.area.trim() + '$', 'i'),post_code: new RegExp('^' +req.body.postcode.trim() + '$', 'i')}, function(err, property) {
 	
 	//Properties.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i'),address1: new RegExp('^' +req.body.address1.trim() + '$', 'i'),address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),'category_id': parseInt(req.body.categories)}, function(err, property) {
 
@@ -515,23 +515,24 @@ exports.storePropertyListing = function(req, res) {
 			newProperty.property_name = req.body.property_name.trim();
 		    newProperty.address1 = req.body.address1.trim();
 		    newProperty.address2 = req.body.address2.trim();
+		    newProperty.area = req.body.area.trim();
+		    newProperty.post_code = req.body.postcode;
 			newProperty.category = req.body.categories;
 		    newProperty.property_desc = req.body.property_desc;
 		    newProperty.property_images = uploaded_files;
-		    newProperty.post_code = req.body.postcode;
 		    newProperty.user = req.session.user.id;
+		    newProperty.bounty = property.bounty;
 		    newProperty.created_by = req.session.user.user_type;
 		    newProperty.status = 0;
-		    //newProperty.bounty = property.bounty;
 		    newProperty.is_claimed = 0;
 		    newProperty.created_date = day;
 		    newProperty.updated_date = day;
 		    if(propertydata.length>0){		    	
 		    	newProperty.id = propertydata[0].id+1;
-		    	newProperty.property_id = random_string+(propertydata[0].id+1);
+		    	newProperty.id = random_string+(propertydata[0].id+1);
 		    }else{
 		    	newProperty.id = 1;
-		    	newProperty.property_id = random_string+1;
+		    	newProperty.id = random_string+1;
 		    }
 		    if(newProperty.length<1){
 				req.flash('success', 'Location added successfully');

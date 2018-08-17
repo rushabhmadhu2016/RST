@@ -71,9 +71,8 @@ module.exports = function(passport) {
                 }
               });     
               var active_code=bcrypt.hashSync(Math.floor((Math.random() * 99999999) *54), null, null);
-              console.log(userdata[0].id);
-              process.exit();
-                    if(userdata.length>0){                        
+              // console.log(userdata[0].id);
+                 if(userdata.length>0){                        
                         newUser.id = userdata[0].id+1;                    
                     }else{
                         newUser.id = 1;
