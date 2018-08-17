@@ -84,13 +84,13 @@
                   if (userLists && properties && categories) {
                       properties.forEach((property) => { 
                         if(filters.category_filter){
-                          if(property.category_id.indexOf(filters.category_filter)!=-1){
+                          if(property.category.indexOf(filters.category_filter)!=-1){
                           %>
                         <tr>
                           <td><%=i++ %></td>
                           <td><%=property.property_name %></td>                        
                           <%
-                          var categoryIds = property.category_id;
+                          var categoryIds = property.category;
                           var catname = '';
                           categoryIds.forEach(function(cat){
                             if(catname.length>0)
@@ -101,8 +101,8 @@
                           });
                           %>
                           <td><%=catname %></td>
-                          <td><%=userLists[property.user_id].contact_number %></td>
-                          <td><%=userLists[property.user_id].mail %></td>
+                          <td><%=userLists[property.user].contact_number %></td>
+                          <td><%=userLists[property.user].mail %></td>
                           <td>
                             <% if(property.status==0) { %>
                               Pending
@@ -130,9 +130,9 @@
                   <tr>
                     <td><%=i++ %></td>
                     <td><%=property.property_name %></td>
-                    <%#categories[property.category_id] %>
+                    <%#categories[property.category] %>
                     <%
-                          var categoryIds = property.category_id;
+                          var categoryIds = property.category;
                           var catname = '';
                           categoryIds.forEach(function(cat){    
                             if(catname.length>0){
@@ -144,8 +144,8 @@
                           });
                     %>
                     <td><%=catname %></td>
-                    <td><%=userLists[property.user_id].contact_number %></td>
-                    <td><%=userLists[property.user_id].mail %></td>
+                    <td><%=userLists[property.user].contact_number %></td>
+                    <td><%=userLists[property.user].mail %></td>
                     <td>
                       <% if(property.status==0) { %>
                         Pending

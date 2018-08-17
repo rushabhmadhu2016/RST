@@ -163,10 +163,10 @@ exports.showMyListingPage = function(req, res) {
   		categories.forEach(function(category) {
   			categoriesList[category.id]=category;
   		}); 		
-		Properties.count({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user_id:req.session.user.id}, categoriesListToSearch]}, function(err, c) {
+		Properties.count({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{ area:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user_id:req.session.user.id}, categoriesListToSearch]}, function(err, c) {
 		counter = c;//
 		console.log("Total Counter = "+c);
-		Properties.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user_id:req.session.user.id}, categoriesListToSearch]}).limit(perPage).skip(perPage * page)
+		Properties.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{ area:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user_id:req.session.user.id}, categoriesListToSearch]}).limit(perPage).skip(perPage * page)
     .sort({ property_name: 'asc'}).exec(function(err, properties) {  	
     	if(err){
 	  		req.flash('error', 'Error : something is wrong in property search');
@@ -199,7 +199,7 @@ exports.showMyListingPage = function(req, res) {
 							res.redirect('/errorpage');
 			    		}
 			    		claimData.forEach(function(claim){
-			    			claimDataProperies.push(claim.property_id);
+			    			claimDataProperies.push(claim.property);
 			    		})
 	  					properties.forEach(function(property) {
 		  					var propertyItem = {};
@@ -213,8 +213,8 @@ exports.showMyListingPage = function(req, res) {
 		  					propertyItem.property_desc = property.property_desc;
 		  					propertyItem.property_status = property.status;
 		  					propertyItem.address1 = property.address1;
+		  					propertyItem.address2 = property.address2;
 		  					propertyItem.area = property.area;
-		  					propertyItem.id = property.id;
 		  					propertyItem.post_code = property.post_code;
 
 		  					propertyItem.review_count = getPropertyReviewCount(property.id, reviewsList);
@@ -505,12 +505,17 @@ exports.storePropertyListing = function(req, res) {
 
 		    console.log(uploaded_files);
 
-		    var random_string = randomstring.generate({length: 5,charset: 'alphabetic'})+randomstring.generate({length: 5,charset: 'numeric'})+randomstring.generate({length: 5,charset: 'alphabetic'});
-
 		    Properties.find().sort([['id', 'descending']]).limit(1).exec(function(err, propertydata) { 
 			console.log(req.body.categories);
+
 			var newProperty = new Properties();
 			var day = getDate();
+
+		    if(propertydata.length>0){		    	
+		    	newProperty.id = propertydata[0].id+1;
+		    }else{
+		    	newProperty.id = 1;
+		    }
 			newProperty.property_name = req.body.property_name.trim();
 		    newProperty.address1 = req.body.address1.trim();
 		    newProperty.address2 = req.body.address2.trim();
@@ -526,17 +531,7 @@ exports.storePropertyListing = function(req, res) {
 		    newProperty.is_claimed = 0;
 		    newProperty.created_date = day;
 		    newProperty.updated_date = day;
-		    if(propertydata.length>0){		    	
-		    	newProperty.id = propertydata[0].id+1;
-		    	newProperty.id = random_string+(propertydata[0].id+1);
-		    }else{
-		    	newProperty.id = 1;
-		    	newProperty.id = random_string+1;
-		    }
-		    if(newProperty.length<1){
-				req.flash('success', 'Location added successfully');
-			    res.redirect('/Mylisting');
-		    }else{
+		    
 			    newProperty.save(function(err) {
 			        if(err){
 			        	console.log('save error');
@@ -563,7 +558,7 @@ exports.storePropertyListing = function(req, res) {
 			        		res.redirect('/Mylisting');
 					}
 			      });
-			}				 
+							 
 		    });
 			}
 			else{
@@ -914,19 +909,19 @@ function IsNumeric(input){
     return (RE.test(input));
 }
 
-function getPropertyAverageRating(property_id, reviews){
+function getPropertyAverageRating(id, reviews){
 	var counter = 0;
 	var totcounter = 0;
 	reviews.forEach(function(review){
-		if(review.property_id==property_id){ counter+=review.review_rating; totcounter++;}
+		if(review.property==id){ counter+=review.review_rating; totcounter++;}
 	});
 	return isNaN(parseInt(counter/totcounter)) ? 0 : parseInt(counter/totcounter);
 }
 
-function getPropertyReviewCount(property_id, reviews){
+function getPropertyReviewCount(id, reviews){
 	var counter = 0;
 	reviews.forEach(function(review){
-		if(review.property_id==property_id) counter++;
+		if(review.property==id) counter++;
 	});
 	return counter;
 }
