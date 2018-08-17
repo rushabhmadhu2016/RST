@@ -5,6 +5,7 @@
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
     "async": "^2.6.1",
+    "async-await": "^0.1.40",
     "basic-auth-connect": "latest",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "~1.13.2",

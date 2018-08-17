@@ -68,7 +68,7 @@ var categorySchema = mongoose.Schema({
 	id: Number,
 	category_name: String,
 	status: Number,
-	user_id: Number,
+	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 	created_date: String,
 	updated_date: String	
 });

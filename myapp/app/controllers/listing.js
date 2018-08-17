@@ -514,16 +514,15 @@ exports.storePropertyListing = function(req, res) {
 			var day = getDate();
 			newProperty.property_name = req.body.property_name.trim();
 		    newProperty.address1 = req.body.address1.trim();
-		    newProperty.address2 = '';
+		    newProperty.address2 = req.body.address2.trim();
 			newProperty.category = req.body.categories;
 		    newProperty.property_desc = req.body.property_desc;
 		    newProperty.property_images = uploaded_files;
 		    newProperty.post_code = req.body.postcode;
-		    newProperty.area = req.body.address2.trim();
 		    newProperty.user = req.session.user.id;
 		    newProperty.created_by = req.session.user.user_type;
 		    newProperty.status = 0;
-		    newProperty.bounty = property.bounty;
+		    //newProperty.bounty = property.bounty;
 		    newProperty.is_claimed = 0;
 		    newProperty.created_date = day;
 		    newProperty.updated_date = day;
@@ -540,6 +539,7 @@ exports.storePropertyListing = function(req, res) {
 		    }else{
 			    newProperty.save(function(err) {
 			        if(err){
+			        	console.log('save error');
 						req.flash('error', 'Error : something is wrong while add business user');
 						res.redirect('/errorpage');
 					}else{
@@ -547,7 +547,7 @@ exports.storePropertyListing = function(req, res) {
 		    			User.findOne({id:req.session.user.id}, function(err, updatePropertyData) {
 		    			//console.log(updatePropertyData);
 		    			//process.exit();
-		    			updatePropertyData.properties = newProperty._id;
+		    			updatePropertyData.property = newProperty._id;
 		    			
 		    			updatePropertyData.save(function (err) {
 		    			if(err){
@@ -585,7 +585,7 @@ exports.showJoinListing = function(req, res){
 	// users.forEach(function(users){
 	// 	console.log(users);
 	// });
-	User.findOne({'id': req.session.user.id}).populate('properties').exec(function(err, user){
+	User.findOne({'id': req.session.user.id}).populate('property').exec(function(err, user){
 		if(err){
 			console.log('Error');
 		}

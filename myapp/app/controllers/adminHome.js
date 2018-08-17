@@ -6,7 +6,7 @@ var User         = models.User;
 var Property     = models.Property;
 var Category     = models.Category;
 var Reviews      = models.Review;
-var FlaggedReview= models.FlaggedReview;
+var FlaggedReview= models.Flag;
 
 /* Middleware Check for Admin Type User*/
 exports.loggedIn = function(req, res, next)
