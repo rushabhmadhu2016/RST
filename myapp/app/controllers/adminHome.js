@@ -1,12 +1,12 @@
 var numeral 	 = require('numeral');
 var bcrypt 		 = require('bcrypt-nodejs');
 var dateFormat   = require('dateformat');
-var User         = require('../../app/models/user');
-var Property     = require('../../app/models/property');
-var Category     = require('../../app/models/category');
-var Reviews      = require('../../app/models/review');
-var Business     = require('../../app/models/business');
-var FlaggedReview= require('../../app/models/flagged_review');
+var models       = require('../../app/models/revstance_models');
+var User         = models.User;
+var Property     = models.Property;
+var Category     = models.Category;
+var Reviews      = models.Review;
+var FlaggedReview= models.FlaggedReview;
 
 /* Middleware Check for Admin Type User*/
 exports.loggedIn = function(req, res, next)
@@ -35,30 +35,30 @@ exports.allUsers = function(req,res) {
 	});
 }
 
-exports.testCall = function(req,res){	
-	var myparams = req.url;
-	if(myparams.indexOf('api')>0){
-		var calltype='api';
-	}else{
-		var calltype='web';
-	}
-	/*All Validation goes here - Start*/
-	if(calltype=='api'){
-		user = User.findOne({'id':1});
-	}else{
-		user = User.findOne({'id':1});
-	}
-	/*All Validation goes here - End*/
-	/*All Logic goes here - Start*/
+// exports.testCall = function(req,res){	
+// 	var myparams = req.url;
+// 	if(myparams.indexOf('api')>0){
+// 		var calltype='api';
+// 	}else{
+// 		var calltype='web';
+// 	}
+// 	/*All Validation goes here - Start*/
+// 	if(calltype=='api'){
+// 		user = User.findOne({'id':1});
+// 	}else{
+// 		user = User.findOne({'id':1});
+// 	}
+// 	/*All Validation goes here - End*/
+// 	/*All Logic goes here - Start*/
 	
 
-	/*All Logic goes here - END*/
-	if(calltype=='api'){
-		res.send({"code":req.url});		
-	}else{
-		res.render();		
-	}
-}
+// 	/*All Logic goes here - END*/
+// 	if(calltype=='api'){
+// 		res.send({"code":req.url});		
+// 	}else{
+// 		res.render();		
+// 	}
+// }
 
 /* Get Properties for Admin Side Location Page*/
 exports.allProperties = function(req,res){	

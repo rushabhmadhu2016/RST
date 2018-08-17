@@ -1,6 +1,6 @@
 var LocalStrategy   = require('passport-local').Strategy;
-
-var User            = require('../app/models/user');
+var models      = require('../app/models/revstance_models');
+var User            = models.User;
 var bcrypt          = require('bcrypt-nodejs');
 var configAuth      = require('./auth.js');
 var constant        = require('../config/constants');

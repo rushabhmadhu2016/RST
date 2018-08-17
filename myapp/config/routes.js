@@ -77,8 +77,8 @@ module.exports = function (app, passport) {
     res.redirect(url);
     });
     
-    app.post('/testCall', AdminHomeController.testCall);    
-    app.post('/api/testCall', AdminHomeController.testCall);    
+    // app.post('/testCall', AdminHomeController.testCall);    
+    // app.post('/api/testCall', AdminHomeController.testCall);    
     app.get('/', HomeController.showIndexPage);
     app.get('/about', HomeController.showAboutPage);
     app.get('/developer-help', HomeController.showDeveloperHelpPage);
@@ -105,6 +105,7 @@ module.exports = function (app, passport) {
     app.get('/changepassword',HomeController.isLoggedIn,HomeController.changePasswordPage);
     app.post('/updatepassword',HomeController.updatePasswordPage);
     app.get('/Mylisting',HomeController.isLoggedIn, ListingController.showMyListingPage);
+    app.get('/JoinListing', HomeController.isLoggedIn, ListingController.showJoinListing);
     app.get('/detailListing', HomeController.isLoggedIn, ListingController.showPropertyListingPage);
     app.get('/addListing', HomeController.isLoggedIn, ListingController.showCreateListingPage);
     app.post('/storeListing', upload.array('property_image',11), ListingController.storePropertyListing);

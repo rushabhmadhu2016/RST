@@ -2,14 +2,15 @@ var numeral 	= require('numeral');
 var bcrypt 		= require('bcrypt-nodejs');
 var dateFormat  = require('dateformat');
 var thumb 		= require('node-thumbnail').thumb;
-var Properties  = require('../../app/models/property');
-var Category    = require('../../app/models/category');
-var Reviews     = require('../../app/models/review');
-var User 		= require('../../app/models/user');
-var Claims 		= require('../../app/models/claim');
+var models      = require('../../app/models/revstance_models');
+var Properties  = models.Property;
+var Category    = models.Category;
+var Reviews     = models.Review;
+var User 		= models.User;
+var Claims 		= models.Claim;
 var fs  		= require('fs');
 var randomstring = require("randomstring");
-var FlaggedReview= require('../../app/models/flagged_review');
+var FlaggedReview= models.Flag;
 
 exports.isLoggedIn = function(req, res, next){
 	if (req.session.user && req.session.user.user_type==2) { // req.session.passport._id
@@ -48,7 +49,7 @@ exports.claimProperty = function(req, res) {
 						req.flash('error', 'Invalid param in location claim');
 						res.redirect('/errorpage');
 					}
-					Claims.find({user_id:req.session.user.id, property_id:req.query.id}, function(err, data){
+					Claims.find({user:req.session.user.id, property:req.query.id}, function(err, data){
 						if(err){
 							req.flash('error', 'Something is wrong');
 							res.redirect('/errorpage');		
@@ -70,8 +71,8 @@ exports.claimProperty = function(req, res) {
 						}else{
 							claim.id=data[0].id+1;
 						}
-						claim.user_id=req.session.user.id;
-						claim.property_id=req.query.id;
+						claim.user=req.session.user.id;
+						claim.property=req.query.id;
 						claim.status = 0;
 						claim.created_date=getDate();
 						claim.save(function(err){
@@ -95,7 +96,7 @@ exports.unclaimProperty = function(req, res) {
 	if(req.session.user){
 		if(req.session.user.user_type==2){
 			if(req.query.id){
-				Claims.find({user_id: req.session.user.id, id:req.query.id}).remove().exec(function(err){
+				Claims.find({user: req.session.user.id, id:req.query.id}).remove().exec(function(err){
 					if(err){
 						req.flash('error', 'Claim failed');
 						res.redirect('/errorpage');
@@ -147,7 +148,7 @@ exports.showMyListingPage = function(req, res) {
 	}
 	if(req.query.category){
 		filter.category_filter=req.query.category;
-		categoriesListToSearch = {'category_id': req.query.category};
+		categoriesListToSearch = {'id': req.query.category};
 	}else{
 		filter.category_filter='';
 		categoriesListToSearch = {};
@@ -173,7 +174,7 @@ exports.showMyListingPage = function(req, res) {
 	  	}
 	  	console.log("Total Property Counter = "+properties.length);
 	  	properties.forEach(function(property) {
-	      userIds.push(property.user_id);
+	      userIds.push(property.user);
 	      propertyIds.push(property.id);
 	    });
 	    User.find({'id': {$in: userIds } }, function(err, users) {
@@ -185,7 +186,7 @@ exports.showMyListingPage = function(req, res) {
 				usersList[user.id]=user;
 	  		});
 	  		console.log("Total Users Counter = "+properties.length);
-	  		Reviews.find({'property_id':{$in: propertyIds}}, function(err, reviews) {
+	  		Reviews.find({'id':{$in: propertyIds}}, function(err, reviews) {
 	  			reviews.forEach(function(review){
 	  				reviewsList.push(review);
 	  			});
@@ -204,20 +205,17 @@ exports.showMyListingPage = function(req, res) {
 		  					var propertyItem = {};
 		  					propertyItem.id = property.id;
 		  					propertyItem.property_name = property.property_name;
-		  					propertyItem.category_id = property.category_id;
+		  					//propertyItem.category_id = property.category;
 		  					// propertyItem.category = categoriesList[property.category_id].category_name;
-		  					propertyItem.category = getCategoryName(property.category_id,categoriesList);
-		  					propertyItem.user_type = usersList[property.user_id].user_type;
-		  					propertyItem.user_id = property.user_id;
+		  					propertyItem.category = getCategoryName(property.category,categoriesList);
+		  					propertyItem.user = property.user;
 		  					propertyItem.property_image = property.property_images;
 		  					propertyItem.property_desc = property.property_desc;
 		  					propertyItem.property_status = property.status;
 		  					propertyItem.address1 = property.address1;
-		  					propertyItem.address2 = property.address2;
-		  					propertyItem.property_id = property.property_id;
+		  					propertyItem.area = property.area;
+		  					propertyItem.id = property.id;
 		  					propertyItem.post_code = property.post_code;
-		  					propertyItem.city = property.city;
-		  					propertyItem.country = property.country;
 
 		  					propertyItem.review_count = getPropertyReviewCount(property.id, reviewsList);
 		  					propertyItem.average_rating = getPropertyAverageRating(property.id, reviewsList);
@@ -516,17 +514,17 @@ exports.storePropertyListing = function(req, res) {
 			var day = getDate();
 			newProperty.property_name = req.body.property_name.trim();
 		    newProperty.address1 = req.body.address1.trim();
-		    newProperty.address2 = req.body.address2.trim();
-			newProperty.category_id = req.body.categories;
+		    newProperty.address2 = '';
+			newProperty.category = req.body.categories;
 		    newProperty.property_desc = req.body.property_desc;
 		    newProperty.property_images = uploaded_files;
 		    newProperty.post_code = req.body.postcode;
-		    newProperty.city = req.body.city;
-		    newProperty.country = req.body.country;
-		    newProperty.user_id = req.session.user.id;
+		    newProperty.area = req.body.address2.trim();
+		    newProperty.user = req.session.user.id;
 		    newProperty.created_by = req.session.user.user_type;
 		    newProperty.status = 0;
-
+		    newProperty.bounty = property.bounty;
+		    newProperty.is_claimed = 0;
 		    newProperty.created_date = day;
 		    newProperty.updated_date = day;
 		    if(propertydata.length>0){		    	
@@ -545,12 +543,27 @@ exports.storePropertyListing = function(req, res) {
 						req.flash('error', 'Error : something is wrong while add business user');
 						res.redirect('/errorpage');
 					}else{
-			        	req.flash('success', 'Location request submitted successfully, it will be listed after admin approval.');
-			        	res.redirect('/Mylisting');
+
+		    			User.findOne({id:req.session.user.id}, function(err, updatePropertyData) {
+		    			//console.log(updatePropertyData);
+		    			//process.exit();
+		    			updatePropertyData.properties = newProperty._id;
+		    			
+		    			updatePropertyData.save(function (err) {
+		    			if(err){
+							req.flash('error', 'Error : something is wrong');
+							res.redirect('/errorpage');
+						}else{
+							console.log('User Properties Added..');
+						}
+					});
+					});
+			        		req.flash('success', 'Location request submitted successfully, it will be listed after admin approval.');
+			        		res.redirect('/Mylisting');
 					}
 			      });
 			}				 
-			});
+		    });
 			}
 			else{
 				console.log("submit without image upload");
@@ -564,6 +577,20 @@ exports.storePropertyListing = function(req, res) {
 	req.flash('error', 'Oops Something went wrong');
 	res.redirect('/Mylisting');
 	}
+}	
+
+exports.showJoinListing = function(req, res){
+
+	// let users = await User.findOne({'id': req.session.user.id}).populate('properties');
+	// users.forEach(function(users){
+	// 	console.log(users);
+	// });
+	User.findOne({'id': req.session.user.id}).populate('properties').exec(function(err, user){
+		if(err){
+			console.log('Error');
+		}
+		console.log(user);
+	});
 }
 
 exports.updatePropertyListing = function(req, res) {
@@ -843,7 +870,7 @@ exports.showClaimPendingProperties = function(req, res) {
   					propertyItem.claim_id = property.id;
   					propertyItem.property_name = propertiesList[property.property_id].property_name;
   					//propertyItem.category = categoriesList[propertiesList[property.property_id].category_id].category_name;
-  					propertyItem.category = getCategoryName(propertiesList[property.property_id].category_id,categoriesList);
+  					propertyItem.category = getCategoryName(propertiesList[property.property_id].category,categoriesList);
   					propertyItem.user_type = 1
   					propertyItem.user_id = property.user_id;
   					propertyItem.property_image = propertiesList[property.property_id].property_images;

@@ -1,6 +1,7 @@
 var mongoose = require ('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
 var autoIncrement = require('mongodb-autoincrement');
+var Schema = mongoose.Schema;
 
 var userSchema = mongoose.Schema({	
 	id:{ type: Number, default: 1 },
@@ -49,9 +50,6 @@ var userSchema = mongoose.Schema({
 	is_professional_badge: { type: Number, default: 0 },
 });
 
-//User object creation
-var User = mongoose.model('users', userSchema);
-
 //Generating a hash for user password
 userSchema.methods.generateHash = function(password) {
  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
@@ -61,6 +59,9 @@ userSchema.methods.generateHash = function(password) {
 userSchema.methods.validPassword = function(password) {
  return bcrypt.compareSync(password, this.password);
 };
+//User object creation
+var User = mongoose.model('users', userSchema);
+
 
 //Category schema
 var categorySchema = mongoose.Schema({	
@@ -76,7 +77,7 @@ var Category = mongoose.model('category', categorySchema);
 
 //Property Schema (Location schema)
 var propertySchema = mongoose.Schema({
-	id:{ type: Number, default: 1 },
+	id: Number,
 	property_name: String,
 	address1: String,
 	address2: String,
@@ -293,21 +294,23 @@ var reportUserSchema = mongoose.Schema({
 });
 var ReportUser = mongoose.model('report_user', reportUserSchema);
 
-module.exports = mongoose.model('users', userSchema);
-module.exports = mongoose.model('category', categorySchema);
-module.exports = mongoose.model('properties', propertySchema);
-module.exports = mongoose.model('products', productSchema);
-module.exports = mongoose.model('bounty', bountySchema);
-module.exports = mongoose.model('claims', claimSchema);
-module.exports = mongoose.model('checkin', checkinSchema);
-module.exports = mongoose.model('featured_listing', featuredListingSchema);
-module.exports = mongoose.model('review', reviewSchema);
-module.exports = mongoose.model('transactions', transactionsSchema);
-module.exports = mongoose.model('flagged_review', flaggedReviewSchema);
-module.exports = mongoose.model('followers', followersSchema);
-module.exports = mongoose.model('like', likeSchema);
-module.exports = mongoose.model('memberships', membershipSchema);
-module.exports = mongoose.model('membership_renewal', membershipRenewalSchema);
-module.exports = mongoose.model('product_reviews', productReviewSchema);
-module.exports = mongoose.model('report_location', ReportLocationSchema);
-module.exports = mongoose.model('report_user', reportUserSchema);
+module.exports = {
+    User: User,
+    Category: Category,
+    Property: Property,
+    Product: Product,
+    Bounty: Bounty,
+    Claim: Claim,
+    Checkin: Checkin,
+    FeaturedListing: FeaturedListing,
+    Flag: Flag,
+    Review: Review,
+    Transactions: Transactions,
+    Followers: Followers,
+    Like: Like,
+    Membership: Membership,
+    MembershipRenewal: MembershipRenewal,
+    ProductReviews: ProductReviews,
+    ReportLocation: ReportLocation,
+    ReportUser: ReportUser
+}

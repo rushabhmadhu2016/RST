@@ -1,11 +1,12 @@
 var numeral = require('numeral');
 var bcrypt = require('bcrypt-nodejs');
 var dateFormat = require('dateformat');
-var User = require('../../app/models/user');
-var Category = require('../../app/models/category');
-var Property = require('../../app/models/property');
-var Reviews  = require('../../app/models/review');
-var Claim 	 = require('../../app/models/claim');
+var models      = require('../../app/models/revstance_models');
+var User = models.User;
+var Category = models.Category;
+var Property = models.Property;
+var Reviews  = models.Review;
+var Claim 	 = models.Claim;
 
 exports.getDetailLocation = function(req, res){
 	var propertyDetails = {};
@@ -203,44 +204,46 @@ exports.approveLocation = function(req, res) {
 	});
 }
 
-exports.allProperties = function(req,res){	
-	var propertyList = [];
-	var usersIds = [];
-	var categoryList = [];
-	var status = [];
-	var filters = {};
-	var category_filter = {};
-	if(req.query.filter1){ status.push(0);  filters.filter1=req.query.filter1;}
-	if(req.query.filter2){ status.push(1);	filters.filter2=req.query.filter2;}
-	if(req.query.filter3){ status.push(2);	filters.filter3=req.query.filter3;}
+exports.allProperties = async function (req, res) {
+    let categoryList = [];
+    let propertyList = [];
+    let usersIds = [];
+    let category_filter = {};
+	let filters = {};
 	if(req.query.category_filter) {	filters.category_filter=req.query.category_filter;	}
-	if(Object.keys(req.query).length == 0){
-		status=[0,1,2,3];
-	}
-	if(Object.keys(req.query).length == 1 && req.query.category_filter){
-		status=[0,1,2,3];
-	}
-	if(Object.keys(req.query).length == 1 && status.length==0){
-		status=[0,1,2,3];
-	}	
-	
-	if(Object.keys(filters).length>0 && filters.category_filter){
-		category_filter.id=filters.category_filter;
-	}
-	Category.find({}, function(err, categories) {
-	   	categories.forEach(function(category) {
-	  		categoryList[category.id]=category;
-		});
-		console.log(status);
-		Property.find({property_name: {$exists: true}, $where: "this.property_name.length > 0", 'status':{ $in: status }},function(err,properties) {
-			console.log(properties.length);
-			properties.forEach(function(property) {								
-				propertyList.push(property);				
-	      		usersIds.push(property.user_id);			
-			});
-			getUsers(categoryList,propertyList, usersIds,req,res,filters);	    
-		});
-	});	
+    let categories = await Category.find({});
+    categories.forEach(function (category) {
+        categoryList[category.id] = category;
+    });
+
+    let properties = await Property.find({});
+    properties.forEach(function (property) {
+        propertyList.push(property);
+        usersIds.push(property.user_id)
+    });
+
+
+    let users = await User.find({ 'id': { $in: usersIds } });
+    let usersList = [];
+    users.forEach(function (user) {
+        usersList[user.id] = [];
+        usersList[user.id]["first_name"] = user.first_name;
+        usersList[user.id]["last_name"] = user.last_name;
+        usersList[user.id]["mail"] = user.last_name;
+        usersList[user.id]["contact_number"] = user.contact_number;
+    });
+    //console.log(categoryList);
+    //console.log(propertyList);
+    //console.log(usersList);
+
+    res.render('admin/allProperties.ejs', {
+        error: req.flash("error"),
+        success: req.flash("success"),
+        categories: categoryList,
+        userLists: usersList,
+        properties: propertyList,
+        filters: filters
+    }); 
 }
 
 function getUsers(categoryList,propertyList, usersIds,req,res,filters){

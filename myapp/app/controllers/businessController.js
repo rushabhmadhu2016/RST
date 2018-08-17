@@ -1,11 +1,11 @@
 var numeral 	 = require('numeral');
 var bcrypt 		 = require('bcrypt-nodejs');
 var dateFormat   = require('dateformat');
-var User         = require('../../app/models/user');
-var Business     = require('../../app/models/business');
+var models       = require('../../app/models/revstance_models');
+var User         = models.User;
 
 exports.getBusinessDetail = function(req,res) {
-	Business.find({id:parseInt(req.query.id)}, function(err, business) {
+	User.find({id:parseInt(req.query.id)}, function(err, business) {
 		if(err){
 			req.flash('error', 'Error : something is wrong Admin Panel Business');
 			res.redirect('/errorpage');
@@ -28,7 +28,7 @@ exports.getBusinessDetail = function(req,res) {
 }
 
 exports.getAllBusiness = function(req,res) {
-	Business.find({}, function(err, business) {
+	User.find({}, function(err, business) {
 		if(err){
 			req.flash('error', 'Error : something is wrong Business');
 			res.redirect('/errorpage');

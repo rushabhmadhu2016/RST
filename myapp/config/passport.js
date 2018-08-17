@@ -1,8 +1,8 @@
 var LocalStrategy   = require('passport-local').Strategy;
-var User            = require('../app/models/user');
-var Like            = require('../app/models/like');
-var FlaggedReview   = require('../app/models/flagged_review');
-var Business        = require('../app/models/business');
+var models          = require('../app/models/revstance_models');
+var User            = models.User;
+var Like            = models.Like;
+var Flag            = models.Flag;
 var bcrypt          = require('bcrypt-nodejs');
 var configAuth      = require('./auth.js');
 var constant        = require('../config/constants');
@@ -187,7 +187,7 @@ module.exports = function(passport) {
                 likes.forEach(function(like){
                     likedReviews.push(like.review_id);
                 });
-                FlaggedReview.find({user_id:user.id}, function(err, freviews) {
+                Flag.find({user_id:user.id}, function(err, freviews) {
                     if(err){
                         console.log("password Login successful Find Liked Reviews Error");
                         res.send('errorpage');

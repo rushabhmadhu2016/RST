@@ -1,10 +1,11 @@
 var numeral = require('numeral');
 var bcrypt = require('bcrypt-nodejs');
 var dateFormat = require('dateformat');
-var User = require('../../app/models/user');
-var Properties = require('../../app/models/property');
-var Category     = require('../../app/models/category');
-var Reviews      = require('../../app/models/review');
+var models      = require('../../app/models/revstance_models');
+var User = models.User;
+var Properties = models.Property;
+var Category     = models.Category;
+var Reviews      = models.Review;
 
 exports.isLoggedIn = function(req, res, next)
 {

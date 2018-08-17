@@ -2,9 +2,10 @@
 var numeral = require('numeral');
 var bcrypt = require('bcrypt-nodejs');
 var dateFormat = require('dateformat');
-var User = require('../../app/models/user');
-var Category = require('../../app/models/category');
-var Properties = require('../../app/models/property');
+var models      = require('../../app/models/revstance_models');
+var User = models.User;
+var Category = models.Category;
+var Properties = models.Property;
 
 
 //#static pages

@@ -1,12 +1,12 @@
 var numeral 	 = require('numeral');
 var bcrypt 		 = require('bcrypt-nodejs');
 var dateFormat   = require('dateformat');
-var User         = require('../../app/models/user');
-var Business     = require('../../app/models/business');
-var Review 		 = require('../../app/models/review');
-var FlaggedReview= require('../../app/models/flagged_review');
-var Property 	 = require('../../app/models/property');
-var Like   	     = require('../../app/models/like');
+var models      = require('../../app/models/revstance_models');
+var User         = models.User;
+var Review 		 = models.Review;
+var FlaggedReview= models.FlaggedReview;
+var Property 	 = models.Property;
+var Like   	     = models.Like;
 
 exports.removeReviewReply = function(req, res) {
 	console.log(req.body.id);

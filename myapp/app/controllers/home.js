@@ -3,14 +3,14 @@ var bcrypt 		= require('bcrypt-nodejs');
 var dateFormat  = require('dateformat');
 var fs          = require('fs');
 var thumb 		= require('node-thumbnail').thumb;
-
-var User 		= require('../../app/models/user');
-var Property 	= require('../../app/models/property');
-var Category    = require('../../app/models/category');
-var Review 		= require('../../app/models/review');
-var Claims 		= require('../../app/models/claim');
-var FlaggedReview= require('../../app/models/flagged_review');
-var Like   	     = require('../../app/models/like');
+var models      = require('../../app/models/revstance_models');
+var User 		= models.User;
+var Property 	= models.Property;
+var Category    = models.Category;
+var Review 		= models.Review;
+var Claims 		= models.Claim;
+var FlaggedReview= models.FlaggedReview;
+var Like   	     = models.Like;
 var constants = require('../../config/constants'); 
 var dynamicmail  = require('../../app/controllers/dynamicMailController');
 

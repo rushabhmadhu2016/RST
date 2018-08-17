@@ -83,13 +83,13 @@
                             <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 white-card">
                                 <div class="card-info <% if(property.user_type==2 && property.property_status==1){ %> verified <% }else if(property.is_claimed==1){ %>  claimed-property <% }else if(property.property_status==0){%>verifypending<%}else if(property.property_status==2 && property.user_type==2){%>suspendedproperty<%} %>">
                                     <h3 class="card-title"><a href="location/location-details?id=<%=property.id%>"><%=property.property_name%></a></h3>
-                                    <span class="property-id">Business Key : <%-property.property_id%></span>
-                                    <% var address = property.address1+property.address2%>
+                                    <span class="property-id">Business Key : <%-property.id%></span>
+                                    <% var address = property.address1+property.address2+property.area%>
 
                                     <% if(address.length > 100){%>
                                     <p class="content-add"><%=address.substr(0,90)+'...'+property.post_code%></p>
                                     <%}else{%>
-                                      <p class="content-add"><%=property.address1+" "+property.address2+" "+property.post_code%></p>
+                                      <p class="content-add"><%=property.address1+" "+property.address2+" "+property.area+" "+property.post_code%></p>
                                     <%}%>
                                     <p class="content-category"><%=property.category%></p>
                                     <div class="review">
