@@ -123,6 +123,7 @@ exports.showProfilePage = function(req, res) {
 	});
 }
 
+
 exports.UpdateProfile = function(req, res) {
 	User.findOne({id:req.session.user.id}, function(err, profile) {
  		if(err){
@@ -163,30 +164,28 @@ exports.UpdateProfile = function(req, res) {
 exports.setProfesstionalBadge = function(req, res){
 	User.findOne({id:req.body.userId}, function(err, userData) {
  		if(err){
-			req.flash('error', 'Error : something is wrong while updating professtional Badge');
-			res.redirect('/errorpage');
+			res.send({'status' : 'false', 'message' : 'something is wrong while updating professtional Badge', 'data': null});
 		}
 		else{
 			if (userData){
-				userData.is_professional_badge = req.body.first_name;
-				profile.save(function(err) {
+
+				if(req.body.is_checked=='true'){
+					userData.is_professional_badge = 1;
+				}else{
+					userData.is_professional_badge = 0;
+				}
+				userData.save(function(err) {
 	                if (err){
-		                req.flash('success', 'Opps. Something went wrong..');
-		                console.log('error');
+	                	res.send({'status' : 'false', 'message' : 'Opps. Something went wrong..', 'data': null});
 	           		}
             		else
             		{
-                		req.flash('success', 'Profile updated successfully.');
-                		console.log('success');
-                		res.redirect('/MyProfile');
+            			res.send({'status' : 'true', 'message' : 'Profile updated successfully.', 'data': null});
                 	}
                 });
 			}
 		}
 	});
-	console.log('request comes '+req.body.user);
-	console.log(req.body.checked);
-	console.log(req.body.valus);
 	return true;
 }
 
