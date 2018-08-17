@@ -196,7 +196,7 @@ var reviewSchema = mongoose.Schema({
 });
 var Review = mongoose.model('review', reviewSchema);
 
-// transactions Schema
+// transactions Schema (My Orders)
 var transactionsSchema = mongoose.Schema ({
 	id: Number,
 	type: Number, //Point/Token
@@ -294,6 +294,46 @@ var reportUserSchema = mongoose.Schema({
 });
 var ReportUser = mongoose.model('report_user', reportUserSchema);
 
+//ReportUser Schema
+var tokenLogSchema = mongoose.Schema({	
+	id: Number,
+	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	token_amount: Number,
+	operation: Number,
+	description: String,
+	type: Number,
+	status: Number,
+	created_date: String,
+	updated_date: String
+});
+var TokenLog = mongoose.model('token_log', tokenLogSchema);
+
+//pointLogSchema Schema
+var recentActivitySchema = mongoose.Schema({	
+	id: Number,
+	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	description: String,
+	status: Number,
+	created_date: String,
+	updated_date: String
+});
+var RecentActivity = mongoose.model('activity', recentActivitySchema);
+
+//pointLogSchema Schema
+var paymentHistorySchema = mongoose.Schema({	
+	id: Number,
+	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	amount: Number,
+	currency: Number,
+	tx_id: String,
+	description: String,
+	payment_type: String,
+	status: Number,
+	created_date: String,
+	updated_date: String
+});
+var PaymentHistory = mongoose.model('payment_history', paymentHistorySchema);
+
 module.exports = {
     User: User,
     Category: Category,
@@ -312,5 +352,8 @@ module.exports = {
     MembershipRenewal: MembershipRenewal,
     ProductReviews: ProductReviews,
     ReportLocation: ReportLocation,
-    ReportUser: ReportUser
+    ReportUser: ReportUser,
+    TokenLog: TokenLog,
+    RecentActivity: RecentActivity,
+    PaymentHistory: PaymentHistory,
 }
