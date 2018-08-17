@@ -219,7 +219,7 @@ exports.allProperties = async function (req, res) {
     let properties = await Property.find({});
     properties.forEach(function (property) {
         propertyList.push(property);
-        usersIds.push(property.user_id)
+        usersIds.push(property.user);
     });
 
 
@@ -232,9 +232,10 @@ exports.allProperties = async function (req, res) {
         usersList[user.id]["mail"] = user.last_name;
         usersList[user.id]["contact_number"] = user.contact_number;
     });
-    //console.log(categoryList);
+    console.log(categoryList);
     //console.log(propertyList);
     //console.log(usersList);
+    process.exit();
 
     res.render('admin/allProperties.ejs', {
         error: req.flash("error"),

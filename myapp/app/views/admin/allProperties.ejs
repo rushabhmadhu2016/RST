@@ -48,8 +48,8 @@
               <select name="category_filter" id="category_filter" class="location-filter-box">
                 <option value="">Select Category</option>
                 <% categories.forEach((category) => { %>
-                  <option value="<%=category.id%>" 
-                    <% if(filters.category_filter && filters.category_filter==category.id){ %> selected <% } %> > <%=category.category_name%> </option>
+                  <option value="<%=category._id%>" 
+                    <% if(filters.category_filter && filters.category_filter==category._id){ %> selected <% } %> > <%=category.category_name%> </option>
                 <% }) %>
               </select>              
             </div>

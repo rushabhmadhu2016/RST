@@ -77,7 +77,7 @@ function getProperties(categoryList,req,res){
 	Property.find({},function(err,properties){
 			properties.forEach(function(property) {
 		      	propertyList.push(property);
-		      	usersIds.push(property.user)
+		      	usersIds.push(property.user_id)
 			});
 			getUsers(categoryList,propertyList, usersIds,req,res);			
 	});
