@@ -48,31 +48,21 @@ module.exports = function(passport) {
             if (user) {
                 return done(null, false, req.flash('error', 'This email address already exists.'));
             } else {
-                
-                
-           User.find().sort([['id', 'descending']]).limit(1).exec(function(err, userdata) { 
-                // if there is no user with that email
-                // create the user
-                var newUser = new User();
-                // set the user's local credentials                
-              //var day =dateFormat(Date.now(), "yyyy-mm-dd HH:MM:ss");
-              var day = getDate(); 
-              var id = crypto.randomBytes(3).toString('hex');
-              // console.log(id);
-              // process.exit();
-              User.findOne ({'wallet_id' : id }, function(err, user) {
-                // if there are any errors, return the error
+            User.find().sort([['id', 'descending']]).limit(1).exec(function(err, userdata) { 
+            var newUser = new User();
+            var day = getDate(); 
+            var default_membership = '5b769e924d45a03cc19255cc';
+            var id = crypto.randomBytes(3).toString('hex');
+            User.findOne ({'wallet_id' : id }, function(err, user) {
                 if (err)
                     return done(err);
-                // check to see if theres already a user with that wallet Id
                 if (user) {
                     var id = crypto.randomBytes(3).toString('hex');  
                     return done(null, false, req.flash('error', 'Wallet ID already exists.'));
                 }
               });     
               var active_code=bcrypt.hashSync(Math.floor((Math.random() * 99999999) *54), null, null);
-              // console.log(userdata[0].id);
-                 if(userdata.length>0){                        
+                    if(userdata.length>0){                        
                         newUser.id = userdata[0].id+1;                    
                     }else{
                         newUser.id = 1;
@@ -81,21 +71,8 @@ module.exports = function(passport) {
                     newUser.last_name = req.body.last_name;
                     newUser.mail    = email;
                     newUser.password = newUser.generateHash(password);
-                    newUser.dob = '';
-                    newUser.gender = '';
-                    newUser.profile_photo = '';
-                    newUser.ethnicity = '';
-                    newUser.contact_number = '';
                     newUser.user_type = req.body.user_type;
                     newUser.status = 0;
-                    newUser.address1 = '';
-                    newUser.address2 = '';
-                    newUser.area = '';
-                    newUser.city = '';
-                    newUser.country = '';
-                    newUser.postcode = '';
-                    newUser.contact_number = '';
-                    newUser.business_name = '';
                     if(req.body.user_type==2){
                         var email_type = 3;
                         newUser.postcode = req.body.business_postcode;
@@ -104,29 +81,22 @@ module.exports = function(passport) {
                     }else{
                         var email_type = 2;
                     }
-                    newUser.ip_address = req.ip;
-                    newUser.tag_line = '';
+                    newUser.ip_address = req.ip;                    
                     newUser.is_influencer = 0;
                     newUser.wallet_balance = 0;
                     newUser.wallet_id = id;
-                    newUser.membership_id = 1;
+                    newUser.membership = default_membership;
                     newUser.badges = [];
                     newUser.auto_renew = 1;
-                    referral_id = '';
-                    //referral_link = '';
                     newUser.created_date = day;
                     newUser.updated_date = day;
-                    newUser.active_hash = active_code;
-                    
+                    newUser.active_hash = active_code;                    
+                    newUser.property = [];
                     newUser.save(function(err) {
                     if (err){
                         req.flash('User registration failed');
                         res.redirect('/errorpage');
                     }   
-
-                    //var email            = require('../lib/email.js');
-                    //email.activate_email(req.body.user_type,req.body.first_name,req.body.email,active_code);
-
                     var sendmail = {
                         receiver_name: req.body.first_name,
                         receiver_email: req.body.email,
