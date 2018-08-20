@@ -110,14 +110,8 @@ exports.unclaimProperty = function(req, res) {
 }
 
 exports.showMyListingPage = async function(req, res) {
-	let properties = await Property.find({}).populate({path: 'user',
-      model: 'User',select: 'first_name last_name mail'}).populate({path: 'category',
-      model: 'Category'}).exec();
-	console.log(properties);//
-	res.send(properties);
-    //process.exit();
-	
-	/*var keyword='';
+	var UserId = req.session.user.id;
+	var keyword='';
 	var category='';
 	if(req.query.keyword)
 	{
@@ -126,7 +120,7 @@ exports.showMyListingPage = async function(req, res) {
 	if(req.query.category)
 	{
 		category=req.query.category;
-	}
+	}	
 	var filter={};
 	var claimStatus = 0;
 	var otherClaimStatus = 0;
@@ -145,6 +139,7 @@ exports.showMyListingPage = async function(req, res) {
 	var categoriesListToSearch = [];
 	filter.keyword=keyword;
 	filter.category=category;	
+
 	if(req.query.page){
 		if(IsNumeric(req.query.page)){
 			page = req.query.page;
@@ -153,6 +148,7 @@ exports.showMyListingPage = async function(req, res) {
 			res.redirect('/errorpage');
 		}
 	}
+
 	if(req.query.category){
 		filter.category_filter=req.query.category;
 		categoriesListToSearch = {'id': req.query.category};
@@ -160,7 +156,13 @@ exports.showMyListingPage = async function(req, res) {
 		filter.category_filter='';
 		categoriesListToSearch = {};
 	}
+	Properties.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user_id:req.session.user.id}, categoriesListToSearch]}).limit(perPage).skip(perPage * page)
+    .sort({ property_name: 'asc'}).exec(function(err, properties) {  	
 
+	let properties = await Property.find({'id':UserId}).populate({path: 'user',
+      model: 'User',select: 'first_name last_name mail'}).populate({path: 'category',
+      model: 'Category',select: 'category_name id'}).exec();
+      
 	var counter = 0;
 	Category.find({}, function(err, categories) {
   		if(err){

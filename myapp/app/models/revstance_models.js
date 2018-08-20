@@ -34,6 +34,7 @@ var userSchema = mongoose.Schema({
 	transaction: [{ type: Schema.Types.ObjectId, ref: 'Transaction' }], 
 	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }], 
 	category: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
+	reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
 	auto_renew: { type: Number, default: 1 },
 	referral_id: { type: Number, default: 0 },
 	referral_link: { type: String, default: '' },
@@ -59,10 +60,10 @@ userSchema.methods.generateHash = function(password) {
 userSchema.methods.validPassword = function(password) {
  return bcrypt.compareSync(password, this.password);
 };
-//User object creation
 
-//var User = mongoose.model('users', userSchema);
+//User object creation
 var User = mongoose.model('User', userSchema);
+
 //Category schema
 var categorySchema = mongoose.Schema({	
 	id: Number,
@@ -73,7 +74,6 @@ var categorySchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String	
 });
-
 var Category = mongoose.model('Category', categorySchema);
 
 //Property Schema (Location schema)
@@ -85,6 +85,7 @@ var propertySchema = mongoose.Schema({
 	area: String,
 	post_code: String,
 	category: [{ type: Schema.Types.ObjectId, ref: 'Category' }], 
+	category_id: Number,
 	property_desc: String,
 	property_images: String,
 	user: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -95,9 +96,7 @@ var propertySchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-
-var Property = mongoose.model('properties', propertySchema);
-
+var Property = mongoose.model('Property', propertySchema);
 //Product Schema
 
 var productSchema = mongoose.Schema ({
@@ -113,7 +112,7 @@ var productSchema = mongoose.Schema ({
 	created_date: String,
 	updated_date: String
 });
-var Product = mongoose.model('products', productSchema);
+var Product = mongoose.model('Product', productSchema);
 
 //Bounty Schema
 var bountySchema = mongoose.Schema ({
@@ -127,7 +126,7 @@ var bountySchema = mongoose.Schema ({
 	created_date: String,
 	updated_date: String
 });
-var Bounty = mongoose.model('bounty', bountySchema);
+var Bounty = mongoose.model('Bounty', bountySchema);
 
 //Claim Schema
 var claimSchema = mongoose.Schema({
@@ -137,7 +136,7 @@ var claimSchema = mongoose.Schema({
 	status: Number,
 	created_date: String	
 });
-var Claim = mongoose.model('claims', claimSchema);
+var Claim = mongoose.model('Claim', claimSchema);
 
 //Checkin Schema
 var checkinSchema = mongoose.Schema ({
@@ -150,7 +149,7 @@ var checkinSchema = mongoose.Schema ({
 	created_date: String,
 	updated_date: String
 });
-var Checkin = mongoose.model('checkin', checkinSchema);
+var Checkin = mongoose.model('Checkin', checkinSchema);
 
 //FeaturedListing Schema
 var featuredListingSchema = mongoose.Schema({
@@ -164,7 +163,7 @@ var featuredListingSchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-var FeaturedListing = mongoose.model('featured_listing', featuredListingSchema);
+var FeaturedListing = mongoose.model('FeaturedListing', featuredListingSchema);
 
 //Flag Schema
 var flaggedReviewSchema = mongoose.Schema({	
@@ -175,7 +174,7 @@ var flaggedReviewSchema = mongoose.Schema({
 	status: Number,
 	created_date: String
 });
-var Flag = mongoose.model('flagged_review', flaggedReviewSchema);
+var Flag = mongoose.model('Review', flaggedReviewSchema);
 
 //Review Schema
 var reviewSchema = mongoose.Schema({	
@@ -195,7 +194,7 @@ var reviewSchema = mongoose.Schema({
 	reply_created_date: String,	
 	updated_date: String
 });
-var Review = mongoose.model('review', reviewSchema);
+var Review = mongoose.model('Review', reviewSchema);
 
 // transactions Schema (My Orders)
 var transactionsSchema = mongoose.Schema ({
@@ -210,7 +209,7 @@ var transactionsSchema = mongoose.Schema ({
 	created_date: String,
 	updated_date: String
 });
-var Transactions = mongoose.model('transactions', transactionsSchema);
+var Transactions = mongoose.model('Transaction', transactionsSchema);
 
 //followers Schema
 var followersSchema = mongoose.Schema({
@@ -221,7 +220,7 @@ var followersSchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-var Followers = mongoose.model('followers', followersSchema);
+var Followers = mongoose.model('Followers', followersSchema);
 
 var likeSchema = mongoose.Schema({	
 	id: Number,
@@ -231,7 +230,7 @@ var likeSchema = mongoose.Schema({
 	status: Number,
 	created_date: String
 });
-var Like = mongoose.model('like', likeSchema);
+var Like = mongoose.model('Like', likeSchema);
 
 //membership Schema
 var membershipSchema = mongoose.Schema({	
@@ -242,7 +241,7 @@ var membershipSchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-var Membership = mongoose.model('memberships', membershipSchema);
+var Membership = mongoose.model('Membership', membershipSchema);
 
 // membershipRenewal Schema
 var membershipRenewalSchema = mongoose.Schema({
@@ -256,7 +255,7 @@ var membershipRenewalSchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-var MembershipRenewal = mongoose.model('membership_renewal', membershipRenewalSchema);
+var MembershipRenewal = mongoose.model('MembershipRenewal', membershipRenewalSchema);
 
 //ProductReview Schema
 var productReviewSchema = mongoose.Schema ({
@@ -269,7 +268,7 @@ var productReviewSchema = mongoose.Schema ({
 	created_date: String,
 	updated_date: String
 });
-var ProductReviews = mongoose.model('product_reviews', productReviewSchema);
+var ProductReviews = mongoose.model('ProductReviews', productReviewSchema);
 
 //ReportLocation Schema
 var ReportLocationSchema = mongoose.Schema({	
@@ -281,7 +280,7 @@ var ReportLocationSchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-var ReportLocation = mongoose.model('report_location', ReportLocationSchema);
+var ReportLocation = mongoose.model('ReportLocation', ReportLocationSchema);
 
 //ReportUser Schema
 var reportUserSchema = mongoose.Schema({	
@@ -293,7 +292,7 @@ var reportUserSchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-var ReportUser = mongoose.model('report_user', reportUserSchema);
+var ReportUser = mongoose.model('ReportUser', reportUserSchema);
 
 //ReportUser Schema
 var tokenLogSchema = mongoose.Schema({	
@@ -307,7 +306,7 @@ var tokenLogSchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-var TokenLog = mongoose.model('token_log', tokenLogSchema);
+var TokenLog = mongoose.model('TokenLog', tokenLogSchema);
 
 //pointLogSchema Schema
 var recentActivitySchema = mongoose.Schema({	
@@ -318,7 +317,7 @@ var recentActivitySchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-var RecentActivity = mongoose.model('activity', recentActivitySchema);
+var RecentActivity = mongoose.model('Activity', recentActivitySchema);
 
 //pointLogSchema Schema
 var paymentHistorySchema = mongoose.Schema({	
@@ -333,12 +332,8 @@ var paymentHistorySchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-var PaymentHistory = mongoose.model('payment_history', paymentHistorySchema);
+var PaymentHistory = mongoose.model('PaymentHistory', paymentHistorySchema);
 
-/*module.exports = mongoose.model('users', userSchema);
-module.exports = mongoose.model('categories', categorySchema);
-module.exports = mongoose.model('properties', propertySchema);
-*/
 module.exports = {
     User: User,
     Category: Category,
