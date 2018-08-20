@@ -1001,7 +1001,8 @@ exports.showPropertyDetailPage = function(req, res) {
 });
 }
 
-exports.showSearchPage = function(req, res) {
+exports.showSearchPage = async function(req, res) {
+	console.log('showSearchPage');
 	var keyword='';
 	if(req.query.keyword){		
 		keyword = req.query.keyword.trim().toLowerCase();	
@@ -1021,7 +1022,6 @@ exports.showSearchPage = function(req, res) {
 	var usersList = [];
 	filter.keyword=keyword;
 	filter.category=category;
-
 	if(req.query.page){
 		if(IsNumeric(req.query.page)){
 			page = req.query.page;
@@ -1036,96 +1036,53 @@ exports.showSearchPage = function(req, res) {
 	}else{
 		filter.category_filter='';
 		categoriesListToSearch = {};
-	}
-	console.log(categoriesListToSearch);
+	}	
 	var categoriesList = [];
-	Category.find({}, function(err, categories) {
-  		if(err){
-	  		req.flash('error', 'Error : something is wrong in property search');
-			res.redirect('/errorpage');
-  		}  
-	var counter = 0;
-	Property.count({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, categoriesListToSearch, {status:1}]}, function(err, c) {
-		//, {category_id: categoriesListToSearch }
-	counter = c;
-	console.log("Total Property Counter = "+c);
-	Property.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, categoriesListToSearch, {status:1}]}).limit(perPage).skip(perPage * page)
-    .sort({ property_name: 'asc'}).exec(function(err, properties) {    	
-    	if(err){
-	  		req.flash('error', 'Error : something is wrong in property search');
-			res.redirect('/errorpage');
-	  	}
-	  	console.log("Total Property = "+properties.length);
-	  	properties.forEach(function(property) {	  		
-	      		propertyIds.push(property.id);
-	  			userIds.push(property.user_id);
-	    });	
-	    User.find({'id': {$in: userIds } }, function(err, users) {
-	    	if(err){
-		  		req.flash('error', 'Error : something is wrong in property search');
-				res.redirect('/errorpage');
-	  		}
-	  		users.forEach(function(user){
-				usersList[user.id]=user;
-	  		});
-	  		console.log("Total Users Counter = "+properties.length);
-	  		Review.find({'property_id':{$in: propertyIds}}, function(err, reviews) {
-	  			reviews.forEach(function(review){
-	  				reviewsList.push(review);
-	  			});
-	  			console.log("Total Review Counter = "+reviews.length);
-		  			categories.forEach(function(category) {
-			  			categoriesList[category.id]=category;
-			  		});
-			  		var claimDataProperies = [];
-					Claims.find({}, function(err, claimData) {
-						if(err){
-					    	req.flash('error', 'Error : something is wrong in property search');
-							res.redirect('/errorpage');
-					    }
-					    claimData.forEach(function(claim){
-					    	claimDataProperies.push(claim.property_id);
-					    });					    
-		  				properties.forEach(function(property) {	  					
-		  					var propertyItem = {};
-		  					propertyItem.id = property.id;
-		  					propertyItem.status = property.status;
-		  					propertyItem.property_name = property.property_name;
-		  					propertyItem.category_id = property.category_id;
-		  					//propertyItem.category = categoriesList[property.category_id].category_name;
-		  					propertyItem.category = getCategoryName(property.category_id,categoriesList);
-		  					propertyItem.user_type = usersList[property.user_id].user_type;
-		  					propertyItem.user_id = property.user_id;
-		  					propertyItem.property_image = property.property_images;
-		  					propertyItem.address1 = property.address1;
-		  					propertyItem.address2 = property.address2;
-		  					propertyItem.post_code = property.post_code;
-		  					propertyItem.city = property.city;
-		  					propertyItem.country = property.country;
-		  					propertyItem.review_count = getPropertyReviewCount(property.id, reviewsList);
-		  					propertyItem.average_rating = getPropertyAverageRating(property.id, reviewsList);
-		  					propertyItem.is_claimed = checkIsClaimedProperty(property.id, claimDataProperies);
-		  					searchedProperties.push(propertyItem);
-					    });
-				    console.log("Total property Counter = "+categories.length);
-					res.render('search', {
-						error : req.flash("error"),
-						success: req.flash("success"),
-						session: req.session,
-						properties: searchedProperties,
-						categories: categoriesList,
-						keyword: keyword,
-						filters: filter,
-						page: page,
-						counter: counter,
-
-					});
-				});
-				});
-			});
+	var categories = await Category.find();
+	var claimData = await Claims.find();
+	var claimDataProperies = [];
+    claimData.forEach(function(claim){
+    	claimDataProperies.push(claim.property_id);
+    });					    
+	propertiesCount = await Property.count({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, categoriesListToSearch, {status:1}]});
+	console.log(propertiesCount);
+	var counter = propertiesCount;
+	properties = await Property.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, categoriesListToSearch, {status:1}]}).limit(perPage).skip(perPage * page)
+    .sort({ property_name: 'asc'}).populate({path: 'user',
+      model: 'User',select: 'id first_name last_name user_type'}).populate({path: 'category',
+      model: 'Category',select: 'category_name id'}).populate({path: 'category',
+      model: 'Review'}).exec();
+    	properties.forEach(function(property) {	  					
+			var propertyItem = {};
+			propertyItem.id = property.id;
+			propertyItem.status = property.status;
+			propertyItem.property_name = property.property_name;
+			propertyItem.category_id = property.category_id;			
+			propertyItem.category = property.category.category_name;
+			propertyItem.user_type = property.user.user_type;
+			propertyItem.user_id = property.user_id;
+			propertyItem.property_image = property.property_images;
+			propertyItem.address1 = property.address1;
+			propertyItem.address2 = property.address2;
+			propertyItem.post_code = property.post_code;
+			propertyItem.city = property.city;
+			propertyItem.country = property.country;
+			propertyItem.review_count = property.reviews.count;
+			propertyItem.average_rating = property.average_rating;
+			propertyItem.is_claimed = checkIsClaimedProperty(property.id, claimDataProperies);
+			searchedProperties.push(propertyItem);
+   		});
+		res.render('search', {
+			error : req.flash("error"),
+			success: req.flash("success"),
+			session: req.session,
+			properties: searchedProperties,
+			categories: categoriesList,
+			keyword: keyword,
+			filters: filter,
+			page: page,
+			counter: counter,
 		});
-	});
-});
 }
 
 function getDate(){ 
