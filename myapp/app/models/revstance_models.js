@@ -33,6 +33,7 @@ var userSchema = mongoose.Schema({
 	membership: [{ type: Schema.Types.ObjectId, ref: 'Membership' }], 
 	transaction: [{ type: Schema.Types.ObjectId, ref: 'Transaction' }], 
 	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }], 
+	category: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
 	auto_renew: { type: Number, default: 1 },
 	referral_id: { type: Number, default: 0 },
 	referral_link: { type: String, default: '' },
@@ -59,6 +60,7 @@ userSchema.methods.validPassword = function(password) {
  return bcrypt.compareSync(password, this.password);
 };
 //User object creation
+
 //var User = mongoose.model('users', userSchema);
 var User = mongoose.model('User', userSchema);
 //Category schema
@@ -67,12 +69,12 @@ var categorySchema = mongoose.Schema({
 	category_name: String,
 	status: Number,
 	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }],
+	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }], 
 	created_date: String,
 	updated_date: String	
 });
 
-var Category = mongoose.model('category', categorySchema);
+var Category = mongoose.model('Category', categorySchema);
 
 //Property Schema (Location schema)
 var propertySchema = mongoose.Schema({

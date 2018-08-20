@@ -1,6 +1,7 @@
 var numeral = require('numeral');
 var bcrypt = require('bcrypt-nodejs');
 var dateFormat = require('dateformat');
+var mongoose = require ('mongoose');
 var models      = require('../../app/models/revstance_models');
 var User = models.User;
 var Category = models.Category;
@@ -211,10 +212,12 @@ exports.allProperties = async function (req, res) {
     let category_filter = {};
 	let filters = {};
 	console.log("welcome to allProperties");
-
-    let properties = await Property.find({}).populate({path: 'Category'}).populate('User').exec();
-    console.log(properties);
-    process.exit();
+ 	
+ 	let properties = await Property.find({}).populate({path: 'user',
+      model: 'User', select: 'first_name last_name mail'}).populate({path: 'category',
+      model: 'Category'}).exec();
+	console.log(properties);
+	res.send(properties);
     /*
     properties.forEach(function (property) {
         propertyList.push(property);
@@ -222,11 +225,25 @@ exports.allProperties = async function (req, res) {
     });
 	
 	if(req.query.category_filter) {	filters.category_filter=req.query.category_filter;	}
+	let properties = await Property.find({}).populate('category').then();
+    properties.forEach(function(data){
+    	console.log(data);
+    })
+    process.exit();
+
+	/*if(req.query.category_filter) {	filters.category_filter=req.query.category_filter;	}
     let categories = await Category.find({});
     categories.forEach(function (category) {
         categoryList[category.id] = category;
     });
 
+
+    let properties = await Property.find({});
+    properties.forEach(function (property) {
+        propertyList.push(property);
+        usersIds.push(parseInt(property.user));
+    });
+>>>>>>> a6b634d21a4dd54cb40bdb28d908a17f88225490
 
 
     let users = await User.find({ 'id': { $in: usersIds } });
@@ -238,10 +255,9 @@ exports.allProperties = async function (req, res) {
         usersList[user.id]["mail"] = user.last_name;
         usersList[user.id]["contact_number"] = user.contact_number;
     });
-    console.log(categoryList);
-    //console.log(propertyList);
-    //console.log(usersList);
-    process.exit();
+    // console.log(categoryList);
+    // //console.log(propertyList);
+    // //console.log(usersList);
 
     res.render('admin/allProperties.ejs', {
         error: req.flash("error"),
@@ -250,6 +266,7 @@ exports.allProperties = async function (req, res) {
         userLists: usersList,
         properties: propertyList,
         filters: filters
+<<<<<<< HEAD
     }); */
 }
 
