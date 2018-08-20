@@ -5,12 +5,12 @@ var thumb 		= require('node-thumbnail').thumb;
 var models      = require('../../app/models/revstance_models');
 var Property    = models.Property;
 var Category    = models.Category;
-var Reviews     = models.Review;
+var Review      = models.Review;
 var User 		= models.User;
 var Claims 		= models.Claim;
-var fs  		= require('fs');
-var randomstring = require("randomstring");
 var FlaggedReview= models.Flag;
+var fs  		= require('fs');
+var randomstring= require("randomstring");
 
 exports.isLoggedIn = function(req, res, next){
 	if (req.session.user && req.session.user.user_type==2) { // req.session.passport._id
@@ -124,19 +124,12 @@ exports.showMyListingPage = async function(req, res) {
 	var filter={};
 	var claimStatus = 0;
 	var otherClaimStatus = 0;
-	if(req.session.user){
-		userId = req.session.user.id;
-	}
-	var propertyIds = [];
-	var userIds = [];
-	var reviewsList = [];
 	var searchedProperties = [];
 	var page = 0;
 	var perPage = 5;
+	var counter = 0;
 	var categoriesList = [];
 	var propertyList = [];
-	var usersList = [];
-	var categoriesListToSearch = [];
 	filter.keyword=keyword;
 	filter.category=category;	
 
@@ -156,18 +149,58 @@ exports.showMyListingPage = async function(req, res) {
 		filter.category_filter='';
 		categoriesListToSearch = {};
 	}
-	/*Properties.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user_id:req.session.user.id}, categoriesListToSearch]}).limit(perPage).skip(perPage * page)
-    .sort({ property_name: 'asc'}).exec(function(err, properties) {  	
-    	*/
-    console.log(req.session.user._id);
-    console.log(req.session.user._id);
+	//Get Claim Data
+	var claimDataProperies = [];
+	var claimData = await Claims.find();
+	claimData.forEach(function(claim){
+		claimDataProperies.push(claim.property);
+	})
+	
+	//Get Categories Data
+    var categories = await Category.find();
+	categories.forEach(function(category) {
+		categoriesList[category.id]=category;
+	}); 
+	
+	//Get Properties with User, Category and Reviews
 	let properties = await Property.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user:req.session.user._id}, categoriesListToSearch]}).limit(perPage).skip(perPage * page)
     .sort({ property_name: 'asc'}).populate({path: 'user',
       model: 'User',select: 'first_name last_name mail'}).populate({path: 'category',
-      model: 'Category',select: 'category_name id'}).exec();
+      model: 'Category',select: 'category_name id'}).populate({path: 'category',
+      model: 'Review'}).exec();
     console.log(properties);
+	counter = properties.count;
+	properties.forEach(function(property) {
+		var propertyItem = {};
+		propertyItem.id = property.id;
+		propertyItem.property_name = property.property_name;
+		propertyItem.category = property.category.category_name;
+		propertyItem.user = property.user;
+		propertyItem.property_image = property.property_images;
+		propertyItem.property_desc = property.property_desc;
+		propertyItem.property_status = property.status;
+		propertyItem.address1 = property.address1;
+		propertyItem.address2 = property.address2;
+		propertyItem.area = property.area;
+		propertyItem.post_code = property.post_code;		
+		propertyItem.average_rating =  property.average_rating;		
+		propertyItem.review_count = property.reviews.count;
+		propertyItem.is_claimed = checkIsClaimedProperty(property.id, claimDataProperies);
+		searchedProperties.push(propertyItem);
+    });
+		res.render('listing/myListing', {
+			error : req.flash("error"),
+			success: req.flash("success"),
+			session: req.session,
+			properties: searchedProperties,
+			categories: categoriesList,
+			keyword: keyword,
+			filters: filter,
+			page: page,			
+			counter: counter,
+		});	
     /*  
-	var counter = 0;
+	
 	Category.find({}, function(err, categories) {
   		if(err){
 	  		req.flash('error', 'Error : something is wrong in property search');
@@ -178,14 +211,14 @@ exports.showMyListingPage = async function(req, res) {
   		}); 		
 		Properties.count({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{ area:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user_id:req.session.user.id}, categoriesListToSearch]}, function(err, c) {
 		counter = c;//
-		console.log("Total Counter = "+c);
+		
 		Properties.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{ area:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user_id:req.session.user.id}, categoriesListToSearch]}).limit(perPage).skip(perPage * page)
     .sort({ property_name: 'asc'}).exec(function(err, properties) {  	
     	if(err){
 	  		req.flash('error', 'Error : something is wrong in property search');
 			res.redirect('/errorpage');
 	  	}
-	  	console.log("Total Property Counter = "+properties.length);
+	  	
 	  	properties.forEach(function(property) {
 	      userIds.push(property.user);
 	      propertyIds.push(property.id);
@@ -198,14 +231,12 @@ exports.showMyListingPage = async function(req, res) {
 	  		users.forEach(function(user){
 				usersList[user.id]=user;
 	  		});
-	  		console.log("Total Users Counter = "+properties.length);
+	  		
 	  		Reviews.find({'id':{$in: propertyIds}}, function(err, reviews) {
 	  			reviews.forEach(function(review){
 	  				reviewsList.push(review);
 	  			});
-	  			console.log("Total Review Counter = "+reviews.length);
-
-		  			var claimDataProperies = [];
+	  				var claimDataProperies = [];
 			    	Claims.find({}, function(err, claimData) {
 			    		if(err){
 			    			req.flash('error', 'Error : something is wrong in property search');
@@ -218,8 +249,6 @@ exports.showMyListingPage = async function(req, res) {
 		  					var propertyItem = {};
 		  					propertyItem.id = property.id;
 		  					propertyItem.property_name = property.property_name;
-		  					//propertyItem.category_id = property.category;
-		  					// propertyItem.category = categoriesList[property.category_id].category_name;
 		  					propertyItem.category = getCategoryName(property.category,categoriesList);
 		  					propertyItem.user = property.user;
 		  					propertyItem.property_image = property.property_images;
@@ -234,9 +263,7 @@ exports.showMyListingPage = async function(req, res) {
 		  					propertyItem.is_claimed = checkIsClaimedProperty(property.id, claimDataProperies);
 		  					searchedProperties.push(propertyItem);
 					    });
-					    //console.log(searchedProperties);
-					    //res.send("welcome");
-				   		res.render('listing/myListing', {
+					    res.render('listing/myListing', {
 							error : req.flash("error"),
 							success: req.flash("success"),
 							session: req.session,
