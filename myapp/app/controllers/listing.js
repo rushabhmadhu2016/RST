@@ -544,6 +544,7 @@ exports.storePropertyListing = function(req, res) {
 		    			//console.log(updatePropertyData);
 		    			//process.exit();
 		    			updatePropertyData.property = newProperty._id;
+		    			updatePropertyData.category = newProperty.category;
 		    			
 		    			updatePropertyData.save(function (err) {
 		    			if(err){
@@ -554,6 +555,20 @@ exports.storePropertyListing = function(req, res) {
 						}
 					});
 					});
+		    			Category.findOne({id: newProperty.category}, function(err, updateCategory) {
+		    				console.log(newProperty.category);
+		    				updateCategory.user = newProperty.user;
+		    				updateCategory.property = newProperty._id;
+
+		    				updateCategory.save(function(err) {
+		    					if(err){
+							req.flash('error', 'Error : something is wrong');
+							res.redirect('/errorpage');
+							}else{
+								console.log('Category Properties Added..');
+							}
+		    				});
+		    			});
 			        		req.flash('success', 'Location request submitted successfully, it will be listed after admin approval.');
 			        		res.redirect('/Mylisting');
 					}

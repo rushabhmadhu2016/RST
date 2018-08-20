@@ -1,6 +1,7 @@
 var numeral = require('numeral');
 var bcrypt = require('bcrypt-nodejs');
 var dateFormat = require('dateformat');
+var mongoose = require ('mongoose');
 var models      = require('../../app/models/revstance_models');
 var User = models.User;
 var Category = models.Category;
@@ -210,7 +211,14 @@ exports.allProperties = async function (req, res) {
     let usersIds = [];
     let category_filter = {};
 	let filters = {};
-	if(req.query.category_filter) {	filters.category_filter=req.query.category_filter;	}
+
+	let properties = await Property.find({}).populate('category').then();
+    properties.forEach(function(data){
+    	console.log(data);
+    })
+    process.exit();
+
+	/*if(req.query.category_filter) {	filters.category_filter=req.query.category_filter;	}
     let categories = await Category.find({});
     categories.forEach(function (category) {
         categoryList[category.id] = category;
@@ -219,7 +227,7 @@ exports.allProperties = async function (req, res) {
     let properties = await Property.find({});
     properties.forEach(function (property) {
         propertyList.push(property);
-        usersIds.push(property.user);
+        usersIds.push(parseInt(property.user));
     });
 
 
@@ -232,10 +240,9 @@ exports.allProperties = async function (req, res) {
         usersList[user.id]["mail"] = user.last_name;
         usersList[user.id]["contact_number"] = user.contact_number;
     });
-    console.log(categoryList);
-    //console.log(propertyList);
-    //console.log(usersList);
-    process.exit();
+    // console.log(categoryList);
+    // //console.log(propertyList);
+    // //console.log(usersList);
 
     res.render('admin/allProperties.ejs', {
         error: req.flash("error"),
@@ -244,7 +251,7 @@ exports.allProperties = async function (req, res) {
         userLists: usersList,
         properties: propertyList,
         filters: filters
-    }); 
+    });*/ 
 }
 
 function getUsers(categoryList,propertyList, usersIds,req,res,filters){
