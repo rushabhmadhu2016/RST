@@ -39,6 +39,11 @@
                  <div class="form-group form-group-material">
                    <label class="control-label animate" for="email_address">Email Address*</label>
                  <input type="text" class="form-control" id="email_address" placeholder="Enter Email Address *" name="email_address" value="<%= user.mail %>" readonly="readonly">                 </div>
+
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="last_name">Date Of Birth</label>
+                   <input type="date" class="form-control" id="dob" placeholder="Enter Last Name *" name="dob" value="<%= user.last_name %>">
+                 </div>
  
                  <div class="form-group form-group-material">
                    <label class="control-label animate" for="contact_number">Contact Number<%if(session.user.user_type==2){%>*<% }%></label>
