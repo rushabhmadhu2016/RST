@@ -124,8 +124,51 @@ exports.showProfilePage = function(req, res) {
 }
 
 
-exports.UpdateProfile = function(req, res) {
-	User.findOne({id:req.session.user.id}, function(err, profile) {
+exports.UpdateProfile = async function(req, res) {
+	let userMembership = [];
+	let user = await User.find({id:req.session.user.id}).populate({path: 'membership', 
+		model: 'Membership', select: 'membership_title'}).exec();
+	let users = user.filter(function(user) {
+   		return userMembership.push(user.membership);	
+	});
+	console.log("Users:"+userMembership);
+	// let usermember = users.filter(function (membership) {
+	// 	console.log(userMembership.membership_title);
+	// });
+
+	user.forEach(function(profile){
+			if (profile){
+				profile.first_name = req.body.first_name;
+				profile.last_name = req.body.last_name;
+				profile.dob = req.body.dob;
+				profile.gender = req.body.gender;
+				profile.contact_number = req.body.contact_number;
+				profile.ethnicity = req.body.ethnicity;
+				profile.tag_line = req.body.tag_line;
+				profile.profile_photo = req.body.profile_photo;
+				profile.address1 = req.body.address1;
+				profile.address2 = req.body.address2;
+				profile.area = req.body.area;
+				profile.city = req.body.city_name;
+				profile.country = req.body.country_name;
+				profile.postcode = req.body.post_code;
+
+				profile.save(function(err) {
+	                if (err){
+		                req.flash('success', 'Opps. Something went wrong..');
+		                console.log('error');
+	           		}
+            		else
+            		{
+                		req.flash('success', 'Profile updated successfully.');
+                		console.log('success');
+                		res.redirect('/MyProfile');
+                	}
+            	});
+        	
+        }    		      
+	});
+	/*User.findOne({id:req.session.user.id}, function(err, profile) {
  		if(err){
 			req.flash('error', 'Error : something is wrong while updating category');
 			res.redirect('/errorpage');
@@ -165,7 +208,7 @@ exports.UpdateProfile = function(req, res) {
 	        	console.log('else'); 
         	}
         }    		      
-	});
+	});*/
 }
 
 exports.setProfesstionalBadge = function(req, res){
