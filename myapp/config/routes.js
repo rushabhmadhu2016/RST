@@ -110,7 +110,7 @@ module.exports = function (app, passport) {
     app.get('/addListing', HomeController.isLoggedIn, ListingController.showCreateListingPage);
     app.post('/storeListing', upload.array('property_image',11), ListingController.storePropertyListing);
     app.post('/updateListing', upload.array('property_image',11), ListingController.updatePropertyListing);
-    app.get('/editListing', HomeController.isLoggedIn, ListingController.editPropertyListingPage);
+    app.get('/editListing/:property', HomeController.isLoggedIn, ListingController.editPropertyListingPage);
     app.get('/deleteListing', HomeController.isLoggedIn, ListingController.deletePropertyListingPage);
     app.post('/addreview',upload.array('review_images',11),HomeController.addReviewPage);
     app.post('/updatereview',upload.array('editreview_images',11),HomeController.updateReviewPage);

@@ -46,13 +46,12 @@
         <div class="form-group form-group-material">
           <label class="control-label animate" for="sel1">Select Category *</label>
           <select class="form-control multiselect" id="sel1" name="categories" multiple="multiple">
-            <!-- <option selected="selected" disabled="disabled">Select Category *</option> -->
               <% if(categories.length>0){ 
-                for(var i=0;i<categories.length;i++){
+                for(var i=1;i<categories.length;i++){
               %>
-              <option value="<%- categories[i].id; %>" <%- getCategoryName(properties.category_id,categories[i].id)%>><%- categories[i].category_name; %></option>
-
-                <!-- <option value="<%- categories[i].id; %>" <%if(properties.category_id==categories[i].id){%>selected="selected"<%}%>><%- categories[i].category_name; %></option> -->
+              <option value="<%- categories[i].id; %>" 
+              <%- getCategoryName(properties.category,categories[i]._id) %>
+              ><%- categories[i].category_name; %></option>
               <%} }%>            
           </select>
         </div>        

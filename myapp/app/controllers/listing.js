@@ -40,7 +40,7 @@ exports.claimProperty = function(req, res) {
 	if(req.session.user){
 		if(req.session.user.user_type==2){
 			if(req.query.id){
-				Properties.findOne({id:req.query.id}, function(err, property){
+				Property.findOne({id:req.query.id}, function(err, property){
 					if(err){
 						req.flash('error', 'Invalid param in location claim');
 						res.redirect('/errorpage');
@@ -447,43 +447,31 @@ exports.deletePropertyListingPage = function(req,res){
 	
 }
 
-exports.editPropertyListingPage = function(req, res) {
-	var id = req.param('property');
-	console.log('propery_id'+id);
+exports.editPropertyListingPage = async function(req, res) {
+	var id = parseInt(req.params.property);
+	if(id.length<=0){
+		console.log("Location id is not provided");
+		req.flash('error', 'Error : something is wrong, location-id is not provided.');
+		res.redirect('/errorpage');
+	}
 
-   Properties.find({id:id,user_id: req.session.user.id}, function(err, property) {
-    	if(err){
-    		console.log(property);
-			req.flash('error', 'Error : something is wrong in location');
-			res.redirect('/errorpage');
-		}else{
-			var propertyList = [];      
-		    property.forEach(function(prop) {
-		      propertyList.push(prop);
-			});
-		    console.log(propertyList.length);
-			Category.find({}, function(err, category) {
-				if(err){
-					req.flash('error', 'Error : something is wrong in edit listing');
-					res.redirect('/errorpage');
-				}else{
-					var categoryList = [];	    
-				    category.forEach(function(cat) {
-				      categoryList.push(cat);
-				    });
-				    //console.log("categories"+categoryList);
-				    res.render('listing/editListing.ejs', {
-						error : req.flash("error"),
-						success: req.flash("success"),
-						session:req.session,
-						properties: propertyList,
-						categories: categoryList,
-				 	})
-				}
-			});
-		}
-	});
+	//Get Categories Data
+    var categories = await Category.find();
+    var categoriesList = [];
+	categories.forEach(function(category) {
+		categoriesList[category.id]=category;
+	}); 
+	console.log(categories.length);
 	
+    PropertyData = await Property.find({id:id, user: req.session.user._id});
+    console.log(PropertyData);
+   		res.render('listing/editListing.ejs', {
+			error : req.flash("error"),
+			success: req.flash("success"),
+			session:req.session,
+			properties: PropertyData,
+			categories: categoriesList,
+	 	})	
 }
 
 exports.storePropertyListing = function(req, res) {
@@ -644,14 +632,12 @@ exports.showJoinListing = function(req, res){
 }
 
 exports.updatePropertyListing = function(req, res) {
-	//console.log(req.files);
-	//console.log(req.body);
+	
 	if(req.body.property_name.length!=0 && req.body.categories!=undefined){
 		var merge_img;
 		var update_merge;
 
-	if(req.files){
-		
+	if(req.files){		
 		var uploaded_files;
 	    uploaded = req.files.map(function(value) {
 			return value.filename;
@@ -666,28 +652,25 @@ exports.updatePropertyListing = function(req, res) {
 
 		var exist_image =req.body.images;
 		if(req.body.images!=undefined){
-		var delete_prop_images = exist_image.join();
+			var delete_prop_images = exist_image.join();
 		}
 
 		
 		if(req.body.images==undefined && uploaded_arr.length==1 && uploaded_arr[0]==''){
-			//console.log("undefined or blank");
 			merge_img = [];
 		}
 		else if(uploaded_arr.length==1 && uploaded_arr[0]==''){
 			var merge_img = req.body.images;
-			//console.log("data");	
 		}else if(req.body.images==undefined){
 			merge_img = uploaded_arr;
 		}else{
 			merge_img = uploaded_arr.concat(req.body.images);
 		}
-
 		update_merge = merge_img.join();
 		
 	}
-	console.log(req.body.property_id);
-	Properties.findOne({ 'id' :  req.body.property_id }, function(err, prop) {	
+	
+	Property.findOne({ 'id' :  req.body.property_id }, function(err, prop) {	
 	if(err){
 		console.log("error"+err);
 		req.flash('error','Error : something is wrong while update Location');
@@ -762,11 +745,7 @@ exports.updatePropertyListing = function(req, res) {
 			//if(db_property_name==req.body.property_name.trim() && db_categories==req.body.categories)
 			if(db_property_id==req.body.property_id && db_property_name==req.body.property_name.trim() && db_address1==req.body.address1.trim() && db_address2==req.body.address2.trim() && db_post_code==req.body.postcode.trim())
 			{
-
-			// if(db_property_name==req.body.property_name.trim())
-			// {
-				//
-				Properties.findOne({id:req.body.property_id}, function(err, updateProperty) {
+				Property.findOne({id:req.body.property_id}, function(err, updateProperty) {
         					if(err){
 								req.flash('success', 'Oops. Something went wrong while update listing');
 						        console.log('error');
@@ -800,19 +779,14 @@ exports.updatePropertyListing = function(req, res) {
 			        	});
 			}
 			else{
-
-				//Properties.findOne({ 'property_name': new RegExp('^' +req.body.property_name.trim() + '$', 'i'),'category_id': req.body.categories }, function(err, property) {
-
-				Properties.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i'),address1: new RegExp('^' +req.body.address1.trim() + '$', 'i'),address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),post_code: new RegExp('^' +req.body.postcode.trim() + '$', 'i')}, function(err, property) {
-
-				//Properties.findOne({ 'property_name': new RegExp('^' +req.body.property_name.trim() + '$', 'i')}, function(err, property) {
-        			if (property.length>0){
+				Property.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i'),address1: new RegExp('^' +req.body.address1.trim() + '$', 'i'),address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),post_code: new RegExp('^' +req.body.postcode.trim() + '$', 'i')}, function(err, property) {
+				if (property.length>0){
         				console.log("Property data"+property.length);
         				req.flash('error', 'Location already exists');
                 		res.redirect('/myListing');
         			}
         			else{
-        				Properties.findOne({id:req.body.property_id}, function(err, updateProperty) {
+        				Property.findOne({id:req.body.property_id}, function(err, updateProperty) {
         					if(err){
 								req.flash('success', 'Oops. Something went wrong while update listing');
 						        console.log('error');
@@ -821,7 +795,6 @@ exports.updatePropertyListing = function(req, res) {
 							    updateProperty.property_name = req.body.property_name.trim();
 							    updateProperty.address1 = req.body.address1.trim();
 							    updateProperty.address2 = req.body.address2.trim();
-							    //updateProperty.category_id = req.body.categories;
 							    updateProperty.category_id = req.body.categories;
 							    updateProperty.property_desc = req.body.property_desc.trim();
 							    updateProperty.property_images = update_merge;
@@ -886,7 +859,7 @@ exports.showClaimPendingProperties = function(req, res) {
 			});	
 		console.log("You have Claimed "+claimProperties.length);
 		console.log("Property Ids "+propertyIds);
-		Properties.find({id: {$in: propertyIds } }, function(err, properties) {
+		Property.find({id: {$in: propertyIds } }, function(err, properties) {
 	    	if(err){	    		
 				req.flash('error', 'Error : something is wrong');
 				res.redirect('/errorpage');
