@@ -156,13 +156,17 @@ exports.showMyListingPage = async function(req, res) {
 		filter.category_filter='';
 		categoriesListToSearch = {};
 	}
-	Properties.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user_id:req.session.user.id}, categoriesListToSearch]}).limit(perPage).skip(perPage * page)
+	/*Properties.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user_id:req.session.user.id}, categoriesListToSearch]}).limit(perPage).skip(perPage * page)
     .sort({ property_name: 'asc'}).exec(function(err, properties) {  	
-
-	let properties = await Property.find({'id':UserId}).populate({path: 'user',
+    	*/
+    console.log(req.session.user._id);
+    console.log(req.session.user._id);
+	let properties = await Property.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user:req.session.user._id}, categoriesListToSearch]}).limit(perPage).skip(perPage * page)
+    .sort({ property_name: 'asc'}).populate({path: 'user',
       model: 'User',select: 'first_name last_name mail'}).populate({path: 'category',
       model: 'Category',select: 'category_name id'}).exec();
-      
+    console.log(properties);
+    /*  
 	var counter = 0;
 	Category.find({}, function(err, categories) {
   		if(err){
@@ -225,7 +229,6 @@ exports.showMyListingPage = async function(req, res) {
 		  					propertyItem.address2 = property.address2;
 		  					propertyItem.area = property.area;
 		  					propertyItem.post_code = property.post_code;
-
 		  					propertyItem.review_count = getPropertyReviewCount(property.id, reviewsList);
 		  					propertyItem.average_rating = getPropertyAverageRating(property.id, reviewsList);
 		  					propertyItem.is_claimed = checkIsClaimedProperty(property.id, claimDataProperies);

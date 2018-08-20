@@ -85,7 +85,7 @@ var propertySchema = mongoose.Schema({
 	area: String,
 	post_code: String,
 	category: [{ type: Schema.Types.ObjectId, ref: 'Category' }], 
-	category_id: Number,
+	category_id: [Number],
 	property_desc: String,
 	property_images: String,
 	user: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -174,7 +174,7 @@ var flaggedReviewSchema = mongoose.Schema({
 	status: Number,
 	created_date: String
 });
-var Flag = mongoose.model('Review', flaggedReviewSchema);
+var Flag = mongoose.model('Flag', flaggedReviewSchema);
 
 //Review Schema
 var reviewSchema = mongoose.Schema({	
