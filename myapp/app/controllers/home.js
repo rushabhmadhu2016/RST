@@ -134,12 +134,19 @@ exports.UpdateProfile = function(req, res) {
 			if (profile){
 				profile.first_name = req.body.first_name;
 				profile.last_name = req.body.last_name;
+				profile.dob = req.body.dob;
+				profile.gender = req.body.gender;
 				profile.contact_number = req.body.contact_number;
+				profile.ethnicity = req.body.ethnicity;
+				profile.tag_line = req.body.tag_line;
+				profile.profile_photo = req.body.profile_photo;
 				profile.address1 = req.body.address1;
 				profile.address2 = req.body.address2;
+				profile.area = req.body.area;
 				profile.city = req.body.city_name;
 				profile.country = req.body.country_name;
 				profile.postcode = req.body.post_code;
+
 				profile.save(function(err) {
 	                if (err){
 		                req.flash('success', 'Opps. Something went wrong..');

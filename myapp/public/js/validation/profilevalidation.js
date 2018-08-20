@@ -35,18 +35,31 @@ $(function(){
                 maxlength: 15,
                 normalizer: function(value) {return $.trim(value);}
 			},
+            gender:{
+                required: true,
+                normalizer: function(value) {return $.trim(value);}
+            },
 			address1:{
                 normalizer: function(value) {return $.trim(value);}
 			},
 			address2:{
                 normalizer: function(value) {return $.trim(value);}
 			},
+            area:{
+                normalizer: function(value) {return $.trim(value);}
+            },
 			city_name:{
                 normalizer: function(value) {return $.trim(value);}
 			},
 			country_name:{
                 normalizer: function(value) {return $.trim(value);}
 			},
+            ethnicity:{
+                normalizer: function(value) {return $.trim(value);}
+            },
+            tag_line:{
+                normalizer: function(value) {return $.trim(value);}
+            },
 			post_code:{
 				//digits: true,
                 //min:1,
@@ -88,6 +101,9 @@ $(function(){
 				required:"Please enter last name",
                 alpha:"The last name may only contain letters."
 			},
+            gender:{
+                required: "Please select gender."
+            },
             contact_number:{
                 digits: "Enter only digits",
                 min: "Please enter valid contact number",
@@ -117,6 +133,10 @@ $(function(){
 				alpha:true,
                 normalizer: function(value) {return $.trim(value);}
 			},
+            gender:{
+                required: true,
+                normalizer: function(value) {return $.trim(value);}
+            },
 			contact_number:{
 				required:true,
                 digits: true,
@@ -133,12 +153,22 @@ $(function(){
 				required:true,
                 normalizer: function(value) {return $.trim(value);}
 			},
+            area:{
+                required:true,
+                normalizer: function(value) {return $.trim(value);}
+            },
 			city_name:{
                 normalizer: function(value) {return $.trim(value);}
 			},
 			country_name:{
                 normalizer: function(value) {return $.trim(value);}
 			},
+            ethnicity:{
+                normalizer: function(value) {return $.trim(value);}
+            },
+            tag_line:{
+                normalizer: function(value) {return $.trim(value);}
+            },
 			post_code:{
                 required:true,
 				//digits: true,
@@ -180,11 +210,17 @@ $(function(){
 				required:"Please enter last name",
                 alpha:"The last name may only contain letters."
 			},
+            gender:{
+                required: "Please select gender."
+            },
 			address1:{
                 required:"Please enter address",
             },
             address2:{
                 required:"Please enter address",
+            },
+            area:{
+                required:"Please enter area",
             },
             contact_number:{
                 required:"Please enter contact number",

@@ -173,7 +173,7 @@ module.exports = function (app, passport) {
     app.post('/admin/updateCategory', AdminHomeController.loggedIn, CategoryController.updateCategoryPage);
     app.get('/admin/editcategory', AdminHomeController.loggedIn, CategoryController.editCategoryPage);
     app.get('/admin/deletecategory', AdminHomeController.loggedIn, CategoryController.deleteCategoryPage);    
-    app.get('/admin/locations', AdminHomeController.loggedIn, LocationController.allProperties);
+    app.get('/admin/locations', LocationController.allProperties);
     app.get('/admin/approve-location', AdminHomeController.loggedIn, LocationController.approveLocation);
     app.get('/admin/reject-location',AdminHomeController.loggedIn, LocationController.rejectLocation);
     app.get('/admin/location-detail', AdminHomeController.loggedIn, LocationController.getDetailLocation);

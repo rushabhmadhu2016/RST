@@ -25,6 +25,12 @@
                    <label class="control-label animate" for="business_name">Business Name</label>
                    <input type="text" class="form-control" id="business_name" placeholder="Business Name" name="business_name" value="<%= user.business_name %>" readonly="readonly">
                    </div>
+
+                   <div class="form-group form-group-material">
+                   <label class="control-label animate" for="business_contact_number">Business Contact Number*</label>
+                   <input type="text" class="form-control" id="business_contact_number" placeholder="Enter Business Contact Number*" name="business_contact_number" value="<%= user.business_contact_number %>" readonly="readonly">
+                   </div>
+
                  <%}%>
                  <div class="form-group form-group-material">
                    <label class="control-label animate" for="first_name">First Name*</label>
@@ -38,20 +44,58 @@
  
                  <div class="form-group form-group-material">
                    <label class="control-label animate" for="email_address">Email Address*</label>
-                 <input type="text" class="form-control" id="email_address" placeholder="Enter Email Address *" name="email_address" value="<%= user.mail %>" readonly="readonly">                 </div>
+                 <input type="text" class="form-control" id="email_address" placeholder="Enter Email Address *" name="email_address" value="<%= user.mail %>" readonly="readonly">                 
+                </div>
 
                  <div class="form-group form-group-material">
-                   <label class="control-label animate" for="last_name">Date Of Birth</label>
-                   <input type="date" class="form-control" id="dob" placeholder="Enter Last Name *" name="dob" value="<%= user.last_name %>">
+                   <label class="control-label animate" for="dob">Date Of Birth</label>
+                   <input type="date" class="form-control" id="dob" name="dob" value="<%= user.dob %>">
+                 </div>
+
+                 <div class="form-group form-group-material">
+                  <label class="control-label animate" for="gender">Gender</label><br/>
+                  
+                  <input type="radio" class="styled" id="gender_type1" name="gender" value="Male">Male &nbsp;&nbsp;
+               
+                   <input type="radio" class="styled" id="gender_type2" name="gender" value="Female">Female
+                  
                  </div>
  
                  <div class="form-group form-group-material">
                    <label class="control-label animate" for="contact_number">Contact Number<%if(session.user.user_type==2){%>*<% }%></label>
                    <input type="text" class="form-control" id="contact_number" placeholder="Enter Contact Number <%if(session.user.user_type==2){%>*<% }%>" name="contact_number" value="<%= user.contact_number %>">
                  </div>
+
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="ethnicity">Ethnicity</label>
+                   <input type="text" class="form-control" id="ethnicity" placeholder="Enter Ethnicity" name="ethnicity" value="<%= user.ethnicity %>">
+                 </div>
+
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="tag_line">Tag Line </label>
+                   <input type="text" class="form-control" id="tag_line" placeholder="Enter Tag Line" name="tag_line" value="<%= user.tag_line %>">
+                 </div>
+
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="profile_photo">Profile Photo</label>
+                   <input type="file" class="form-control" id="profile_photo" name="profile_photo" value="<%= user.profile_photo %>">
+                 </div>
+
+                 
+
               </div>
               <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 float-left">
+                 <%if(session.user.user_type==2){%>
+                <div class="form-group form-group-material">
+                   <label class="control-label animate" for="business_address1">Business Address 1*</label>
+                   <input type="text" class="form-control" id="business_address1" placeholder="Enter Business Address 1*" name="business_address1" value="<%= user.business_address1 %>" readonly="readonly">
+                   </div>
 
+                   <div class="form-group form-group-material">
+                   <label class="control-label animate" for="business_address2">Business Address 2*</label>
+                   <input type="text" class="form-control" id="business_address2" placeholder="Enter Business Address 2*" name="business_address2" value="<%= user.business_address2 %>" readonly="readonly">
+                   </div>
+                 <%}%>
                  <div class="form-group form-group-material">
                    <label class="control-label animate" for="address1">Address Line 1<%if(session.user.user_type==2){%>*<% }%></label>
                    <input type="text" class="form-control" id="address1" placeholder="Enter Address Line 1 <%if(session.user.user_type==2){%>*<% }%>" name="address1" value="<%= user.address1 %>">
@@ -59,6 +103,11 @@
                  <div class="form-group form-group-material">
                    <label class="control-label animate" for="address2">Address Line 2<%if(session.user.user_type==2){%>*<% }%></label>
                    <input type="text" class="form-control" id="address2" placeholder="Enter Address Line 2 <%if(session.user.user_type==2){%>*<% }%>" name="address2" value="<%= user.address2 %>">
+                 </div>
+
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="area">Area <%if(session.user.user_type==2){%>*<% }%></label>
+                   <input type="text" class="form-control" id="area" placeholder="Enter Area <%if(session.user.user_type==2){%>*<% }%>" name="area" value="<%= user.area %>">
                  </div>
  
                  <div class="form-group form-group-material">
@@ -75,6 +124,27 @@
                    <label class="control-label animate" for="post_code">Post Code<%if(session.user.user_type==2){%>*<% }%></label>
                    <input type="text" class="form-control" id="post_code" placeholder="Enter Postal Code <%if(session.user.user_type==2){%>*<% }%>" name="post_code" value="<%= user.postcode %>">
                  </div>
+
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="wallet_id">Wallet ID</label>
+                 <input type="text" class="form-control" id="wallet_id" placeholder="Wallet ID" name="wallet_id" value="<%= user.wallet_id %>" readonly="readonly">                 
+                </div>
+
+                <div class="form-group form-group-material">
+                   <label class="control-label animate" for="token_balance">Token Balance</label>
+                 <input type="text" class="form-control" id="token_balance" placeholder="Token Balance" name="token_balance" value="<%= user.token_balance %>" readonly="readonly">                 
+                </div>
+
+                <div class="form-group form-group-material">
+                   <label class="control-label animate" for="point_balance">Point Balance</label>
+                 <input type="text" class="form-control" id="point_balance" placeholder="Wallet ID" name="point_balance" value="<%= user.point_balance %>" readonly="readonly">                 
+                </div>
+
+                 <div class="form-group form-group-material">
+                   <label class="control-label animate" for="membership">Current Membership</label>
+                 <input type="text" class="form-control" id="membership" placeholder="Cuurent Membership" name="membership" value="<%= user.membership %>" readonly="readonly">                 
+                </div>
+
               </div>
               </div>
             </div>

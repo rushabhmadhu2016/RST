@@ -317,7 +317,7 @@ var recentActivitySchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-var RecentActivity = mongoose.model('Activity', recentActivitySchema);
+var RecentActivity = mongoose.model('RecentActivity', recentActivitySchema);
 
 //pointLogSchema Schema
 var paymentHistorySchema = mongoose.Schema({	
