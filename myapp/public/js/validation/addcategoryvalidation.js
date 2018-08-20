@@ -4,30 +4,42 @@ $(function(){
     },"Please enter valid category name");
 
 	$("form[name='categoryform']").validate({
-		rules:{
-			category_name:{
-				required:true,
-				alpha:true,
-			},
-		},
-		//
-		highlight: function(element) {
-            $(element).closest('.form-group').addClass('has-error');
-            $(element).addClass('has-error');
+        ignore: 'input[type=hidden], .select2-search__field', // ignore hidden fields
+        errorClass: 'validation-invalid-label',
+        validClass: 'validation-valid-label',
+        rules:{
+            category_name:{
+                required:true,
+                minlength:2,
+                maxlength:30,
+                alpha:true,
+                normalizer: function(value) {return $.trim(value);}
+            },
         },
-        unhighlight: function(element) {
-            $(element).closest('.form-group').removeClass('has-error');
-            $(element).removeClass('has-error');
+        //
+        highlight: function(element, errorClass) {
+            $(element).removeClass(errorClass);
         },
-        errorElement: 'span',
-        errorClass: 'help-block',
+        unhighlight: function(element, errorClass) {
+            $(element).removeClass(errorClass);
+        },  
         errorPlacement: function(error, element) {
-            if(element.parent('.input-group').length) {
-                error.insertAfter(element.parent());
+            // Unstyled checkboxes, radios
+            if (element.parents().hasClass('form-check')) {
+                error.appendTo( element.parents('.form-check').parent() );
             }
-            else if (element.parents('div').hasClass('has-feedback') || element.hasClass('select2-hidden-accessible')) {
+
+            // Input with icons and Select2
+            else if (element.parents().hasClass('form-group-feedback') || element.hasClass('select2-hidden-accessible')) {
                 error.appendTo( element.parent() );
             }
+
+            // Input group, styled file input
+            else if (element.parent().is('.uniform-uploader, .uniform-select') || element.parents().hasClass('input-group')) {
+                error.appendTo( element.parent().parent() );
+            }
+
+            // Other elements
             else {
                 error.insertAfter(element);
             }
@@ -36,6 +48,8 @@ $(function(){
 		messages:{
 			category_name:{
 				required:"Please enter category name",
+                minlength: jQuery.validator.format("At least {0} characters required"),
+                maxlength: jQuery.validator.format("Maximum {0} characters allowed")
 			},
 		},
 		submitHandler:function(form){

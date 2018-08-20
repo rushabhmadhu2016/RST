@@ -1,0 +1,16 @@
+.content{
+	padding: 0px;
+}
+.page-title{
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+.breadcrumb-line{
+	border-top: 0px;
+}
+.page-header{
+	border-bottom: 0px;
+}
+.cont-pad{
+	padding: 1.25rem 1.25rem;
+}

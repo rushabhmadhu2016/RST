@@ -71,7 +71,8 @@ exports.editCategoryPage = function(req, res) {
 
 /*Store New Category From Admin Side*/
 exports.storeCategoryPage = function(req, res) {
-		Category.findOne({ 'category_name' :  req.body.category_name}, function(err, category_name) {
+		cat_name = (req.body.category_name).toLowerCase();
+		Category.findOne({ 'category_name' :  cat_name}, function(err, category_name) {
 
 			if(err){
 				req.flash('error', 'Error : something is wrong while add category');
@@ -88,7 +89,7 @@ exports.storeCategoryPage = function(req, res) {
 		    		var newCategory = new Category();
 					//var day =dateFormat(Date.now(), "yyyy-mm-dd HH:MM:ss");
 					var day = getDate();
-					newCategory.category_name = req.body.category_name;
+					newCategory.category_name = cat_name;
 				    newCategory.status = parseInt(0);
 				    newCategory.created_date = day;
 				    newCategory.updated_date = day;

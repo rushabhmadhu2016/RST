@@ -406,10 +406,3 @@ exports.suspendUser = function(req, res) {
   		}
 	});
 }
-
-exports.nfpPage = function(req,res){
-	res.render('admin/nfp.ejs', {
-	error : req.flash("error"),
-	success: req.flash("success"),
-	});
-}
