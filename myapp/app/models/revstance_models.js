@@ -59,14 +59,15 @@ userSchema.methods.validPassword = function(password) {
  return bcrypt.compareSync(password, this.password);
 };
 //User object creation
-var User = mongoose.model('users', userSchema);
-
+//var User = mongoose.model('users', userSchema);
+var User = mongoose.model('User', userSchema);
 //Category schema
 var categorySchema = mongoose.Schema({	
 	id: Number,
 	category_name: String,
 	status: Number,
 	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }],
 	created_date: String,
 	updated_date: String	
 });
@@ -84,7 +85,7 @@ var propertySchema = mongoose.Schema({
 	category: [{ type: Schema.Types.ObjectId, ref: 'Category' }], 
 	property_desc: String,
 	property_images: String,
-	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	user: { type: Schema.Types.ObjectId, ref: 'User' },
 	bounty: [{ type: Schema.Types.ObjectId, ref: 'Bounty' }],
 	created_by: Number,
 	status: Number,
@@ -332,6 +333,10 @@ var paymentHistorySchema = mongoose.Schema({
 });
 var PaymentHistory = mongoose.model('payment_history', paymentHistorySchema);
 
+/*module.exports = mongoose.model('users', userSchema);
+module.exports = mongoose.model('categories', categorySchema);
+module.exports = mongoose.model('properties', propertySchema);
+*/
 module.exports = {
     User: User,
     Category: Category,

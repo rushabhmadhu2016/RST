@@ -210,17 +210,23 @@ exports.allProperties = async function (req, res) {
     let usersIds = [];
     let category_filter = {};
 	let filters = {};
+	console.log("welcome to allProperties");
+
+    let properties = await Property.find({}).populate({path: 'Category'}).populate('User').exec();
+    console.log(properties);
+    process.exit();
+    /*
+    properties.forEach(function (property) {
+        propertyList.push(property);
+        usersIds.push(parseInt(property.user));
+    });
+	
 	if(req.query.category_filter) {	filters.category_filter=req.query.category_filter;	}
     let categories = await Category.find({});
     categories.forEach(function (category) {
         categoryList[category.id] = category;
     });
 
-    let properties = await Property.find({});
-    properties.forEach(function (property) {
-        propertyList.push(property);
-        usersIds.push(property.user);
-    });
 
 
     let users = await User.find({ 'id': { $in: usersIds } });
@@ -244,7 +250,7 @@ exports.allProperties = async function (req, res) {
         userLists: usersList,
         properties: propertyList,
         filters: filters
-    }); 
+    }); */
 }
 
 function getUsers(categoryList,propertyList, usersIds,req,res,filters){

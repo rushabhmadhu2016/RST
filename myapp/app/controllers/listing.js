@@ -3,7 +3,7 @@ var bcrypt 		= require('bcrypt-nodejs');
 var dateFormat  = require('dateformat');
 var thumb 		= require('node-thumbnail').thumb;
 var models      = require('../../app/models/revstance_models');
-var Properties  = models.Property;
+var Property    = models.Property;
 var Category    = models.Category;
 var Reviews     = models.Review;
 var User 		= models.User;
@@ -109,8 +109,14 @@ exports.unclaimProperty = function(req, res) {
 	}
 }
 
-exports.showMyListingPage = function(req, res) {
-	var keyword='';
+exports.showMyListingPage = async function(req, res) {
+	let properties = await Property.find({}).populate({path: 'user',
+      model: 'User',select: 'first_name last_name'}).exec();
+	console.log(properties);
+	res.send(properties);
+    //process.exit();
+	
+	/*var keyword='';
 	var category='';
 	if(req.query.keyword)
 	{
@@ -222,8 +228,8 @@ exports.showMyListingPage = function(req, res) {
 		  					propertyItem.is_claimed = checkIsClaimedProperty(property.id, claimDataProperies);
 		  					searchedProperties.push(propertyItem);
 					    });
-					    /*console.log(searchedProperties);
-					    res.send("welcome");*/
+					    //console.log(searchedProperties);
+					    //res.send("welcome");
 				   		res.render('listing/myListing', {
 							error : req.flash("error"),
 							success: req.flash("success"),
@@ -240,7 +246,7 @@ exports.showMyListingPage = function(req, res) {
 			});
 		});
 	});
-});
+});*/
 }
 
 function checkIsClaimedProperty(id, list){
