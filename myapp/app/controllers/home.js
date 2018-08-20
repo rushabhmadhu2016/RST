@@ -11,6 +11,7 @@ var Review 		= models.Review;
 var Claims 		= models.Claim;
 var FlaggedReview= models.FlaggedReview;
 var Like   	     = models.Like;
+var Membership   = models.Membership;
 var constants = require('../../config/constants'); 
 var dynamicmail  = require('../../app/controllers/dynamicMailController');
 
@@ -80,7 +81,7 @@ exports.checkForAddReviewPage = function(req, res) {
 	});
 }
 
-exports.showProfilePage = function(req, res) {
+exports.showProfilePage = async function(req, res) {
 	var myparams = req.url;
 	var userId;
 	var api_response = {};
@@ -91,6 +92,10 @@ exports.showProfilePage = function(req, res) {
 		var calltype='web';
 		userId = req.session.user.id
 	}
+	let userMembership = [];
+	let membershipTitle = await Membership.findOne({_id:req.session.user.membership});
+	console.log(membershipTitle);
+
 	User.findOne({id:userId}, function(err, profile) {
 		if(err){
 			if(calltype=='api'){
@@ -111,13 +116,14 @@ exports.showProfilePage = function(req, res) {
 				api_response.status=true;
 				api_response.profile=profile;
 				res.send(api_response);
-			}else{				
-		    	res.render('profile', {
+			}else{	
+				res.render('profile', {
 				error : req.flash("error"),
 				success: req.flash("success"),
 				session: req.session,
+				membership: membershipTitle,
 				user: profile,
-				});
+				});				
 		    }
 		}		
 	});

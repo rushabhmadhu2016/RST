@@ -1,3 +1,4 @@
+<% - membership.membership_title; %>
 <!DOCTYPE html>
  <html lang="en">
    <head>
@@ -142,7 +143,7 @@
 
                  <div class="form-group form-group-material">
                    <label class="control-label animate" for="membership">Current Membership</label>
-                 <input type="text" class="form-control" id="membership" placeholder="Cuurent Membership" name="membership" value="<%= user.membership %>" readonly="readonly">                 
+                 <input type="text" class="form-control" id="membership" placeholder="Cuurent Membership" name="membership" value="<%= membership.membership_title %>" readonly="readonly">                 
                 </div>
 
               </div>
