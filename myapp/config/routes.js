@@ -96,8 +96,8 @@ module.exports = function (app, passport) {
     app.get('/forgotpassword/confirm',HomeController.forgotPasswordConfirm);
     app.get('/home', HomeController.isLoggedIn, HomeController.showHomePage);
     app.get('/search', HomeController.showSearchPage);
-    app.get('/property/property-details',HomeController.showPropertyDetailPage);
-    app.get('/location/location-details',HomeController.showPropertyDetailPage);
+    app.get('/property/property-details',HomeController.isLoggedIn, HomeController.showPropertyDetailPage);
+    app.get('/location/location-details',HomeController.isLoggedIn, HomeController.showPropertyDetailPage);
     /*Front side Operations Routes*/
     app.get('/MyProfile', HomeController.isLoggedIn, HomeController.showProfilePage);
     app.get('/api/MyProfile', HomeController.showProfilePage);
