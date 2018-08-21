@@ -43,6 +43,8 @@ var userSchema = mongoose.Schema({
 	business_address2: { type: String, default: '' },
 	business_contact_number: { type: String, default: '' },
 	business_status: { type: Number, default: 0 },
+	stripe_customer: { type: String, default: "" },
+	stripe_card_id: { type: String, default: "" },
 	created_date: String,
 	updated_date: String,
 	active_hash: String,
@@ -339,19 +341,6 @@ var paymentHistorySchema = mongoose.Schema({
 });
 var PaymentHistory = mongoose.model('PaymentHistory', paymentHistorySchema);
 
-var businessPlansSchema = mongoose.Schema({	
-	id: Number,
-	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-	amount: Number,
-	currency: String,
-	title: String,
-	description: String,
-	status: Number,
-	created_date: String,
-	updated_date: String
-});
-var BusinessPlans = mongoose.model('BusinessPlans', businessPlansSchema);
-
 module.exports = {
     User: User,
     Category: Category,
@@ -374,5 +363,4 @@ module.exports = {
     TokenLog: TokenLog,
     RecentActivity: RecentActivity,
     PaymentHistory: PaymentHistory,
-    BusinessPlans: BusinessPlans,
 }

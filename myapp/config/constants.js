@@ -1,5 +1,5 @@
 module.exports = {
-     'project_name':'express-mvc-generator',
+    'project_name':'express-mvc-generator',
 	'adminname': 'Rajaram',
 	'adminmail': 'test@gmail.com',
 	'adminemail': 'akash.patel@innvonix.com',
@@ -12,4 +12,5 @@ module.exports = {
 	"alert_email":"aler@email.com",
 	"alert_email_name":"Aler Name",
 	"blog_url":"http://revstance.co/index.php/wp-json/wp/v2/posts/",
+	'token_price':"0.05",
 };

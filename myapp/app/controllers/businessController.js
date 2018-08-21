@@ -2,10 +2,65 @@ var numeral 	 = require('numeral');
 var bcrypt 		 = require('bcrypt-nodejs');
 var dateFormat   = require('dateformat');
 var models       = require('../../app/models/revstance_models');
+var BusinessPlans= require('../../app/models/business_plans');
+var constants 	 = require('../../config/constants');
 var User         = models.User;
 
-exports.getMembershipData = function(req,res) {
-	res.send("Welcome");
+exports.buyTokens = async function(req, res) {
+	if(!req.session.user){
+		res.redirect('/login');
+	}else if(req.session.user && req.session.user_type==1){
+		res.redirect('/home');
+	}else{
+		console.log(constants.token_price);
+		res.render('buy_token',{
+			error : req.flash("error"),
+			success: req.flash("success"),
+			user: req.session.user,
+			session: req.session,
+			token_price: constants.token_price,
+		});
+	}
+}
+
+exports.getMembershipData = async function(req,res) {
+	if(!req.session.user){
+		res.redirect('/login');
+	}else if(req.session.user && req.session.user_type==1){
+		res.redirect('/home');
+	}else{
+		let plans = await BusinessPlans.find();
+		res.render('business_membership',{
+			plans: plans,
+			error : req.flash("error"),
+			success: req.flash("success"),
+			user: req.session.user,
+			session: req.session,
+		});
+	}
+}
+
+exports.purchaseMembershipPlan = async function(req, res) {
+	if(!req.session.user){
+		res.redirect('/login');
+	}else if(req.session.user && req.session.user_type==1){
+		res.redirect('/home');
+	}else{
+		var plan_id = req.params.plan_id;
+		if(!plan_id){
+			req.flash('error', 'Error : something is wrong business plan purchase');
+			res.redirect('/errorpage');
+		}
+		let plan = await BusinessPlans.findOne({'_id':plan_id});
+		
+		res.render('purchase_membership',{
+			plan: plan,
+			error : req.flash("error"),
+			success: req.flash("success"),
+			user: req.session.user,
+			session: req.session,
+		});
+	}
 }
 
 exports.getBusinessDetail = function(req,res) {
