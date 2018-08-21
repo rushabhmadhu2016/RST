@@ -105,7 +105,6 @@ module.exports = function (app, passport) {
     app.get('/changepassword',HomeController.isLoggedIn,HomeController.changePasswordPage);
     app.post('/updatepassword',HomeController.updatePasswordPage);
     app.get('/Mylisting',HomeController.isLoggedIn, ListingController.showMyListingPage);
-    app.get('/JoinListing', HomeController.isLoggedIn, ListingController.showJoinListing);
     app.get('/detailListing', HomeController.isLoggedIn, ListingController.showPropertyListingPage);
     app.get('/addListing', HomeController.isLoggedIn, ListingController.showCreateListingPage);
     app.post('/storeListing', upload.array('property_image',11), ListingController.storePropertyListing);
@@ -211,7 +210,7 @@ module.exports = function (app, passport) {
     /**/
     /*Newly Added routes*/
     app.get('/user/:userid/profile', HomeController.showUserProfile);
-    
+    app.get('/business/memberships', BusinessController.getMembershipData);
 }
 /*    
 app.post('/admin/login', function (req, res) {

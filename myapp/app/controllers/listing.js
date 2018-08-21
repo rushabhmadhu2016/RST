@@ -523,7 +523,9 @@ exports.storePropertyListing = async function(req, res) {
 		    console.log(uploaded_files);
 		    let categoriesList = [];
 		    let categories = await Category.find({_id: req.body.categories});
+		    let categories_ids = [];
 		    categories.forEach(function(cat){
+		    	categories_ids.push(cat.id);
 		    	categoriesList.push(cat.category_name);
 		    });
 		    
@@ -537,22 +539,17 @@ exports.storePropertyListing = async function(req, res) {
 		    	newProperty.id = propertydata[0].id+1;
 		    }else{
 		    	newProperty.id = 1;
-		    }
-		    console.log(categoriesList);
-		    let cats = await Category.find({'category_name': {$in:$categoriesList}});
-		    console.log(cats);
-		    process.exit();
+		    }		    
 			newProperty.property_name = req.body.property_name.trim();
 		    newProperty.address1 = req.body.address1.trim();
 		    newProperty.address2 = req.body.address2.trim();
 		    newProperty.area = req.body.area.trim();
 		    newProperty.post_code = req.body.postcode;
 			newProperty.category = req.body.categories;
-			newProperty.category_id = getCategoryId(categoriesList);
+			newProperty.category_id = categories_ids;
 		    newProperty.property_desc = req.body.property_desc;
 		    newProperty.property_images = uploaded_files;
 		    newProperty.user = req.session.user._id;
-		    //newProperty.bounty = property.bounty;
 		    newProperty.created_by = req.session.user.user_type;
 		    newProperty.status = 0;
 		    newProperty.is_claimed = 0;

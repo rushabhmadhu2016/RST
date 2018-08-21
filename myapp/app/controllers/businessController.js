@@ -4,6 +4,10 @@ var dateFormat   = require('dateformat');
 var models       = require('../../app/models/revstance_models');
 var User         = models.User;
 
+exports.getMembershipData = function(req,res) {
+	res.send("Welcome");
+}
+
 exports.getBusinessDetail = function(req,res) {
 	User.find({id:parseInt(req.query.id)}, function(err, business) {
 		if(err){

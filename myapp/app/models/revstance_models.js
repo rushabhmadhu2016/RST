@@ -135,7 +135,9 @@ var Bounty = mongoose.model('Bounty', bountySchema);
 var claimSchema = mongoose.Schema({
 	id: Number,
 	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	user_id: Number,
 	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }],
+	property_id: Number,
 	status: Number,
 	created_date: String	
 });
@@ -337,6 +339,19 @@ var paymentHistorySchema = mongoose.Schema({
 });
 var PaymentHistory = mongoose.model('PaymentHistory', paymentHistorySchema);
 
+var businessPlansSchema = mongoose.Schema({	
+	id: Number,
+	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	amount: Number,
+	currency: String,
+	title: String,
+	description: String,
+	status: Number,
+	created_date: String,
+	updated_date: String
+});
+var BusinessPlans = mongoose.model('BusinessPlans', businessPlansSchema);
+
 module.exports = {
     User: User,
     Category: Category,
@@ -359,4 +374,5 @@ module.exports = {
     TokenLog: TokenLog,
     RecentActivity: RecentActivity,
     PaymentHistory: PaymentHistory,
+    BusinessPlans: BusinessPlans,
 }
