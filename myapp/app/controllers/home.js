@@ -15,6 +15,12 @@ var Membership   = models.Membership;
 var constants = require('../../config/constants'); 
 var dynamicmail  = require('../../app/controllers/dynamicMailController');
 
+exports.showUserProfile = async function(req, res, next){
+	var userid=parseInt(req.params.userid);
+	var userData = await User.find({'id':userid}).populate({path: 'membership',model: 'Membership',select: 'membership_title'})
+	res.send(userData);	
+}
+
 exports.isLoggedIn = function(req, res, next){
 	if (req.session.user) { // req.session.passport._id
 		if(req.session.user.user_type==3){

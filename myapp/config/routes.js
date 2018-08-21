@@ -209,6 +209,8 @@ module.exports = function (app, passport) {
     app.post('/admin/review/removeReviewReply', ReviewController.removeReviewReply);
     app.post('/admin/setprofesstionalbadge', AdminHomeController.loggedIn, HomeController.setProfesstionalBadge);    
     /**/
+    /*Newly Added routes*/
+    app.get('/user/:userid/profile', HomeController.showUserProfile);
 }
 /*    
 app.post('/admin/login', function (req, res) {
