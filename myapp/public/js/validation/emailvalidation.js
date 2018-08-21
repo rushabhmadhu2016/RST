@@ -14,15 +14,23 @@ $(function(){
     
 
 	$("form[name='emails_form']").validate({
-        ignore: [],
+        ignore: 'input[type=hidden], .select2-search__field', // ignore hidden fields
+        errorClass: 'validation-invalid-label',
+        validClass: 'validation-valid-label',
 		rules:{
 			email_name:{
 				required:true,
                 noSpace:true,
+                minlength:2,
+                maxlength:50,
+                normalizer: function(value) {return $.trim(value);}
 			},
             email_subject:{
                 required:true,
                 noSpace:true,
+                minlength:2,
+                maxlength:100,
+                normalizer: function(value) {return $.trim(value);}
             },
             email_message:{
                 ck_edit:true,
@@ -30,23 +38,34 @@ $(function(){
             },
 		},
 		//
-		highlight: function(element) {
-            $(element).closest('.form-group').addClass('has-error');
-            $(element).addClass('has-error');
+		highlight: function(element, errorClass) {
+            $(element).removeClass(errorClass);
         },
-        unhighlight: function(element) {
-            $(element).closest('.form-group').removeClass('has-error');
-            $(element).removeClass('has-error');
+        unhighlight: function(element, errorClass) {
+            $(element).removeClass(errorClass);
         },
-        errorElement: 'span',
-        errorClass: 'help-block',
         errorPlacement: function(error, element) {
-            if(element.parent('.input-group').length) {
-                error.insertAfter(element.parent());
+            // Unstyled checkboxes, radios
+            if (element.parents().hasClass('form-check')) {
+                error.appendTo( element.parents('.form-check').parent() );
             }
-            else if (element.parents('div').hasClass('ck_editerror') || element.hasClass('select2-hidden-accessible')) {
+
+            // CKEditor
+            else if (element.parents().hasClass('ck_email_message')) {
+                error.appendTo( element.parents('.ck_email_message'));
+            }
+
+            // Input with icons and Select2
+            else if (element.parents().hasClass('form-group-feedback') || element.hasClass('select2-hidden-accessible')) {
                 error.appendTo( element.parent() );
             }
+
+            // Input group, styled file input
+            else if (element.parent().is('.uniform-uploader, .uniform-select') || element.parents().hasClass('input-group')) {
+                error.appendTo( element.parent().parent() );
+            }
+
+            // Other elements
             else {
                 error.insertAfter(element);
             }
@@ -55,9 +74,13 @@ $(function(){
 		messages:{
 			email_name:{
 				required:"Please enter email name",
+                minlength: jQuery.validator.format("At least {0} characters required"),
+                maxlength: jQuery.validator.format("Maximum {0} characters allowed"),
 			},
             email_subject:{
                 required:"Please enter email subject",
+                minlength: jQuery.validator.format("At least {0} characters required"),
+                maxlength: jQuery.validator.format("Maximum {0} characters allowed"),
             },
 		},
 		submitHandler:function(form){
@@ -66,15 +89,23 @@ $(function(){
 	});
 
     $("form[name='updateemails_form']").validate({
-        ignore: [],
+        ignore: 'input[type=hidden], .select2-search__field', // ignore hidden fields
+        errorClass: 'validation-invalid-label',
+        validClass: 'validation-valid-label',
         rules:{
             email_name:{
                 required:true,
                 noSpace:true,
+                minlength:2,
+                maxlength:50,
+                normalizer: function(value) {return $.trim(value);}
             },
             email_subject:{
                 required:true,
                 noSpace:true,
+                minlength:2,
+                maxlength:100,
+                normalizer: function(value) {return $.trim(value);}
             },
             email_message:{
                 ck_edit:true,
@@ -82,23 +113,34 @@ $(function(){
             },
         },
         //
-        highlight: function(element) {
-            $(element).closest('.form-group').addClass('has-error');
-            $(element).addClass('has-error');
+        highlight: function(element, errorClass) {
+            $(element).removeClass(errorClass);
         },
-        unhighlight: function(element) {
-            $(element).closest('.form-group').removeClass('has-error');
-            $(element).removeClass('has-error');
+        unhighlight: function(element, errorClass) {
+            $(element).removeClass(errorClass);
         },
-        errorElement: 'span',
-        errorClass: 'help-block',
         errorPlacement: function(error, element) {
-            if(element.parent('.input-group').length) {
-                error.insertAfter(element.parent());
+            // Unstyled checkboxes, radios
+            if (element.parents().hasClass('form-check')) {
+                error.appendTo( element.parents('.form-check').parent() );
             }
-            else if (element.parents('div').hasClass('ck_editerror') || element.hasClass('select2-hidden-accessible')) {
+
+            // CKEditor
+            else if (element.parents().hasClass('ck_email_message')) {
+                error.appendTo( element.parents('.ck_email_message'));
+            }
+
+            // Input with icons and Select2
+            else if (element.parents().hasClass('form-group-feedback') || element.hasClass('select2-hidden-accessible')) {
                 error.appendTo( element.parent() );
             }
+
+            // Input group, styled file input
+            else if (element.parent().is('.uniform-uploader, .uniform-select') || element.parents().hasClass('input-group')) {
+                error.appendTo( element.parent().parent() );
+            }
+
+            // Other elements
             else {
                 error.insertAfter(element);
             }
@@ -107,9 +149,13 @@ $(function(){
         messages:{
             email_name:{
                 required:"Please enter email name",
+                minlength: jQuery.validator.format("At least {0} characters required"),
+                maxlength: jQuery.validator.format("Maximum {0} characters allowed"),
             },
             email_subject:{
                 required:"Please enter email subject",
+                minlength: jQuery.validator.format("At least {0} characters required"),
+                maxlength: jQuery.validator.format("Maximum {0} characters allowed"),
             },
         },
         submitHandler:function(form){

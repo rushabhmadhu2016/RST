@@ -33,33 +33,30 @@
 
 					<li class="nav-item"><a href="locations" class="nav-link <% if(req.path=="/admin/locations" || req.path=="/admin/location-detail") {%>active<% } %>"><i class="icon-office"></i> <span>All Locations</span></a></li>
 
-					<li class="nav-item nav-item-submenu <% if(req.path=="/admin/editcategory") {%>active<% } %>">
-						<a href="#" class="nav-link"><i class="icon-list3"></i> <span>Categories</span></a>
-
-						<ul class="nav nav-group-sub" data-submenu-title="Category">
-							<li class="nav-item <% if(req.path=="/admin/addcategory") {%>active<% } %>"><a href="/admin/addcategory" class="nav-link active"><i class="icon-add"></i><span>Add New Category</span></a></li>
-							<li class="nav-item <% if(req.path=="/admin/categories") {%>active<% } %>"><a href="categories" class="nav-link"><i class="icon-eye8"></i><span>View Category</span></a></li>
-						</ul>
-					</li>
-
-
 					<li class="<% if(req.path=="/admin/claimed-locations") {%>active<% } %>"><a href="claimed-locations" class="nav-link"><i class="icon-price-tags"></i> <span>Claimed Locations</span></a></li>
 
 					<li class="<% if(req.path=="/admin/flagged-reviews") {%>active<% } %>"><a href="flagged-reviews" class="nav-link"><i class="icon-spam"></i> <span>Flagged Reviews</span></a></li>
 
-					<!-- <li class="<% if(req.path=="/admin/blogs") {%>active<% } %>"><a href="blogs" class="nav-link"><i class="icon-blogger2"></i> <span>Blogs</span></a></li> -->
+					<li class="nav-item nav-item-submenu">
+						<a href="#" class="nav-link"><i class="icon-list3"></i> <span>Categories</span></a>
+
+						<ul class="nav nav-group-sub" data-submenu-title="Category">
+							<li class="nav-item"><a href="/admin/addcategory" class="nav-link <% if(req.path=="/admin/addcategory") {%>active<% } %>"><i class="icon-add"></i><span>Add New Category</span></a></li>
+							<li class="nav-item"><a href="categories" class="nav-link <% if(req.path=="/admin/categories") {%>active<% } %>"><i class="icon-eye8"></i><span>View Category</span></a></li>
+						</ul>
+					</li>
 
 					<li class="nav-item nav-item-submenu <% if(req.path=="/admin/blogs") {%>active<% } %>">
 						<a href="#" class="nav-link"><i class="icon-blogger2"></i> <span>Blogs</span></a>
 
 						<ul class="nav nav-group-sub" data-submenu-title="Blog">
-							<li class="nav-item <% if(req.path=="/admin/addblog") {%>active<% } %>"><a href="/admin/addblog" class="nav-link active"><i class="icon-add"></i><span>Add New Blog</span></a></li>
-							<li class="nav-item <% if(req.path=="/admin/blogs") {%>active<% } %>"><a href="blogs" class="nav-link"><i class="icon-eye8"></i><span>View Blogs</span></a></li>
+							<li class="nav-item"><a href="/admin/addblog" class="nav-link <% if(req.path=="/admin/addblog") {%>active<% } %>"><i class="icon-add"></i><span>Add New Blog</span></a></li>
+							<li class="nav-item"><a href="blogs" class="nav-link <% if(req.path=="/admin/blogs") {%>active<% } %>"><i class="icon-eye8"></i><span>View Blogs</span></a></li>
 						</ul>
 					</li>
 					<!-- /main -->
 
-					<li class="nav-item nav-item-submenu <% if(req.path=="/admin/emails") {%>active<% } %>">
+					<li class="nav-item nav-item-submenu">
 						<a href="#" class="nav-link"><i class="icon-envelop4"></i> <span>Email Template</span></a>
 
 						<ul class="nav nav-group-sub" data-submenu-title="Email Template">
@@ -67,8 +64,6 @@
 							<li class="nav-item <% if(req.path=="/admin/emails") {%>active<% } %>"><a href="emails" class="nav-link"><i class="icon-eye8"></i><span>View Email</span></a></li>
 						</ul>
 					</li>
-
-					<li class="<% if(req.path=="/admin/nfp") {%>active<% } %>"><a href="nfp" class="nav-link"><i class="icon-design"></i> <span>Non Functional Prototype</span></a></li>
 					<!-- /tables -->
 				</ul>
 			</div>
