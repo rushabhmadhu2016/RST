@@ -474,51 +474,41 @@ exports.editPropertyListingPage = async function(req, res) {
 	 	})	
 }
 
-exports.storePropertyListing = function(req, res) {
+exports.storePropertyListing = async function(req, res) {
+
 	if(req.body.property_name.length!=0 && req.body.categories!=undefined){
 
-	Properties.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i'),address1: new RegExp('^' +req.body.address1.trim() + '$', 'i'),address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),area: new RegExp('^' +req.body.area.trim() + '$', 'i'),post_code: new RegExp('^' +req.body.postcode.trim() + '$', 'i')}, function(err, property) {
-	
-	//Properties.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i'),address1: new RegExp('^' +req.body.address1.trim() + '$', 'i'),address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),'category_id': parseInt(req.body.categories)}, function(err, property) {
+	let getProperty = await Property.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i'),
+		address1: new RegExp('^' +req.body.address1.trim() + '$', 'i'),
+		address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),
+		area: new RegExp('^' +req.body.area.trim() + '$', 'i'),
+		post_code: new RegExp('^' +req.body.postcode.trim() + '$', 'i')}).exec();
 
-	//Properties.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i'),'category_id': parseInt(req.body.categories)}, function(err, property) {
-	
-	//Properties.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i')}, function(err, property) {	
-	if(err){
+	if(getProperty.length>0){
 		req.flash('error','Error : something is wrong while store Location');
 		res.redirect('/errorpage');
-	}else{
-		if(property.length>0){
 
-			uploaded = req.files.map(function(value) {
-				return value.filename;
-			});
+		uploaded = req.files.map(function(value) {
+			return value.filename;
+		});
 
-			uploaded_files = uploaded.join();
-			var arr = uploaded_files.split(',');
-			for (var i = 0; i < arr.length; i++) {
-				console.log('public/uploads/'+arr[i]);
-				if(fs.existsSync('public/uploads/'+arr[i])){
-				    fs.unlink('public/uploads/'+arr[i], (err) => {
-					  if (err){
-					  	console.log('File delete error');
-					  }else{
-					  	console.log('File deleted!');
-					  }
-					});
-				}
+		uploaded_files = uploaded.join();
+		var arr = uploaded_files.split(',');
+		for (var i = 0; i < arr.length; i++) {
+			console.log('public/uploads/'+arr[i]);
+			if(fs.existsSync('public/uploads/'+arr[i])){
+			    fs.unlink('public/uploads/'+arr[i], (err) => {
+				  if (err){
+				  	console.log('File delete error');
+				  }else{
+				  	console.log('File deleted!');
+				  }
+				});
 			}
+		}		
+	}else{
 
-			req.flash('error','Error : Location already exist in our system.');
-			backURL=req.header('Referer') || '/';  			
-  			res.redirect(backURL);	
-		  
-		} else {
-			
-			console.log('new property');
-
-			if(req.files && (req.files.length<=10)){
-		 	//console.log('uploading File...')
+		if(req.files && (req.files.length<=10)){
 		    var uploaded_files;
 
 		    uploaded = req.files.map(function(value) {
@@ -528,31 +518,41 @@ exports.storePropertyListing = function(req, res) {
 
 			uploaded.map(function(a){
 				generateThumb('public/uploads/'+a, '345px', 'thumb_', 'public/uploads/thumbs');
-			})
+			});
 
 		    console.log(uploaded_files);
-
-		    Properties.find().sort([['id', 'descending']]).limit(1).exec(function(err, propertydata) { 
-			console.log(req.body.categories);
-
-			var newProperty = new Properties();
-			var day = getDate();
+		    let categoriesList = [];
+		    let categories = await Category.find({_id: req.body.categories});
+		    categories.forEach(function(cat){
+		    	categoriesList.push(cat.category_name);
+		    });
+		    
+		    let properties = await Property.find({}).sort([['id', 'descending']]).limit(1);
+		    
+		    properties.forEach(function (propertydata) {
+		    	var newProperty = new Property();
+				var day = getDate();
 
 		    if(propertydata.length>0){		    	
 		    	newProperty.id = propertydata[0].id+1;
 		    }else{
 		    	newProperty.id = 1;
 		    }
+		    console.log(categoriesList);
+		    let cats = await Category.find({'category_name': {$in:$categoriesList}});
+		    console.log(cats);
+		    process.exit();
 			newProperty.property_name = req.body.property_name.trim();
 		    newProperty.address1 = req.body.address1.trim();
 		    newProperty.address2 = req.body.address2.trim();
 		    newProperty.area = req.body.area.trim();
 		    newProperty.post_code = req.body.postcode;
 			newProperty.category = req.body.categories;
+			newProperty.category_id = getCategoryId(categoriesList);
 		    newProperty.property_desc = req.body.property_desc;
 		    newProperty.property_images = uploaded_files;
 		    newProperty.user = req.session.user._id;
-		    newProperty.bounty = property.bounty;
+		    //newProperty.bounty = property.bounty;
 		    newProperty.created_by = req.session.user.user_type;
 		    newProperty.status = 0;
 		    newProperty.is_claimed = 0;
@@ -565,71 +565,38 @@ exports.storePropertyListing = function(req, res) {
 			        	console.log(err);
 						req.flash('error', 'Error : something is wrong while add business user');
 						res.redirect('/errorpage');
-					}else{
-
-		    			User.findOne({id:req.session.user.id}, function(err, updatePropertyData) {
-		    			//console.log(updatePropertyData);
-		    			//process.exit();
-		    			updatePropertyData.property = newProperty._id;
-		    			updatePropertyData.category = newProperty.category;
-		    			
-		    			updatePropertyData.save(function (err) {
-		    			if(err){
-							req.flash('error', 'Error : something is wrong');
-							res.redirect('/errorpage');
-						}else{
-							console.log('User Properties Added..');
-						}
-					});
-					});
-		    			Category.findOne({id: newProperty.category}, function(err, updateCategory) {
-		    				console.log(newProperty.category);
-		    				updateCategory.user = newProperty.user;
-		    				updateCategory.property = newProperty._id;
-
-		    				updateCategory.save(function(err) {
-		    					if(err){
-							req.flash('error', 'Error : something is wrong');
-							res.redirect('/errorpage');
-							}else{
-								console.log('Category Properties Added..');
-							}
-		    				});
-		    			});
-			        		req.flash('success', 'Location request submitted successfully, it will be listed after admin approval.');
-			        		res.redirect('/Mylisting');
 					}
-			      });
-							 
+					else{
+					 	User.findOne({id:req.session.user.id}, function (err, updatePropertyData) {
+							updatePropertyData.property = newProperty._id;
+		    				updatePropertyData.category = newProperty.category;
+		  
+		    				updatePropertyData.save(function (err) {
+		    				if(err){
+								req.flash('error', 'Error : something is wrong');
+								res.redirect('/errorpage');
+							}else{
+								console.log('User Properties Added..');
+							}
+						});
+		    			});
+			        	req.flash('success', 'Location request submitted successfully, it will be listed after admin approval.');
+			        	res.redirect('/Mylisting');
+					}
+
 		    });
-			}
+			});
+		}
+	}
+}
 			else{
 				console.log("submit without image upload");
 				req.flash('error', 'You can upload maximum 10 images');
 			    res.redirect('/addListing');
-			}
-		}
-	}	
-	});
-	}else{
-	req.flash('error', 'Oops Something went wrong');
-	res.redirect('/Mylisting');
-	}
+			}	
+	
 }	
 
-exports.showJoinListing = function(req, res){
-
-	// let users = await User.findOne({'id': req.session.user.id}).populate('properties');
-	// users.forEach(function(users){
-	// 	console.log(users);
-	// });
-	User.findOne({'id': req.session.user.id}).populate('property').exec(function(err, user){
-		if(err){
-			console.log('Error');
-		}
-		console.log(user);
-	});
-}
 
 exports.updatePropertyListing = function(req, res) {
 	
@@ -682,6 +649,7 @@ exports.updatePropertyListing = function(req, res) {
 			var db_property_name = prop.property_name;
 			var db_address1 = prop.address1;
 			var db_address2 = prop.address2;
+			var db_category = prop.category;
 			var db_categories = prop.category_id;
 			var db_post_code = prop.post_code;
 			var db_images = prop.property_images.split(",");
@@ -756,6 +724,7 @@ exports.updatePropertyListing = function(req, res) {
 							    updateProperty.address1 = req.body.address1.trim();
 							    updateProperty.address2 = req.body.address2.trim();
 							    //updateProperty.category_id = req.body.categories;
+							    updateProperty.category = req.body.categories;
 							    updateProperty.category_id = req.body.categories;
 							    updateProperty.property_desc = req.body.property_desc.trim();
 							    updateProperty.property_images = update_merge;
@@ -795,6 +764,7 @@ exports.updatePropertyListing = function(req, res) {
 							    updateProperty.property_name = req.body.property_name.trim();
 							    updateProperty.address1 = req.body.address1.trim();
 							    updateProperty.address2 = req.body.address2.trim();
+							    updateProperty.category = req.body.categories;
 							    updateProperty.category_id = req.body.categories;
 							    updateProperty.property_desc = req.body.property_desc.trim();
 							    updateProperty.property_images = update_merge;
@@ -963,6 +933,18 @@ function getCategoryName(id,catList){
 		}
 	});
 	return catname.join();
+}
+
+function getCategoryId(catList){
+	var catid = [];
+	catList.forEach(function(cat){		
+		if(cat.indexOf(cat.toString()) == -1){
+			//console.log("Not found");
+		}else{
+			catid.push(parseInt(cat.id));		
+		}
+	});
+	return catid.join();
 }
 
 function generateThumb(fileName, width, prefix, destinationFolder){
