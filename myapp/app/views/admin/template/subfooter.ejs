@@ -18,6 +18,11 @@
 <!-- /page content -->
 <!-- JavaScript-->
 <script type="text/javascript">
+	$(document).ready(function(){
+		if($(".nav-item a.active").parents('.nav-group-sub').parent().hasClass('nav-item-submenu')){
+			$(".nav-item a.active").parents('.nav-item-submenu').addClass('nav-item-expanded nav-item-open');
+		}
+	});
 	function confirmmessage(text,redirect){
 			swal({
 			    title: text,

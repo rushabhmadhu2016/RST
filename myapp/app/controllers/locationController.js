@@ -211,63 +211,27 @@ exports.allProperties = async function (req, res) {
     let usersIds = [];
     let category_filter = {};
 	let filters = {};
-	console.log("welcome to allProperties");
- 	
- 	let properties = await Property.find({}).populate({path: 'user',
-      model: 'User', select: 'first_name last_name mail'}).populate({path: 'category',
-      model: 'Category'}).exec();
-	console.log(properties);
-	res.send(properties);
-    /*
-    properties.forEach(function (property) {
-        propertyList.push(property);
-        usersIds.push(parseInt(property.user));
-    });
-	
 	if(req.query.category_filter) {	filters.category_filter=req.query.category_filter;	}
-	let properties = await Property.find({}).populate('category').then();
-    properties.forEach(function(data){
-    	console.log(data);
-    })
-    process.exit();
 
-	/*if(req.query.category_filter) {	filters.category_filter=req.query.category_filter;	}
-    let categories = await Category.find({});
-    categories.forEach(function (category) {
-        categoryList[category.id] = category;
-    });
+	console.log("welcome to allProperties");
+ 	let properties = await Property.find({}).populate({path: 'user',
+      model: 'User',select: 'first_name last_name mail contact_number'}).populate({path: 'category',
+      model: 'Category',select: 'category_name id'}).populate({path: 'category',
+      model: 'Review'}).exec();
 
-
-    let properties = await Property.find({});
-    properties.forEach(function (property) {
-        propertyList.push(property);
-        usersIds.push(parseInt(property.user));
-    });
->>>>>>> a6b634d21a4dd54cb40bdb28d908a17f88225490
-
-
-    let users = await User.find({ 'id': { $in: usersIds } });
-    let usersList = [];
-    users.forEach(function (user) {
-        usersList[user.id] = [];
-        usersList[user.id]["first_name"] = user.first_name;
-        usersList[user.id]["last_name"] = user.last_name;
-        usersList[user.id]["mail"] = user.last_name;
-        usersList[user.id]["contact_number"] = user.contact_number;
-    });
-    // console.log(categoryList);
-    // //console.log(propertyList);
-    // //console.log(usersList);
-
+    //Get Categories Data
+    var categories = await Category.find();
+	categories.forEach(function(category) {
+		categoryList[category.id]=category;
+	}); 
+	
     res.render('admin/allProperties.ejs', {
         error: req.flash("error"),
         success: req.flash("success"),
-        categories: categoryList,
-        userLists: usersList,
-        properties: propertyList,
+        categories: categoryList,        
+        properties: properties,
         filters: filters
-<<<<<<< HEAD
-    }); */
+    }); 
 }
 
 function getUsers(categoryList,propertyList, usersIds,req,res,filters){
