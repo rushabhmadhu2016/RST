@@ -521,22 +521,19 @@ exports.storePropertyListing = async function(req, res) {
 			});
 
 		    console.log(uploaded_files);
-		    let categoriesList = [];
 		    let categories = await Category.find({_id: req.body.categories});
 		    let categories_ids = [];
 		    categories.forEach(function(cat){
 		    	categories_ids.push(cat.id);
-		    	categoriesList.push(cat.category_name);
 		    });
 		    
-		    let properties = await Property.find({}).sort([['id', 'descending']]).limit(1);
+		    let properties = await Property.find().sort([['id', 'descending']]).limit(1).exec();
 		    
 		    properties.forEach(function (propertydata) {
 		    	var newProperty = new Property();
 				var day = getDate();
-
-		    if(propertydata.length>0){		    	
-		    	newProperty.id = propertydata[0].id+1;
+		    if(propertydata){		    	
+		    	newProperty.id = propertydata.id+1;
 		    }else{
 		    	newProperty.id = 1;
 		    }		    

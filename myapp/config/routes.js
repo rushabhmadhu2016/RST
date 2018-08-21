@@ -207,12 +207,13 @@ module.exports = function (app, passport) {
     app.post('/admin/review/cancelFlaggedReview', ReviewController.cancelFlaggedReview);
     app.post('/admin/review/removeReviewReply', ReviewController.removeReviewReply);
     app.post('/admin/setprofesstionalbadge', AdminHomeController.loggedIn, HomeController.setProfesstionalBadge);    
-    /**/
-     /*Newly Added routes*/
+
+    /*Newly Added routes*/
     app.get('/user/:userid/profile', HomeController.showUserProfile);
     app.get('/business-memberships', BusinessController.getMembershipData);
     app.get('/business-plans/:plan_id/purchase', BusinessController.purchaseMembershipPlan);
     app.get('/buy-token', BusinessController.buyTokens);
+
 }
 /*    
 app.post('/admin/login', function (req, res) {

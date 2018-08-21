@@ -14,7 +14,7 @@
    <div class="row">
      <div class="col-md-8 offset-md-2">
        <div class="panel panel-default listing-page-inner">
-         <div class="panel-heading">EDIT PROFILE</div>
+         <div class="panel-heading">USER PROFILE</div>
            <div class="panel-body">
              <% include frontend/template/error %>
              <form role="form" action="/updateprofile" role="form" method="post" class="login-form edit-profile" <%if(session.user.user_type==2){%>name="businessprofileform"<%}else{%>name="userprofileform"<%}%>>

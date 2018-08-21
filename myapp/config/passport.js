@@ -51,6 +51,7 @@ module.exports = function(passport) {
             User.find().sort([['id', 'descending']]).limit(1).exec(function(err, userdata) { 
             var newUser = new User();
             var day = getDate(); 
+          
             var default_membership = '5b769e924d45a03cc19255cc';
             var id = crypto.randomBytes(3).toString('hex');
             User.findOne ({'wallet_id' : id }, function(err, user) {
@@ -78,14 +79,21 @@ module.exports = function(passport) {
                         newUser.postcode = req.body.business_postcode;
                         newUser.contact_number = req.body.business_contact;
                         newUser.business_name = req.body.business_name;
+                        newUser.business_address1 = req.body.address1;
+                        newUser.business_address2 = req.body.address2;
+                        newUser.business_contact_number = req.body.business_contact;
                     }else{
                         var email_type = 2;
                     }
+                    if(req.body.user_type==1){
+                        newUser.membership = default_membership;
+                    }else{
+                        newUser.membership = [];
+                    }
+                    newUser.token_balance = 100;
                     newUser.ip_address = req.ip;                    
                     newUser.is_influencer = 0;
-                    newUser.wallet_balance = 0;
                     newUser.wallet_id = id;
-                    newUser.membership = default_membership;
                     newUser.badges = [];
                     newUser.auto_renew = 1;
                     newUser.created_date = day;
