@@ -211,6 +211,7 @@ module.exports = function (app, passport) {
     /**/
     /*Newly Added routes*/
     app.get('/user/:userid/profile', HomeController.showUserProfile);
+    
 }
 /*    
 app.post('/admin/login', function (req, res) {

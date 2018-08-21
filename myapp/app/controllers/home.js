@@ -21,6 +21,7 @@ exports.showUserProfile = async function(req, res, next){
 	res.send(userData);	
 }
 
+
 exports.isLoggedIn = function(req, res, next){
 	if (req.session.user) { // req.session.passport._id
 		if(req.session.user.user_type==3){
