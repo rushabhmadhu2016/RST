@@ -593,10 +593,20 @@ exports.storePropertyListing = async function(req, res) {
 
 
 exports.updatePropertyListing = function(req, res) {
-	
+	var categoryIds = [];
+	if(req.body.categories.length==1){
+		categoryIds.push(parseInt(req.body.categories));
+	}else{
+		var cats = req.body.categories;
+		cats.forEach((cat) => {
+			categoryIds.push(parseInt(cat));
+		});
+	}	
+
 	if(req.body.property_name.length!=0 && req.body.categories!=undefined){
 		var merge_img;
 		var update_merge;
+		
 
 	if(req.files){		
 		var uploaded_files;
@@ -615,7 +625,6 @@ exports.updatePropertyListing = function(req, res) {
 		if(req.body.images!=undefined){
 			var delete_prop_images = exist_image.join();
 		}
-
 		
 		if(req.body.images==undefined && uploaded_arr.length==1 && uploaded_arr[0]==''){
 			merge_img = [];
@@ -627,19 +636,17 @@ exports.updatePropertyListing = function(req, res) {
 		}else{
 			merge_img = uploaded_arr.concat(req.body.images);
 		}
-		update_merge = merge_img.join();
-		
-	}
-	
-	Property.findOne({ 'id' :  req.body.property_id }, function(err, prop) {	
+		update_merge = merge_img.join();		
+	}	
+
+	Property.findOne({ 'id' :  parseInt(req.body.property_id) }, function(err, prop) {	
 	if(err){
 		console.log("error"+err);
 		req.flash('error','Error : something is wrong while update Location');
 		res.redirect('/errorpage');
 	}else{
-		if (prop) {
-
-			var db_property_id = prop.id;
+		if (prop) {		
+			var db_property_id	= prop.id;
 			var db_property_name = prop.property_name;
 			var db_address1 = prop.address1;
 			var db_address2 = prop.address2;
@@ -651,9 +658,6 @@ exports.updatePropertyListing = function(req, res) {
 			if(req.body.images!=undefined){
 				for (var i = 0; i < db_images.length; i++) {
 					if((delete_prop_images.indexOf(db_images[i])) == (-1)){
-						console.log(db_images[i]);
-
-
 						if(fs.existsSync('public/uploads/'+db_images[i])){
 							fs.unlink('public/uploads/'+db_images[i], (err) => {
 								if (err){
@@ -698,68 +702,71 @@ exports.updatePropertyListing = function(req, res) {
 							  	}
 							});
 						}
-
 					}
 				}
 			}
-			
-
-			//if(db_property_name==req.body.property_name.trim() && db_categories==req.body.categories)
-			if(db_property_id==req.body.property_id && db_property_name==req.body.property_name.trim() && db_address1==req.body.address1.trim() && db_address2==req.body.address2.trim() && db_post_code==req.body.postcode.trim())
+	
+			db_post_code = (typeof(db_post_code) =="undefined") ? "" : db_post_code;
+			if(db_post_code.length==0){
+				db_post_code = "";
+			}			
+			var categoryHashIds = [];
+			Category.find({'id': {$in:categoryIds}}, function(err, result){
+				result.forEach(function(categoryData){
+					categoryHashIds.push(categoryData._id);
+				});			
+			if(db_property_id==parseInt(req.body.property_id) && db_property_name==req.body.property_name.trim() && db_address1==req.body.address1.trim() && db_address2==req.body.address2.trim() && db_post_code==req.body.postcode.trim())
 			{
-				Property.findOne({id:req.body.property_id}, function(err, updateProperty) {
-        					if(err){
-								req.flash('success', 'Oops. Something went wrong while update listing');
-						        console.log('error');
-        					}else{
-
-        						var day = getDate();
-							    updateProperty.property_name = req.body.property_name.trim();
-							    updateProperty.address1 = req.body.address1.trim();
-							    updateProperty.address2 = req.body.address2.trim();
-							    //updateProperty.category_id = req.body.categories;
-							    updateProperty.category = req.body.categories;
-							    updateProperty.category_id = req.body.categories;
-							    updateProperty.property_desc = req.body.property_desc.trim();
-							    updateProperty.property_images = update_merge;
-							    updateProperty.post_code = req.body.city;
-							    updateProperty.city = req.body.country;
-							    updateProperty.country = req.body.postcode;
-							    updateProperty.updated_date = day;
-							    updateProperty.save(function(err) {
-					                if (err){
-						                req.flash('error', 'Oops. Something went wrong..');
-						                console.log('error');
-					           		}
-				            		else
-				            		{				            			
-				                		req.flash('success', 'Location updated successfully.');
-				                		console.log('same value success');
-				                		res.redirect('/myListing');
-				                	}
-					            });
-			            	}
-			        	});
+				Property.findOne({id:parseInt(req.body.property_id)}, function(err, updateProperty) {
+					if(err){
+						req.flash('success', 'Oops. Something went wrong while update listing');
+				        console.log('error');
+					}else{
+						var day = getDate();
+					    updateProperty.property_name = req.body.property_name.trim();
+					    updateProperty.address1 = req.body.address1.trim();
+					    updateProperty.address2 = req.body.address2.trim();							    
+					    updateProperty.category = categoryHashIds;
+					    updateProperty.category_id = categoryIds;
+					    updateProperty.property_desc = req.body.property_desc.trim();
+					    updateProperty.property_images = update_merge;
+					    updateProperty.post_code = req.body.city;
+					    updateProperty.city = req.body.country;
+					    updateProperty.country = req.body.postcode;
+					    updateProperty.updated_date = day;
+					    updateProperty.save(function(err) {
+			                if (err){
+				                req.flash('error', 'Oops. Something went wrong..');
+				                console.log('error');
+			           		}
+		            		else
+		            		{				            			
+		                		req.flash('success', 'Location updated successfully.');
+		                		console.log('same value success');
+		                		res.redirect('/myListing');
+		                	}
+			            });
+	            	}
+	        	});
 			}
-			else{
-				Property.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i'),address1: new RegExp('^' +req.body.address1.trim() + '$', 'i'),address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),post_code: new RegExp('^' +req.body.postcode.trim() + '$', 'i')}, function(err, property) {
+			else{				
+				Property.find({property_name: new RegExp('^' +req.body.property_name.trim() + '$', 'i'),address1: new RegExp('^' +req.body.address1.trim() + '$', 'i'),address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),post_code: new RegExp('^' +req.body.postcode.trim() + '$', 'i')}, function(err, property) {			 	
 				if (property.length>0){
-        				console.log("Property data"+property.length);
         				req.flash('error', 'Location already exists');
                 		res.redirect('/myListing');
         			}
         			else{
-        				Property.findOne({id:req.body.property_id}, function(err, updateProperty) {
+        				Property.findOne({id:parseInt(req.body.property_id)}, function(err, updateProperty) {
         					if(err){
 								req.flash('success', 'Oops. Something went wrong while update listing');
 						        console.log('error');
-        					}else{
+        					}else{        						
         						var day = getDate();
 							    updateProperty.property_name = req.body.property_name.trim();
 							    updateProperty.address1 = req.body.address1.trim();
 							    updateProperty.address2 = req.body.address2.trim();
-							    updateProperty.category = req.body.categories;
-							    updateProperty.category_id = req.body.categories;
+							    updateProperty.category = categoryHashIds;
+							    updateProperty.category_id = categoryIds;
 							    updateProperty.property_desc = req.body.property_desc.trim();
 							    updateProperty.property_images = update_merge;
 							    updateProperty.updated_date = day;
@@ -768,20 +775,21 @@ exports.updatePropertyListing = function(req, res) {
 							    updateProperty.country = req.body.country;
 							    updateProperty.save(function(err) {
 				                if (err){
-					                req.flash('error', 'Oops. Something went wrong..');
+				                	req.flash('error', 'Oops. Something went wrong..');
+				                	res.redirect('/errorpage');
 					           	}
 				            	else
 				            	{
 				                	req.flash('success', 'Location updated successfully.');
-				                	console.log('success');
-				                	res.redirect('/myListing');
+			                		res.redirect('/myListing');
 				                }
 					            });
 			            	}
 			        	});
         			}
 				});
-			}			
+			}
+			});			
 			} 
 		}	
 	});
@@ -789,8 +797,7 @@ exports.updatePropertyListing = function(req, res) {
 	else{
 		req.flash('error', 'Oops. Something went wrong..');
 		res.redirect('/myListing');
-	}
-		
+	}		
 }
 
 exports.showClaimPendingProperties = function(req, res) {
