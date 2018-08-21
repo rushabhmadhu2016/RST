@@ -38,7 +38,7 @@ var BootstrapMultiselect = function() {
 
         // Custom empty text
         $('.multiselect-nonselected-text').multiselect({
-            nonSelectedText: 'Please choose'
+            nonSelectedText: 'Select Category'
         });
 
         // Select All option

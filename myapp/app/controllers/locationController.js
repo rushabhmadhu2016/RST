@@ -211,13 +211,30 @@ exports.allProperties = async function (req, res) {
     let usersIds = [];
     let category_filter = {};
 	let filters = {};
+	let status = [];	
+	if(req.query.filter1){ status.push(0);  filters.filter1=req.query.filter1;}
+	if(req.query.filter2){ status.push(1);	filters.filter2=req.query.filter2;}
+	if(req.query.filter3){ status.push(2);	filters.filter3=req.query.filter3;}
 	if(req.query.category_filter) {	filters.category_filter=req.query.category_filter;	}
+	if(Object.keys(req.query).length == 0){
+		status=[0,1,2,3];
+	}
+	if(Object.keys(req.query).length == 1 && req.query.category_filter){
+		status=[0,1,2,3];
+	}
+	if(Object.keys(req.query).length == 1 && status.length==0){
+		status=[0,1,2,3];
+	}	
+	
+	if(Object.keys(filters).length>0 && filters.category_filter){
+		category_filter.id=filters.category_filter;
+	}
+	console.log(status);
 
 	console.log("welcome to allProperties");
- 	let properties = await Property.find({}).populate({path: 'user',
+ 	let properties = await Property.find({'status':{$in:status}}).populate({path: 'user',
       model: 'User',select: 'first_name last_name mail contact_number'}).populate({path: 'category',
-      model: 'Category',select: 'category_name id'}).populate({path: 'category',
-      model: 'Review'}).exec();
+      model: 'Category',select: 'category_name id'}).exec();
 
     //Get Categories Data
     var categories = await Category.find();

@@ -2,9 +2,12 @@
   <script src="../global_assets/js/plugins/tables/datatables/datatables.min.js"></script>
   <script src="../global_assets/js/plugins/tables/datatables/extensions/responsive.min.js"></script>
   <script src="../global_assets/js/plugins/forms/selects/select2.min.js"></script>
-
+  <script src="../global_assets/js/plugins/forms/styling/uniform.min.js"></script>
+  <script src="../global_assets/js/plugins/forms/selects/bootstrap_multiselect.js"></script>
   <script src="../assets/js/app.js"></script>
   <script src="../global_assets/js/demo_pages/datatables_responsive.js"></script>
+  <script src="../global_assets/js/demo_pages/form_multiselect.js"></script>
+  <script src="../global_assets/js/demo_pages/form_checkboxes_radios.js"></script>
 <% include template/subheader %>
 <!-- Page header -->
   <div class="page-header page-header-light">
@@ -32,11 +35,49 @@
   <div class="content">
     <% include template/flashmessage %>
     <div class="card">
+      <div class="card-body">
+        <form name="location_filters" id="location_filters">
+          <div class="row">
+              <div class="form-check col-md-2">
+                <label class="form-check-label" for="filter1">
+                  <input type="checkbox" name="filter1" id="filter1" <% if(filters.filter1){ %> checked <% } %> class="form-check-input-styled-info" data-fouc>
+                  Pending
+                </label>
+              </div>
+              <div class="form-check col-md-2">
+                <label class="form-check-label" for="filter2">
+                  <input type="checkbox" name="filter2" id="filter2" <% if(filters.filter2){ %> checked <% } %> class="form-check-input-styled-success" data-fouc>
+                  Activated
+                </label>
+              </div>
+              <div class="form-check col-md-2">
+                <label class="form-check-label" for="filter3">
+                  <input type="checkbox" name="filter3" id="filter3" <% if(filters.filter3){ %> checked <% } %> class="form-check-input-styled-danger" data-fouc>
+                  Deactivated
+                </label>
+              </div>
+              <div class="col-md-4">
+                      <select name="category_filter" id="category_filter" class="form-control multiselect-nonselected-text" multiple="multiple" data-fouc>
+                        <% categories.forEach((category) => { %>
+                      <option value="<%=category.id%>" 
+                        <% if(filters.category_filter && filters.category_filter==category.id){ %> selected <% } %> > <%=category.category_name%> </option>
+                    <% }) %>
+                      </select>
+              </div>
+              <div class="col-md-2">
+                <div>
+                  <button type="submit" class="btn btn-primary btn-sm" id="filterApplyBtn">Apply <i class="icon-filter4 ml-2"></i></button>
+                </div>
+              </div>
+          </div>
+        </form>
+      </div>
           <table class="table datatable-responsive">
             <thead>
               <tr>
                 <th>Sr. No</th>
                 <th>Business Name</th>
+                <th>Category</th>
                 <th>Contact Number</th>
                 <th>Email</th>
                 <th>Business Owner</th>
@@ -52,6 +93,13 @@
               <tr>
                 <td><%= i++ %></td>
                 <td><%= property.property_name%></td>
+                <%
+                 var categoryList = [];
+                 if(property.category){
+                  (property.category).forEach((category) => { 
+                    categoryList.push(' '+category.category_name);                   
+                 }); } %>
+                <td><%= categoryList.join()%></td>
                 <td><%= property.user.contact_number%></td>
                 <td><%= property.user.mail%></td>
                 <td><%= property.user.first_name+' '+property.user.last_name%></td>
@@ -72,19 +120,19 @@
 
                     <% if(property.status==0) { %>
 
-                    <a href="javascript:void(0)" class="list-icons-item text-success-600" data-popup="tooltip" title="Approve Location" data-container="body" onclick="confirmmessage('Are you sure you want to approve this location?','/admin/businessuser/approve?id=<%=property.id%>')">
-                      <i class="icon-user-check"></i>
+                    <a href="javascript:void(0)" class="list-icons-item text-success-600" data-popup="tooltip" title="Approve Location" data-container="body" onclick="confirmmessage('Are you sure you want to approve this location?','/admin/approve-location/?id=<%=property.id%>')">
+                      <i class="icon-checkmark-circle"></i>
                     </a>
                          <% }else if(property.status==1) { %>
 
-                      <a href="javascript:void(0)" class="list-icons-item text-danger-600" data-popup="tooltip" title="Suspend User" data-container="body" onclick="confirmmessage('Are you sure you want to suspend this user? ','/admin/businessuser/suspend?id=<%=property.id%>')">
-                      <i class="icon-user-block"></i>
+                      <a href="javascript:void(0)" class="list-icons-item text-danger-600" data-popup="tooltip" title="Deactivate Location" data-container="body" onclick="confirmmessage('Are you sure you want to deactivate this location? ','/admin/reject-location/?id=<%=property.id%>')">
+                      <i class="icon-close2"></i>
                     </a>
 
                          <% }else if(property.status==2) { %>
                       
-                      <a href="javascript:void(0)" class="list-icons-item text-success-600" data-popup="tooltip" title="Activate User" data-container="body" onclick="confirmmessage('Are you sure you want to activate this user? ','/admin/businessuser/activate?id=<%=property.id%>')">
-                      <i class="icon-user-check"></i>
+                      <a href="javascript:void(0)" class="list-icons-item text-success-600" data-popup="tooltip" title="Activate Location" data-container="body" onclick="confirmmessage('Are you sure you want to activate this location? ','/admin/approve-location/?id=<%=property.id%>')">
+                      <i class="icon-checkmark-circle2"></i>
                     </a>
                     <% } %>
                     </div>
@@ -97,23 +145,4 @@
   </div>
   <!-- /content area -->
 <% include template/subfooter%>   
-  <script type="text/javascript">
-      $(document).ready(function(){      
-        $("#category_filter").change(function(){       
-          $("#location_filters").submit();
-        });
-      });
-      function approveProperty(id){
-        confirmmessage('Are you sure you want to approve this location?','/admin/approve-location/?id='+id);
-      }
-
-      function rejectProperty(id){
-        confirmmessage('Are you sure you want to deactivate this location?','/admin/reject-location/?id='+id);
-      }
-
-      function activateProperty(id){
-        confirmmessage('Are you sure you want to activate this location?','/admin/approve-location/?id='+id);
-      }
-  </script>
 <% include template/footer%>
-      
