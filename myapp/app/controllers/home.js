@@ -16,9 +16,44 @@ var constants = require('../../config/constants');
 var dynamicmail  = require('../../app/controllers/dynamicMailController');
 
 exports.showUserProfile = async function(req, res, next){
+	var myparams = req.url;
+	var usersId;
+	var api_response = {};
+	if(myparams.indexOf('api')>0){
+		var calltype='api';
+		usersId = 1;
+	}else{
+		var calltype='web';
+		usersId = req.session.user.id;
+	}
+
 	var userid=parseInt(req.params.userid);
-	var userData = await User.find({'id':userid}).populate({path: 'membership',model: 'Membership',select: 'membership_title'})
-	res.send(userData);	
+	var userData = await User.find({'id':userid}).
+	populate({path: 'membership',model: 'Membership',select: 'membership_title'}).exec();
+	console.log(userData);
+
+	userData.forEach(function(profile) {
+		
+			if(calltype=='api'){
+				api_response.message='Profile retrived.';
+				api_response.code=200;
+				api_response.status=true;
+				api_response.profile=profile;
+				res.send(api_response);
+			}else{	
+				res.render('showUserProfile', {
+				error : req.flash("error"),
+				success: req.flash("success"),
+				session: req.session,
+				user: profile,
+				});				
+		    }
+				
+	});
+
+	//res.send(userData);
+		
+
 }
 
 
@@ -135,7 +170,8 @@ exports.showProfilePage = async function(req, res) {
 	});
 }
 
-exports.UpdateProfile = async function(req, res) {	
+exports.UpdateProfile = async function(req, res) {
+	let user = await User.find({id: req.session.user.id});	
 	user.forEach(function(profile){
 	if (profile){
 		profile.first_name = req.body.first_name;
