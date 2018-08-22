@@ -85,8 +85,9 @@ exports.getClaimedLocations = async function(req,res){
 	let usersData = await User.find({_id:{$in: user_ids}}).select('first_name last_name mail id');
 	var existingusers = [];
 	usersData.forEach(function(usr){
-		existingusers[usr._id]=usr;
+		existingusers[usr._id]=usr;		
 	});
+	console.log(existingusers);
 	claimedpropertiesData.forEach(function(cproperty) {
 		claimedLocation = {};
    		claimedLocation.id=cproperty.id;
@@ -94,12 +95,13 @@ exports.getClaimedLocations = async function(req,res){
    		claimedLocation.property_name=cproperty.property.property_name;
    		claimedLocation.category=cproperty.property.category_id;
    		claimedLocation.contact_number=cproperty.user.contact_number;
-   		claimedLocation.exiting_owner_id=cproperty.property.user_id;
+   		claimedLocation.exiting_owner_id=existingusers[cproperty.property.user._id].id;
    		claimedLocation.exiting_owner=existingusers[cproperty.property.user._id].first_name;
    		claimedLocation.mail=cproperty.user.mail;
    		claimedLocation.new_owner_id=cproperty.user_id;
    		claimedLocation.new_owner_name=cproperty.user.first_name+' '+cproperty.user.last_name;
    		claimedLocationsList.push(claimedLocation);
+   		console.log(claimedLocation.exiting_owner);
 	});
 	let category = await Category.find({});
 	categories = [];

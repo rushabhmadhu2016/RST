@@ -91,7 +91,7 @@
                               %>
                               <td><%=catname %></td>
                               %>
-                              <td><a href="userdetails?id=<%=property.exiting_owner_id%>"> <%=property.exiting_owner %></a></td>
+                              <td><a href="userdetails?id=<%=property.exiting_owner_id%>"> <%=property.exiting_owner %>111</a></td>
                               <td><a href="business-detail?id=<%=property.new_owner_id%>"> <%=property.new_owner_name %></a></td>
                               <td><a type="button" class="btn btn-success btn-sm" data-href="/admin/propertydetail?id=<%=property.id%>" data-id="<%=property.id%>" onclick="approveClaim(<%=property.id%>)">Accept</a>
                                 <a type="button" class="btn btn-success btn-sm" data-href="/admin/propertydetail?id=<%=property.id%>" data-id="<%=property.id%>" onclick="ignoreClaim(<%=property.id%>)">Ignore</a>

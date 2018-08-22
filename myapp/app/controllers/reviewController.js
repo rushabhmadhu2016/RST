@@ -1,10 +1,10 @@
 var numeral 	 = require('numeral');
 var bcrypt 		 = require('bcrypt-nodejs');
 var dateFormat   = require('dateformat');
-var models      = require('../../app/models/revstance_models');
+var models       = require('../../app/models/revstance_models');
 var User         = models.User;
 var Review 		 = models.Review;
-var FlaggedReview= models.FlaggedReview;
+var FlaggedReview= models.Flag;
 var Property 	 = models.Property;
 var Like   	     = models.Like;
 
@@ -222,7 +222,7 @@ exports.manageLike = function(req, res){
 		res.send({success:false});
 	}	
 }
-exports.getAllFlaggedReviews = function(req, res){	
+exports.getAllFlaggedReviews = async function(req, res){	
 	var propertyIds = [];
 	var propertyList=[];
 	var userList=[];
@@ -235,95 +235,32 @@ exports.getAllFlaggedReviews = function(req, res){
 	if(req.query.property_id){
 		filters.property_id=req.query.property_id;
 	}
-
-	FlaggedReview.find(filters, function(err, flaggedReviews){
-		if (err){
-			req.flash('error', 'Error : something is wrong in getting flagged reviews');
-			res.redirect('/admin/flagged-reviews');
-		}
-		flaggedReviews.forEach(function(fproperty){		
-			console.log(fproperty);	
-			propertyIds.push(fproperty.property_id);
-			userIds.push(fproperty.user_id);
-			console.log(fproperty.review_id);
-			reviewIds.push(fproperty.review_id);
+	console.log("welcome");
+	flaggedReviews =  await FlaggedReview.find().populate({'path':'user',
+      model: 'User',select: 'first_name last_name mail id'}).populate({'path':'property', model:'Property', select:'property_name id'}).populate({path:'review',model:'Review',select:'id review_rating user_location ip_address'});
+	let properties = await Property.find();
+	flaggedReviews.forEach(function(freview){
+			var freviewObj = {};
+			freviewObj.id = freview.id;
+			freviewObj.review_id = freview.review_id;
+			freviewObj.user_id = freview.user_id;
+			freviewObj.property_id = freview.property_id;
+			freviewObj.property_name = freview.property.property_name;
+			freviewObj.customer = freview.user.first_name+" "+freview.user.last_name;
+			freviewObj.mail = freview.user.mail;
+			freviewObj.rating = freview.review_rating;
+			freviewObj.review_text = freview.review.review_content;
+			freviewObj.user_location = freview.review.user_location;						
+			freviewObj.ip_address = freview.review.ip_address;
+			flaggedReviewList[freview.review_id]=freviewObj;
 		});
-		console.log("FlaggedReview length"+flaggedReviews.length);
-		Property.find({property_name: {$exists: true}, $where: "this.property_name.length > 0"}, function(err, allproperties) {
-			if (err){
-				req.flash('error', 'Error : something is wrong in getting locations from flagged reviews');
-				res.redirect('/admin/flagged-reviews');
-			}
-			allProperties = [];
-			allproperties.forEach(function(pr){
-				var propertyObj = {};
-				propertyObj.id=pr.id;
-				propertyObj.property_name=pr.property_name;
-				allProperties.push(propertyObj);
-			});
-		Property.find({id: { $in: propertyIds }}, function(err, properties) {
-			if (err){
-				req.flash('error', 'Error : something is wrong in getting locations from flagged reviews');
-				res.redirect('/admin/flagged-reviews');
-			}
-			console.log("Property length"+properties.length);
-			properties.forEach(function(pr){
-				propertyList[pr.id]=pr;
-			});
-			Review.find({id: {$in: reviewIds }}, function(err, reviews) {
-				if (err){
-					req.flash('error', 'Error : something is wrong in getting locations from flagged reviews');
-					res.redirect('/admin/flagged-reviews');
-				}
-				flaggedReviewList = [];
-				reviewList = [];
-				reviews.forEach(function(review){
-					reviewList[review.id] = review;
-					userIds.push(review.user_id);
-				});
-				console.log("reviews length"+reviews.length);
-				User.find({id: { $in: userIds }}, function(err, users) {
-					if (err){
-						req.flash('error', 'Error : something is wrong in getting locations from flagged reviews');
-						res.redirect('/admin/flagged-reviews');
-					}
-					users.forEach(function(usr){
-						userList[usr.id]=usr;
-					});
-					console.log("Users length"+users.length);
-					console.log("Total Flagged Review");
-					console.log(flaggedReviews);
-					flaggedReviews.forEach(function(freview){
-						var freviewObj = {};
-						freviewObj.id = freview.id;
-						freviewObj.review_id = freview.review_id;
-						freviewObj.user_id = freview.user_id;
-						freviewObj.property_id = freview.property_id;
-						freviewObj.property_name = propertyList[freview.property_id].property_name;
-						freviewObj.customer = userList[reviewList[freview.review_id].user_id].first_name+" "+userList[reviewList[freview.review_id].user_id].last_name;
-						freviewObj.mail = userList[reviewList[freview.review_id].user_id].mail;
-						freviewObj.rating = reviewList[freview.review_id].review_rating;
-						freviewObj.review_text = reviewList[freview.review_id].review_content;
-						freviewObj.user_location = reviewList[freview.review_id].user_location;						
-						freviewObj.ip_address = reviewList[freview.review_id].ip_address;
-						flaggedReviewList[freview.review_id]=freviewObj;
-					});
-					res.render('admin/allFlaggedReviews.ejs', {
-						error : req.flash("error"),
-						success: req.flash("success"),
-						flagged_reviews: flaggedReviewList,
-						properties: allProperties,
-						filters: filters,
-					});
-					});
-				});
-			});
+		res.render('admin/allFlaggedReviews.ejs', {
+			error : req.flash("error"),
+			success: req.flash("success"),
+			flagged_reviews: flaggedReviewList,
+			properties:properties,
+			filters: filters,
 		});
-	});
-
-	function getAverageReview(id){
-		return 3;
-	}
 }
 
 

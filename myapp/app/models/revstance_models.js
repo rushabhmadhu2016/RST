@@ -176,8 +176,11 @@ var FeaturedListing = mongoose.model('FeaturedListing', featuredListingSchema);
 var flaggedReviewSchema = mongoose.Schema({	
 	id: Number,
 	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	user_id: Number,
 	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }],
+	property_id: Number,
 	review: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
+	review_id: Number,
 	status: Number,
 	created_date: String
 });
