@@ -11,7 +11,7 @@ var FlaggedReview= models.Flag;
 /* Middleware Check for Admin Type User*/
 exports.loggedIn = function(req, res, next)
 {
-	if (req.session.user && req.session.user.user_type==3) { 
+	if (req.session.user && req.session.user.user_type==3) {
 		next();
 	} else {
 		res.redirect('/admin/login');
@@ -20,55 +20,36 @@ exports.loggedIn = function(req, res, next)
 
 
 /* Get User for Admin Side User Page*/
-exports.allUsers = function(req,res) {	
-	User.find({user_type:1}, function(err, users) {
-	    var usersList = [];
-	    var i=0;
+exports.allUsers = async function(req,res) {
+	let page=1;
+	let skip=0;
+	let usersList = [];
+	if(req.query.page){
+		page=parseInt(req.query.page)-1;
+		skip=page*10;
+	}
+	var filters = {};
+	let users = await User.find(filters).skip(skip).limit(10);
 	    users.forEach(function(user) {
 	      usersList.push(user);
-	    });	    
+	    });
 		res.render('admin/allUsers.ejs', {
 			error : req.flash("error"),
 			success: req.flash("success"),
 			users: usersList,
+			page: page,
 		});
-	});
 }
 
-// exports.testCall = function(req,res){	
-// 	var myparams = req.url;
-// 	if(myparams.indexOf('api')>0){
-// 		var calltype='api';
-// 	}else{
-// 		var calltype='web';
-// 	}
-// 	/*All Validation goes here - Start*/
-// 	if(calltype=='api'){
-// 		user = User.findOne({'id':1});
-// 	}else{
-// 		user = User.findOne({'id':1});
-// 	}
-// 	/*All Validation goes here - End*/
-// 	/*All Logic goes here - Start*/
-	
-
-// 	/*All Logic goes here - END*/
-// 	if(calltype=='api'){
-// 		res.send({"code":req.url});		
-// 	}else{
-// 		res.render();		
-// 	}
-// }
-
 /* Get Properties for Admin Side Location Page*/
-exports.allProperties = function(req,res){	
-	var categoryList = [];	    
+exports.allProperties = function(req,res){
+	var categoryList = [];
 	Category.find({}, function(err, categories) {
 	    categories.forEach(function(category) {
 	      categoryList[category.id]=category;
 	    });
 	    getProperties(categoryList,req,res);
-	});	
+	});
 }
 
 function getProperties(categoryList,req,res){
@@ -79,14 +60,14 @@ function getProperties(categoryList,req,res){
 		      	propertyList.push(property);
 		      	usersIds.push(property.user_id)
 			});
-			getUsers(categoryList,propertyList, usersIds,req,res);			
+			getUsers(categoryList,propertyList, usersIds,req,res);
 	});
 }
 
 function getUsers(categoryList,propertyList, usersIds,req,res){
 	var usersList = [];
 	User.find({'id':{ $in: usersIds }},function(err,users){
-		users.forEach(function(user) {	      	
+		users.forEach(function(user) {
 	      	usersList[user.id] = [];
 	      	usersList[user.id]["first_name"] = user.first_name;
 	      	usersList[user.id]["last_name"] = user.last_name;
@@ -100,7 +81,7 @@ function getUsers(categoryList,propertyList, usersIds,req,res){
 			userLists: usersList,
 			properties: propertyList
 		});
-	});	
+	});
 }
 
 /* Approve User form Admin Side*/
@@ -116,7 +97,7 @@ exports.approveBusinessUser = function(req,res){
   		if (!p){
     		req.flash('success', 'Could not find User');
   		}
-  		else 
+  		else
   		{   console.log(p);
     	    p.status = parseInt(2);
 		    p.save(function(err) {
@@ -131,7 +112,7 @@ exports.approveBusinessUser = function(req,res){
     		});
   		}
 	});
-	res.redirect('/admin/business-users');	
+	res.redirect('/admin/business-users');
 }
 
 exports.getUserDetails = function(req,res){
@@ -147,15 +128,15 @@ exports.getUserDetails = function(req,res){
   		if (!result){
     		req.flash('error', 'Could not find User');
   		}
-  		else 
+  		else
   		{
 			req.flash('success', 'User details found');
-  		}  	
+  		}
   		res.render('admin/userDetails.ejs', {
 			error : req.flash("error"),
 			success: req.flash("success"),
 			user: result,
-		});	
+		});
 	});
 }
 
@@ -164,7 +145,7 @@ exports.getBusinessUserDetails = function(req,res){
   		if (!user){
     		req.flash('error', 'Could not find User');
   		}
-  		else 
+  		else
   		{
 			req.flash('success', 'User details found');
   		}
@@ -181,7 +162,7 @@ exports.allBusinessUsers = function(req,res){
 	    var usersList = [];
 		var i=0;
 	    users.forEach(function(user) {
-	      usersList.push(user);	      
+	      usersList.push(user);
 	    });
 	  	res.render('admin/allBusinesUsers.ejs', {
 			error : req.flash("error"),
@@ -194,7 +175,7 @@ exports.allBusinessUsers = function(req,res){
 /* Get All Category List from Admin Side*/
 exports.allCategories = function(req,res){
 	Category.find({}, function(err, users) {
-	    var categoryList = [];	    
+	    var categoryList = [];
 	    users.forEach(function(user) {
 	      categoryList.push(user);
 	    });
@@ -246,13 +227,13 @@ exports.home = function(req, res) {
 						property_count: property_counts,
 						category_count: category_counts,
 						business_count: business_counts,
-						review_count: review_counts,						
+						review_count: review_counts,
 						regular_users : usersList,
 						business_users : bUsersList,
 				    	});
-						});					
 						});
-					});	
+						});
+					});
 				});
 			});
 		});
@@ -260,7 +241,7 @@ exports.home = function(req, res) {
 };
 
 exports.login = function(req, res) {
-	
+
 	var user_count = User.count({user_type: 2}, function(err, c) {
            console.log('Count is ' + c);
       });
@@ -286,7 +267,7 @@ exports.logout = function(req, res) {
 		req.session.destroy(function (err) {
 		res.redirect('/admin/login');
 		});
-	}    	
+	}
 }
 /* Approve Business User From Admin Side*/
 exports.approveBusinessUser = function(req, res) {
@@ -295,8 +276,8 @@ exports.approveBusinessUser = function(req, res) {
     		req.flash('error', 'Could not find user');
     		res.redirect('/admin/business-users');
   		}
-  		else 
-  		{  
+  		else
+  		{
     	    p.status = parseInt(2);
 		    p.save(function(err) {
 		    if (err){
@@ -305,7 +286,7 @@ exports.approveBusinessUser = function(req, res) {
 		    }
 		    else{
     		req.flash('success', 'Business approved successfully.');
-			res.redirect('/admin/business-users');	
+			res.redirect('/admin/business-users');
 			}
 		  });
   		}
@@ -318,8 +299,8 @@ exports.activateBusinessUser = function(req, res) {
     		req.flash('error', 'Could not find user');
     		res.redirect('/admin/business-users');
   		}
-  		else 
-  		{  
+  		else
+  		{
     	    p.status = parseInt(2);
 		    p.save(function(err) {
 		    if (err){
@@ -328,7 +309,7 @@ exports.activateBusinessUser = function(req, res) {
 		    }
 		    else{
     		req.flash('success', 'Business activated successfully.');
-			res.redirect('/admin/business-users');	
+			res.redirect('/admin/business-users');
 			}
 		  });
   		}
@@ -336,14 +317,14 @@ exports.activateBusinessUser = function(req, res) {
 }
 
 exports.suspendBusinessUser = function(req, res) {
-	console.log('a');	
+	console.log('a');
 	User.findOne({id:req.query.id}, function(err, p) {
   		if (!p){
     		req.flash('error', 'Could not find user');
     		res.redirect('/admin/business-users');
   		}
-  		else 
-  		{  
+  		else
+  		{
     	    p.status = parseInt(3);
 		    p.save(function(err) {
 		    if (err){
@@ -352,7 +333,7 @@ exports.suspendBusinessUser = function(req, res) {
 		    }
 		    else{
     		req.flash('success', 'Business suspended successfully.');
-			res.redirect('/admin/business-users');	
+			res.redirect('/admin/business-users');
 			}
 		  });
   		}
@@ -360,14 +341,14 @@ exports.suspendBusinessUser = function(req, res) {
 }
 /*Approve User from Admin Side*/
  exports.approveUser = function(req, res) {
-	console.log('a');	
+	console.log('a');
 	User.findOne({id:req.query.id}, function(err, p) {
   		if (!p){
     		req.flash('error', 'Could not find user');
     		res.redirect('/admin/users');
   		}
-  		else 
-  		{  
+  		else
+  		{
     	    p.status = parseInt(1);
 		    p.save(function(err) {
 		    if (err){
@@ -376,7 +357,7 @@ exports.suspendBusinessUser = function(req, res) {
 		    }
 		    else{
     		req.flash('success', 'User activated successfully.');
-			res.redirect('/admin/users');	
+			res.redirect('/admin/users');
 			}
 		  });
   		}
@@ -384,14 +365,14 @@ exports.suspendBusinessUser = function(req, res) {
 }
 /*Suspend User from Admin Side*/
 exports.suspendUser = function(req, res) {
-	console.log('a');	
+	console.log('a');
 	User.findOne({id:req.query.id}, function(err, p) {
   		if (!p){
     		req.flash('error', 'Could not find user');
     		res.redirect('/admin/users');
   		}
-  		else 
-  		{  
+  		else
+  		{
     	    p.status = parseInt(3);
 		    p.save(function(err) {
 		    if (err){
@@ -400,7 +381,7 @@ exports.suspendUser = function(req, res) {
 		    }
 		    else{
     		req.flash('success', 'User suspended successfully.');
-			res.redirect('/admin/users');	
+			res.redirect('/admin/users');
 			}
 		  });
   		}
