@@ -383,15 +383,24 @@ exports.showCreateListingPage = function(req, res) {
 }
 
 exports.deletePropertyListingPage = function(req,res){		
-	var id = req.param('property');	
-	console.log("deleted");
-
-	Properties.findOne({id:id,user_id: req.session.user.id}, function(err, property) {
-		var del_images = property.property_images.split(",");
-		
-		Properties.deleteOne({ 'id' :  id}, function(err){
-		console.log('Location deleted');
-
+	var id = parseInt(req.query.property);
+	console.log("PropertyId"+id);
+	var userId = req.session.user._id;
+	console.log("UserId"+userId);
+	Property.findOne({id:id,user: userId}, function(err, property) {
+		if(err){
+			console.log(err);
+			req.flash('success', 'Location deleted failed.');
+     		res.redirect('/myListing');
+		}
+		if(property==null){
+			console.log(err);
+			req.flash('success', 'Location deleted failed.');
+     		res.redirect('/myListing');	
+		}
+		console.log(property);
+		var del_images = property.property_images.split(",");		
+		Property.deleteOne({ 'id' :  id}, function(err){
 		if((property.property_images.length)!=0){
 			for (var i = 0; i < del_images.length; i++) {
 				console.log("Image Name :"+del_images[i]);
@@ -417,8 +426,7 @@ exports.deletePropertyListingPage = function(req,res){
 					});
 				}
 			}
-		}
-		
+		}		
 
 		Claims.deleteMany({ 'property_id' :  id}, function(err){
 			if(err){
@@ -427,7 +435,7 @@ exports.deletePropertyListingPage = function(req,res){
 			console.log('Claims deleted');			
 		});
 
-		Reviews.deleteMany({ 'property_id' :  id}, function(err){
+		Review.deleteMany({ 'property_id' :  id}, function(err){
 			if(err){
 				console.log('err');
 			}
@@ -440,7 +448,6 @@ exports.deletePropertyListingPage = function(req,res){
 			}
 			console.log('Review deleted');			
 		});
-
 	 	req.flash('success', 'Location deleted successfully');
      	res.redirect('/myListing');
 	});	
