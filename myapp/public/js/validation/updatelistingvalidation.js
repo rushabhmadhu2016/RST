@@ -24,6 +24,12 @@ $(function(){
                 maxlength:20,
 				normalizer: function(value) {return $.trim(value);}
 			},
+			area:{
+				required:true,
+				minlength:2,
+                maxlength:20,
+				normalizer: function(value) {return $.trim(value);}
+			},
 			postcode:{
 				required:true,
 				minlength: 3,
@@ -96,6 +102,11 @@ $(function(){
 				required:"Please enter area",
 				minlength: jQuery.validator.format("At least {0} characters required"),
                 maxlength: jQuery.validator.format("Maximum {0} characters allowed")
+			},
+			area:{
+				required:"Please enter area",
+				minlength: jQuery.validator.format("At least {0} characters required"),
+                maxlength: jQuery.validator.format("Maximum {0} characters allowed")	
 			},
 			postcode:{
 				required:"Please enter postcode",

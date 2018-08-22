@@ -495,8 +495,8 @@ exports.storePropertyListing = async function(req, res) {
 		var slug = slugify(req.body.property_name.trim());
 		slug = slug+"-"+randomstring.generate(5);
 	if(getProperty.length>0){
-		req.flash('error','Error : something is wrong while store Location');
-		res.redirect('/errorpage');
+		req.flash('error','Error : This location is already exist');
+		res.redirect('/addListing');
 
 		uploaded = req.files.map(function(value) {
 			return value.filename;
