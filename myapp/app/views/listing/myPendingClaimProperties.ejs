@@ -40,7 +40,7 @@
                             </div>
                             <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 white-card">
                                 <div class="card-info <% if(property.status==0){%>claimed-property<%}else if(property.status==1){%>claim-assignedother<%}else{%>claimed-rejected<%} %>">
-                                    <h3 class="card-title"><a href="location/location-details?id=<%=property.id%>"><%=property.property_name%></a></h3>
+                                    <h3 class="card-title"><a href="location/<%=property.slug%>/details"><%=property.property_name%></a></h3>
                                     <% var address = property.address1+property.address2%>
 
                                     <% if(address.length > 100){%>

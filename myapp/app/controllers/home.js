@@ -19,17 +19,20 @@ exports.showUserProfile = async function(req, res, next){
 	var myparams = req.url;
 	var usersId;
 	var api_response = {};
+	var userid=parseInt(req.params.userid);
 	if(myparams.indexOf('api')>0){
 		var calltype='api';
 		usersId = 1;
 	}else{
 		var calltype='web';
-		usersId = req.session.user.id;
+		usersId = userid;
 	}
-
-	var userid=parseInt(req.params.userid);
 	var userData = await User.find({'id':userid}).
 	populate({path: 'membership',model: 'Membership',select: 'membership_title'}).exec();
+	if(userData.length==0){
+		req.flash('error', 'Error : No such user found in system.');
+		res.redirect('/errorpage');
+	}
 	userData.forEach(function(profile) {		
 		if(calltype=='api'){
 			api_response.message='Profile retrived.';
@@ -794,7 +797,7 @@ exports.showPropertyDetailPage = async function(req, res) {
 
 	//get Particular property data
 	var slug = req.params.slug;
-	var properties = await Property.findOne({slug: slug}).exec(); 
+	var properties = await Property.find({slug: slug}).exec(); 
 	properties.forEach(function(property) {
 		
 	if(property==null || property.length==0){
