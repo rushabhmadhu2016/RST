@@ -15,6 +15,20 @@ var Membership   = models.Membership;
 var constants = require('../../config/constants'); 
 var dynamicmail  = require('../../app/controllers/dynamicMailController');
 
+exports.showUserMembership = async function(req, res, next) {
+	var memberships = await Membership.find({'status':parseInt(1)});
+	var profile = await User.findOne({'id':req.session.user.id}).
+	populate({path: 'membership',model: 'Membership',select: 'membership_title'}).exec();
+	console.log(memberships);
+	res.render('user_membership', {
+		error : req.flash("error"),
+		success: req.flash("success"),
+		session: req.session,
+		memberships: memberships,
+		user: profile,
+	});	
+}
+
 exports.showUserProfile = async function(req, res, next){
 	var myparams = req.url;
 	var usersId;
@@ -27,28 +41,26 @@ exports.showUserProfile = async function(req, res, next){
 		var calltype='web';
 		usersId = userid;
 	}
-	var userData = await User.find({'id':userid}).
+	var profile = await User.findOne({'id':userid}).
 	populate({path: 'membership',model: 'Membership',select: 'membership_title'}).exec();
-	if(userData.length==0){
+	if(!profile){
 		req.flash('error', 'Error : No such user found in system.');
 		res.redirect('/errorpage');
 	}
-	userData.forEach(function(profile) {		
-		if(calltype=='api'){
-			api_response.message='Profile retrived.';
-			api_response.code=200;
-			api_response.status=true;
-			api_response.profile=profile;
-			res.send(api_response);
-		}else{	
-			res.render('showUserProfile', {
-			error : req.flash("error"),
-			success: req.flash("success"),
-			session: req.session,
-			user: profile,
-			});				
-	    }				
-	});
+	if(calltype=='api'){
+		api_response.message='Profile retrived.';
+		api_response.code=200;
+		api_response.status=true;
+		api_response.profile=profile;
+		res.send(api_response);
+	}else{	
+		res.render('showUserProfile', {
+		error : req.flash("error"),
+		success: req.flash("success"),
+		session: req.session,
+		user: profile,
+		});				
+    }	
 }
 
 exports.isLoggedIn = function(req, res, next){

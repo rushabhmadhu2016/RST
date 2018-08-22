@@ -73,6 +73,7 @@ var categorySchema = mongoose.Schema({
 	status: Number,
 	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }], 
+	created_by: Number,
 	created_date: String,
 	updated_date: String	
 });
@@ -250,6 +251,7 @@ var membershipSchema = mongoose.Schema({
 	membership_title: String,
 	membership_cost: String,
 	status: Number,
+	token_limit: Number,
 	created_date: String,
 	updated_date: String
 });

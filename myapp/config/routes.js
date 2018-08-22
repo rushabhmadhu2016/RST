@@ -210,11 +210,11 @@ module.exports = function (app, passport) {
 
     /*Newly Added routes*/
     app.get('/user/:userid/profile', HomeController.showUserProfile);
-    app.get('/business-memberships', BusinessController.getMembershipData);
-    app.get('/business-plans/:plan_id/purchase', BusinessController.purchaseMembershipPlan);
-    app.get('/buy-token', BusinessController.buyTokens);
+    app.get('/business-memberships', HomeController.isLoggedIn, BusinessController.getMembershipData);
+    app.get('/business-plans/:plan_id/purchase',HomeController.isLoggedIn, BusinessController.purchaseMembershipPlan);
+    app.get('/buy-token',HomeController.isLoggedIn, BusinessController.buyTokens);
     app.get('/location/:slug/details', HomeController.showPropertyDetailPage);
-
+    app.get('/user-memberships', HomeController.isLoggedIn, HomeController.showUserMembership);
 }
 /*    
 app.post('/admin/login', function (req, res) {
