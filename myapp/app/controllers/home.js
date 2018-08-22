@@ -9,7 +9,7 @@ var Property 	= models.Property;
 var Category    = models.Category;
 var Review 		= models.Review;
 var Claims 		= models.Claim;
-var FlaggedReview= models.FlaggedReview;
+var FlaggedReview= models.Flag;
 var Like   	     = models.Like;
 var Membership   = models.Membership;
 var constants = require('../../config/constants'); 
@@ -830,7 +830,7 @@ function IsNumeric(input){
     return (RE.test(input));
 }
 
-exports.showPropertyDetailPage = function(req, res) {
+exports.showPropertyDetailPage = async function(req, res) {
 	var propertyDetails = {};
 	var keyword = req.query.id;
 	var page = req.query.page;
@@ -846,23 +846,22 @@ exports.showPropertyDetailPage = function(req, res) {
 		userId = req.session.user.id;
 	}
 	filter.keyword=keyword;
-	filter.category=category;		
-	Property.findOne({id:req.query.id}, function(err, property) {
-	if (err){
-		req.flash('error', 'Could not find location');		
-		backURL=req.header('Referer') || '/search';
-		res.redirect(backURL);
-	}
+	filter.category=category;
 
+	//get Particular property data
+	var properties = await Property.find({id: req.query.id}).exec(); 
+	properties.forEach(function(property) {
+		
 	if(property==null || property.length==0){
 		req.flash('error', 'Could not find location');
 		backURL=req.header('Referer') || '/search';
 		res.redirect(backURL);
 	}else {
 		console.log("Starts");
+		console.log(property.status);
 		if(property.status != 1){
 			if(req.session.user){
-				if(req.session.user.id!=property.user_id){				
+				if(req.session.user._id!=property.user){				
 					req.flash('error', 'Could not find location');
 					backURL=req.header('Referer') || '/search';
 					res.redirect(backURL);
@@ -874,21 +873,22 @@ exports.showPropertyDetailPage = function(req, res) {
 			}
 		}
 
-	propertyDetails.id = req.query.id; 
-	propertyDetails.property_name = property.property_name;
-	propertyDetails.address1 = property.address1;
-	propertyDetails.address2 = property.address2;
-	propertyDetails.property_desc = property.property_desc;
-	propertyDetails.user_id = property.user_id;
-	propertyDetails.status = property.status;
-	propertyDetails.created_date = property.created_date;
-	propertyDetails.property_images = property.property_images;
-	propertyDetails.property_images_count = property.property_images.split(',').length;
-	propertyDetails.category_id = property.category_id;
-	propertyDetails.post_code = property.post_code;
-	propertyDetails.city = property.city;
-	propertyDetails.country = property.country;
-	Claims.find({status:0, property_id:propertyDetails.id}, function(err, claimData) {		
+		propertyDetails.id = req.query.id; 
+		propertyDetails.property_name = property.property_name;
+		propertyDetails.address1 = property.address1;
+		propertyDetails.address2 = property.address2;
+		propertyDetails.property_desc = property.property_desc;
+		propertyDetails.user_id = property.user_id;
+		propertyDetails.status = property.status;
+		propertyDetails.created_date = property.created_date;
+		propertyDetails.property_images = property.property_images;
+		propertyDetails.category = property.category;
+		propertyDetails.category_id = property.category_id;
+		propertyDetails.post_code = property.post_code;
+		propertyDetails.city = property.city;
+		propertyDetails.country = property.country;
+
+		Claims.find({status:0, property_id:propertyDetails.id}, function(err, claimData) {		
 		if (err){
 			req.flash('error', 'Could not find claim detail for property.');
 			res.redirect('/admin/locations');
@@ -911,7 +911,7 @@ exports.showPropertyDetailPage = function(req, res) {
 			categories[cate.id]=(cate);
 		});
 		userIds = [];
-		userIds.push(property.user_id);
+		userIds.push(property.user);
 		Review.find({property_id: property.id}, function(err, reviewList){
 			if (err){
 				req.flash('error', 'review fetching error for selected location');
@@ -922,26 +922,30 @@ exports.showPropertyDetailPage = function(req, res) {
 			Review.find({property_id: property.id}).limit(perPage).skip(perPage * page).exec(function(err, reviewData) { 
 				propertyDetails.reviews=[];
 				reviewData.forEach(function(review){							
-					userIds.push(review.user_id);
+					userIds.push(review.user);
 				});			
-			User.find({'id':{ $in: userIds }}, function(err,users){
+			User.find({'_id':{ $in: userIds }}, function(err,users){
+				
 				if (err){
 					req.flash('error', 'property and review users fetching error for selected location');
 					res.redirect('/admin/locations');
 				}
 				var usersList=[];
 				users.forEach(function(user){
+
 					usersList[user.id]=user;
 				});
+				
+				console.log(users.user_type);
 				propertyDetails.property_images = property.property_images;
 				//propertyDetails.category_name = categories[property.category_id].category_name;
 				propertyDetails.category_name = getCategoryName(property.category_id,categories);
-				propertyDetails.user_type = usersList[propertyDetails.user_id].user_type;
-				propertyDetails.user_status = usersList[propertyDetails.user_id].status;
-				propertyDetails.contact_number = usersList[propertyDetails.user_id].contact_number;
-				propertyDetails.first_name = usersList[propertyDetails.user_id].first_name;
-				propertyDetails.last_name = usersList[propertyDetails.user_id].last_name;
-				propertyDetails.mail = usersList[propertyDetails.user_id].mail;
+				propertyDetails.user_type = users.user_type;
+				propertyDetails.user_status = users.status;
+				propertyDetails.contact_number = users.contact_number;
+				propertyDetails.first_name = users.first_name;
+				propertyDetails.last_name = users.last_name;
+				propertyDetails.mail = users.mail;
 				propertyDetails.total_reviews = counter;//post_code
 				propertyDetails.post_code = property.post_code;
 				propertyDetails.city = property.city;
@@ -965,7 +969,7 @@ exports.showPropertyDetailPage = function(req, res) {
 				});
 				propertyDetails.avg_review_rating = avg_review_rating / reviewList.length;
 				propertyDetails.review_types = review_types;
-				res.render('listing/propertyDetail.ejs', {
+			res.render('listing/propertyDetail.ejs', {
 					error : req.flash("error"),
 					success: req.flash("success"),
 					session: req.session,
@@ -980,13 +984,13 @@ exports.showPropertyDetailPage = function(req, res) {
 					claimId:claimId,
 					perPage:perPage
 				});
-				});
 			});
 		});
+		});
+		});
 	});
+	}
 	});		
-	}		
-});
 }
 
 exports.showSearchPage = async function(req, res) {
@@ -1025,22 +1029,31 @@ exports.showSearchPage = async function(req, res) {
 		filter.category_filter='';
 		categoriesListToSearch = {};
 	}	
-	var categoriesList = [];
-	var categories = await Category.find();
-	var claimData = await Claims.find();
+
+	//Get Claim Data
 	var claimDataProperies = [];
-    claimData.forEach(function(claim){
-    	claimDataProperies.push(claim.property_id);
-    });					    
+	var claimData = await Claims.find();
+	claimData.forEach(function(claim){
+		claimDataProperies.push(claim.property);
+	})
+	
+	//Get Categories Data
+    var categories = await Category.find();
+	categories.forEach(function(category) {
+		categoriesList[category.id]=category;
+	}); 
+
+	//Get Properties with User, Category and Reviews
 	propertiesCount = await Property.count({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, categoriesListToSearch, {status:1}]});
 	console.log(propertiesCount);
 	var counter = propertiesCount;
+
 	properties = await Property.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, categoriesListToSearch, {status:1}]}).limit(perPage).skip(perPage * page)
     .sort({ property_name: 'asc'}).populate({path: 'user',
       model: 'User',select: 'id first_name last_name user_type'}).populate({path: 'category',
       model: 'Category',select: 'category_name id'}).populate({path: 'category',
       model: 'Review'}).exec();
-    	properties.forEach(function(property) {	  					
+    	properties.forEach(function(property) {	  				
 			var propertyItem = {};
 			propertyItem.id = property.id;
 			propertyItem.status = property.status;

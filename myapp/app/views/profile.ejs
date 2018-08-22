@@ -141,7 +141,7 @@
                  <input type="text" class="form-control" id="point_balance" placeholder="Wallet ID" name="point_balance" value="<%= user.point_balance %>" readonly="readonly">                 
                 </div>
 
-                <%if(user.membership){%>
+                <%if(membership==null){%>
                 <div class="form-group form-group-material">
                    <label class="control-label animate" for="membership">Current Membership</label>
                  <input type="text" class="form-control" id="membership" placeholder="No Membership Plan" value="No Membership Plan" name="membership" readonly="readonly">                 
