@@ -123,6 +123,9 @@
                     <a href="javascript:void(0)" class="list-icons-item text-success-600" data-popup="tooltip" title="Approve Location" data-container="body" onclick="confirmmessage('Are you sure you want to approve this location?','/admin/approve-location/?id=<%=property.id%>')">
                       <i class="icon-checkmark-circle"></i>
                     </a>
+                    <a href="javascript:void(0)" class="list-icons-item text-danger-600" data-popup="tooltip" title="Reject Location" data-container="body" onclick="confirmmessage('Are you sure you want to reject this location?','/admin/approve-location/?id=<%=property.id%>')">
+                      <i class="icon-cancel-circle2"></i>
+                    </a>
                          <% }else if(property.status==1) { %>
 
                       <a href="javascript:void(0)" class="list-icons-item text-danger-600" data-popup="tooltip" title="Deactivate Location" data-container="body" onclick="confirmmessage('Are you sure you want to deactivate this location? ','/admin/reject-location/?id=<%=property.id%>')">

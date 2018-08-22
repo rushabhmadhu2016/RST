@@ -117,11 +117,13 @@ exports.updateCategoryPage = function(req, res) {
 			res.redirect('/errorpage');
 		}
 		else{
+			console.log('test');
 			if (!p){
             req.flash('error', 'Category Not Found..');
         	}
 	        else 
 	        {   
+	        	console.log('test1');
 	        	var existing = p.category_name;
 	        	if(existing!=req.body.category_name)
 	        	{
@@ -131,11 +133,13 @@ exports.updateCategoryPage = function(req, res) {
 	                		res.redirect('/admin/categories');
 	        			}
 	        			else{
+	        				console.log('test2');
 	        				Category.findOne({id:req.body.category_id}, function(err, cate) {
 	        					if(err){
 									req.flash('success', 'Oops. Something went wrong..');
 							        console.log('error');
 	        					}else{
+	        						console.log('test3');
 	        						cate.category_name = req.body.category_name;
 				            		cate.save(function(result) {
 						                if (result){

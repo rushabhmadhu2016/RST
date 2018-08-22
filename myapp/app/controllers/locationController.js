@@ -3,6 +3,7 @@ var bcrypt = require('bcrypt-nodejs');
 var dateFormat = require('dateformat');
 var mongoose = require ('mongoose');
 var models      = require('../../app/models/revstance_models');
+var dynamicmail  = require('../../app/controllers/dynamicMailController');
 var User = models.User;
 var Category = models.Category;
 var Property = models.Property;
@@ -187,19 +188,39 @@ exports.approveLocation = function(req, res) {
   		}
   		else 
   		{   
+  			var property_user = p.user;
     	    p.status = parseInt(1);
 		    p.save(function(err) {
-		    if (err){
-	    	    req.flash('error', 'Could not find location');
-		    }
-		    else{
-		    	if(currentStatus==0){
-		    		req.flash('success', 'Location approved successfully.');
-		    	}else{		    		
-    				req.flash('success', 'Location activated successfully.');
-		    	}
-				res.redirect('/admin/locations');	
-			}
+			    if (err){
+		    	    req.flash('error', 'Could not find location');
+		    	    res.redirect('/errorpage');
+			    }
+			    else{
+			    	User.findOne({_id:property_user}, function(err, userdata){
+			    		console.log(userdata);
+
+			    		if(!userdata){
+			    			req.flash('error', 'Error in fetching userdetail');
+	    					res.redirect('/admin/locations');
+			    		}else{
+					    	if(currentStatus==0){
+
+					    		var sendmail = {
+				            		receiver_name: userdata.first_name,
+				            		receiver_email: userdata.mail,
+				            		email_type: 6
+				            	}
+
+		            			dynamicmail.sendMail(sendmail);
+		            			
+					    		req.flash('success', 'Location approved successfully.');
+					    	}else{		    		
+			    				req.flash('success', 'Location activated successfully.');
+					    	}
+							res.redirect('/admin/locations');	
+			    		}
+			    	})
+				}
 		    });
   		}
 	});

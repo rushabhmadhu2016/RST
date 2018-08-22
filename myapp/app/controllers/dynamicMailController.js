@@ -72,6 +72,11 @@ exports.sendMail = function(data) {
 				    	email_body = email_body.replace('{contact_subject}',data.contact_subject);
 				    	email_body = email_body.replace('{contact_desc}',data.contact_desc);
 				        break;
+				    case 6:
+				    	console.log('Location Approval Mail on Admin Approval');
+				    	var mail_content = emailData.email_message;
+				    	email_body = mail_content.replace('{user_name}',data.receiver_name);
+				        break;
 				    default:
 				    	console.log('default switch case');
 				        break;
