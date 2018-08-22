@@ -90,6 +90,8 @@ var propertySchema = mongoose.Schema({
 	category_id: [Number],
 	property_desc: String,
 	property_images: String,
+	property_id : Number,
+	user_id: Number,
 	business_key: String,
 	user: { type: Schema.Types.ObjectId, ref: 'User' },
 	bounty: [{ type: Schema.Types.ObjectId, ref: 'Bounty' }],

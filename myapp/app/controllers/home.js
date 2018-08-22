@@ -171,6 +171,7 @@ exports.showProfilePage = async function(req, res) {
 }
 
 exports.UpdateProfile = async function(req, res) {
+	
 	let user = await User.find({id: req.session.user.id});	
 	user.forEach(function(profile){
 	if (profile){
@@ -185,6 +186,7 @@ exports.UpdateProfile = async function(req, res) {
 		profile.address1 = req.body.address1;
 		profile.address2 = req.body.address2;
 		profile.area = req.body.area;
+		profile.auto_renew = Boolean(req.body.auto_renew);
 		profile.city = req.body.city_name;
 		profile.country = req.body.country_name;
 		profile.postcode = req.body.post_code;

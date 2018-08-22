@@ -3,7 +3,67 @@
  <html lang="en">
    <head>
      <% include frontend/template/head %>
-     
+     <style>
+     /* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+   </style>
    </head>
    <body>
      <!-- Navigation -->
@@ -52,15 +112,26 @@
                    <label class="control-label animate" for="dob">Date Of Birth</label>
                    <input type="date" class="form-control" id="dob" name="dob" value="<%= user.dob %>">
                  </div>
-
+                
+                  <%if(!user.gender){%>
                  <div class="form-group form-group-material">
                   <label class="control-label animate" for="gender">Gender</label><br/>
-                  
-                  <input type="radio" class="styled" id="gender_type1" name="gender" value="Male">Male &nbsp;&nbsp;
-               
+                  <input type="radio" class="styled" id="gender_type1" name="gender" value="Male">Male 
                    <input type="radio" class="styled" id="gender_type2" name="gender" value="Female">Female
-                  
                  </div>
+                <%}else{%>
+                <div class="form-group form-group-material">
+                  <label class="control-label animate" for="gender">Gender</label><br/>
+                  <% if(user.gender == "Male"){ %>
+                  <input type="radio" class="styled" id="gender_type1" name="gender" checked>Male 
+                  <input type="radio" class="styled" id="gender_type2" name="gender">Female
+                  <%}else{%>
+                   <input type="radio" class="styled" id="gender_type1" name="gender">Male 
+                   <input type="radio" class="styled" id="gender_type2" name="gender" checked>Female
+                  <%}%>
+                 </div>
+                   <%}%>
+
  
                  <div class="form-group form-group-material">
                    <label class="control-label animate" for="contact_number">Contact Number<%if(session.user.user_type==2){%>*<% }%></label>
@@ -78,11 +149,22 @@
                  </div>
 
                  <div class="form-group form-group-material">
+                   <label class="control-label animate" for="badges">Badges</label>
+                   <input type="text" class="form-control" id="badges" placeholder="Badges" name="badges" readonly="readonly" value="<%= user.badges %>">
+                 </div>
+
+                 <div class="form-group form-group-material">
                    <label class="control-label animate" for="profile_photo">Profile Photo</label>
                    <input type="file" class="form-control" id="profile_photo" name="profile_photo" value="<%= user.profile_photo %>">
                  </div>
 
-                 
+                 <%if(session.user.user_type==2){%>
+                <div class="form-group form-group-material">
+                   <label class="control-label animate" for="stripe_card_id">Stripe Card Id</label>
+                   <input type="text" class="form-control" id="stripe_card_id" placeholder="Stripe Card Id" name="stripe_card_id" value="<%= user.stripe_card_id %>" readonly="readonly">
+                   </div>
+
+                 <%}%>
 
               </div>
               <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 float-left">
@@ -140,6 +222,24 @@
                    <label class="control-label animate" for="point_balance">Point Balance</label>
                  <input type="text" class="form-control" id="point_balance" placeholder="Wallet ID" name="point_balance" value="<%= user.point_balance %>" readonly="readonly">                 
                 </div>
+                
+                <%if(user.auto_renew==1){%>
+                <div class="form-group form-group-material">
+                  <label class="control-label animate" for="auto_renew">Auto Renewal Membership</label><br/>
+                  <label class="switch">
+                  <input type="checkbox" id="auto_renew" name="auto_renew" checked value="1">
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+                <%}else{%>
+                <div class="form-group form-group-material">
+                  <label class="control-label animate" for="auto_renew">Auto Renewal Membership</label><br/>
+                  <label class="switch">
+                  <input type="checkbox" id="auto_renew" name="auto_renew" value="0">
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+                 <%}%>
 
                 <%if(membership==null){%>
                 <div class="form-group form-group-material">
