@@ -30,21 +30,23 @@ exports.showUserProfile = async function(req, res, next){
 	var userid=parseInt(req.params.userid);
 	var userData = await User.find({'id':userid}).
 	populate({path: 'membership',model: 'Membership',select: 'membership_title'}).exec();
+	console.log(userData);
+
 	userData.forEach(function(profile) {		
-		if(calltype=='api'){
-			api_response.message='Profile retrived.';
-			api_response.code=200;
-			api_response.status=true;
-			api_response.profile=profile;
-			res.send(api_response);
-		}else{	
-			res.render('showUserProfile', {
-			error : req.flash("error"),
-			success: req.flash("success"),
-			session: req.session,
-			user: profile,
-			});				
-	    }				
+			if(calltype=='api'){
+				api_response.message='Profile retrived.';
+				api_response.code=200;
+				api_response.status=true;
+				api_response.profile=profile;
+				res.send(api_response);
+			}else{	
+				res.render('showUserProfile', {
+				error : req.flash("error"),
+				success: req.flash("success"),
+				session: req.session,
+				user: profile,
+				});				
+		    }				
 	});
 }
 
@@ -124,7 +126,8 @@ exports.showProfilePage = async function(req, res) {
 	}
 	let userMembership = [];
 	let membershipTitle = await Membership.findOne({_id:req.session.user.membership});
-	
+	console.log(membershipTitle);
+
 	User.findOne({id:userId}, function(err, profile) {
 		if(err){
 			if(calltype=='api'){
@@ -159,7 +162,6 @@ exports.showProfilePage = async function(req, res) {
 }
 
 exports.UpdateProfile = async function(req, res) {
-	
 	let user = await User.find({id: req.session.user.id});	
 	user.forEach(function(profile){
 	if (profile){
@@ -174,7 +176,6 @@ exports.UpdateProfile = async function(req, res) {
 		profile.address1 = req.body.address1;
 		profile.address2 = req.body.address2;
 		profile.area = req.body.area;
-		profile.auto_renew = Boolean(req.body.auto_renew);
 		profile.city = req.body.city_name;
 		profile.country = req.body.country_name;
 		profile.postcode = req.body.post_code;
@@ -234,11 +235,12 @@ exports.showHomePage = function(req, res) {
 				res.redirect('/errorpage');
 			}
 			else{
-				var propertyList = [];      
+					var propertyList = [];      
 		        c.forEach(function(user) {
 		          propertyList.push(user);
 		    	});
-		        res.render('home', {
+		        console.log(propertyList);
+		    	res.render('home', {
 				error : req.flash("error"),
 				success: req.flash("success"),
 				session:req.session,
@@ -263,7 +265,6 @@ exports.showContactUsPage = function(req, res) {
 			session:req.session
 		});
 }
-
 exports.showTermsPage = function(req, res) {
 		res.render('terms', {
 			error : req.flash("error"),
@@ -279,7 +280,6 @@ exports.showPrivacyPage = function(req, res) {
 		session:req.session
 	});	
 }
-
 exports.showDeveloperHelpPage = function(req, res) {
 		res.render('developer-help', {
 			error : req.flash("error"),
@@ -352,7 +352,8 @@ exports.sendForgotPasswordLinkPage = function(req, res) {
 				if(user.status==3)
 				{
 					req.flash('error', 'Sorry, your account is suspended');
-					res.redirect('/forgotpassword');
+				res.redirect('/forgotpassword');
+
 				}else{
 					var expiretime = new Date().getTime() + 60*60*1000;
 					var forgot_code=bcrypt.hashSync(Math.floor((Math.random() * 99999999) *54), null, null);
@@ -361,12 +362,17 @@ exports.sendForgotPasswordLinkPage = function(req, res) {
 	            		req.flash('success', 'Error : Error : something is wrong');
 						res.redirect('/login');
 	            	}
+
+	            	//var forgotpassword = require('../../lib/forgotpassword.js');
+	            	//forgotpassword.re_activate_email(user.first_name,user.mail,forgot_code);
+
 	            	var sendmail = {
 	            		receiver_name: user.first_name,
 	            		receiver_email: user.mail,
 	            		forgot_code: forgot_code,
 	            		email_type: 1
 	            	}
+
 	            	dynamicmail.sendMail(sendmail);
 	            	req.flash('success', 'Password activation link sent to your email');
 					res.redirect('/login');
@@ -379,10 +385,14 @@ exports.sendForgotPasswordLinkPage = function(req, res) {
 				res.redirect('/forgotpassword');
 			}
 		}
+
 	});
 }
 
 exports.sendContactUsMailPage = function(req, res) {
+   	//var contactus = require('../../lib/contactus.js');
+   	//contactus.contact_email(req.body.contact_name,req.body.contact_email,req.body.contact_subject,req.body.contact_desc);
+
    	var sendmail = {
 		receiver_name: req.body.contact_name,
 		receiver_email: req.body.contact_email,
@@ -390,7 +400,9 @@ exports.sendContactUsMailPage = function(req, res) {
 		contact_desc: req.body.contact_desc,
 		email_type: 4
 	}
+
 	dynamicmail.sendMail(sendmail);
+
 	var sendadminmail = {
 		receiver_email: constants.adminemail,
 		sender_name: req.body.contact_name,
@@ -399,7 +411,9 @@ exports.sendContactUsMailPage = function(req, res) {
 		contact_desc: req.body.contact_desc,
 		email_type: 5
 	}
+
 	dynamicmail.sendMail(sendadminmail);
+
    	req.flash('success', 'We will contact you soon');
 	res.redirect('/contactus');
 }
@@ -407,6 +421,8 @@ exports.sendContactUsMailPage = function(req, res) {
 exports.confirm = function(req, res) {
 	console.log('Hello from activate');
 	var hash = req.param('active_link');
+    
+	//res.end('confirm');
 	User.findOne({ 'active_hash' :  hash }, function(err, user) {
 		if(err){
 			req.flash('error', 'Error : something is wrong');
@@ -414,6 +430,7 @@ exports.confirm = function(req, res) {
 		}
 		else{
 			if (user) {
+        	console.log("hash avail");
 	        	if(user.status==0){
 	        		User.updateOne({'active_hash': hash},{ $set:{'status': 1}},function(err,done){
 	            	if (err)if (err){
@@ -444,9 +461,12 @@ exports.addReviewPage = function(req, res) {
 	    uploaded = req.files.map(function(value) {
 			return value.filename;
 		});
+
 		uploaded_files = uploaded.join();
+
 		uploaded.map(function(a){
-			generateThumb('public/uploads/'+a, '345px', 'thumb_', 'public/uploads/thumbs/');
+		console.log('public/uploads/'+a);
+		generateThumb('public/uploads/'+a, '345px', 'thumb_', 'public/uploads/thumbs/');
 		})
 
 	    Review.find().sort([['id', 'descending']]).limit(1).exec(function(err, reviewdata) { 
@@ -475,8 +495,12 @@ exports.addReviewPage = function(req, res) {
 
 		    newReviews.save(function(err) {
 		        if(err){
+		        	console.log('review add error');
+		        	//res.send('error');
 		        	res.send({'status':false,'backurl':req.originalUrl});
 				}else{
+					console.log('success');
+					//res.send('review add Success');
 					res.send({'status':true,'backurl':req.originalUrl});
 			    }		       	
 			});
@@ -493,9 +517,11 @@ exports.updateReviewPage = function(req, res) {
 	    uploaded = req.files.map(function(value) {
 			return value.filename;
 		})
+
 		uploaded.map(function(a){
-			generateThumb('public/uploads/'+a, '345px', 'thumb_', 'public/uploads/thumbs');
+		generateThumb('public/uploads/'+a, '345px', 'thumb_', 'public/uploads/thumbs');
 		})
+
 		uploaded = uploaded.join();
 
 		var uploaded_arr = uploaded.split(",");
@@ -511,6 +537,7 @@ exports.updateReviewPage = function(req, res) {
 		}
 		else if(uploaded_arr.length==1 && uploaded_arr[0]==''){
 			var merge_img = req.body.images;
+			//console.log("data");	
 		}else if(req.body.images==undefined){
 			merge_img = uploaded_arr;
 		}else{
@@ -523,12 +550,14 @@ exports.updateReviewPage = function(req, res) {
 			console.log("error");
 		}else{
 			if(review){
+
 				var db_reviewimages = review.review_media.split(",");
 				
 			if(req.body.images!=undefined){
 				for (var i = 0; i < db_reviewimages.length; i++) {
 					if((delete_review_images.indexOf(db_reviewimages[i])) == (-1)){
-						
+						console.log(db_reviewimages[i]);
+
 						if(fs.existsSync('public/uploads/'+db_reviewimages[i])){
 							fs.unlink('public/uploads/'+db_reviewimages[i], (err) => {
 							if (err){
@@ -537,7 +566,8 @@ exports.updateReviewPage = function(req, res) {
 							  	console.log('File deleted!');
 							  }
 							});
-						}						
+						}
+						
 
 						if(fs.existsSync('public/uploads/thumbs/thumb_'+db_reviewimages[i])){
 							fs.unlink('public/uploads/thumbs/thumb_'+db_reviewimages[i], (err) => {
@@ -549,8 +579,10 @@ exports.updateReviewPage = function(req, res) {
 							  }
 							});
 						}
+
 					}
 				}
+
 			}else{
 				if((review.review_media.length)!=0){
 					for (var i = 0; i < db_reviewimages.length; i++) {
@@ -573,11 +605,15 @@ exports.updateReviewPage = function(req, res) {
 									console.log('File deleted!');
 							  	}
 							});
-						}					
+						}
+						
+
 					}
 				}
+
 			}
-			var day = getDate();
+				console.log("review find");
+				var day = getDate();
 				review.is_guest = req.body.review_post_user;
 				review.review_content = req.body.review_content;
 				review.review_media = update_merge;
@@ -595,7 +631,8 @@ exports.updateReviewPage = function(req, res) {
                 		res.send({'status':true,'backurl':req.originalUrl});
                 	}
 	            });
-			}			
+			}
+			
 		}
 	});
 }
@@ -662,6 +699,9 @@ exports.deleteReviewPage = function(req,res){
 }
 
 exports.deletereplyReviewPage = function(req,res){
+
+	console.log(req.body.review_id);
+
 	Review.updateOne({'id': req.body.review_id},{ $set:{'is_reply': 0,'reply_text':''}},function(err,done){
     	if (err){
     		res.send({'status':false});
@@ -680,11 +720,15 @@ exports.getEditReviewDetailPage = function(req, res) {
 			res.send({'status':false});
 		}
 		res.send({'status':true,'data':review});
-	});	
+	});
+	
 }
 
 exports.forgotPasswordConfirm = function(req, res) {
+	console.log('Hello from activate');
 	var hash = req.param('active_link');
+    console.log(hash);
+	//res.end('confirm');
 	User.findOne({ 'forgot_hash' :  hash }, function(err, user) {
 		if(err){
 			req.flash('error', 'Error : something is wrong');
@@ -713,7 +757,8 @@ exports.forgotPasswordConfirm = function(req, res) {
 	        	req.flash('error', 'Sorry, We unable to find you, please signup');
 				res.redirect('/signup');
 	        }
-		}        
+		}
+        
 	});		 
 }
 
@@ -737,6 +782,7 @@ exports.createNewPasswordPage = function(req, res) {
 				res.redirect('/signup');
 			}
 		}
+
 	});
 }
 
@@ -766,6 +812,7 @@ exports.updatePasswordPage = function(req, res) {
 				res.redirect('/signup');
 			}
 		}
+
 	});
 }
 
@@ -793,8 +840,8 @@ exports.showPropertyDetailPage = async function(req, res) {
 	filter.category=category;
 
 	//get Particular property data
-	var slug = req.params.slug;
-	var properties = await Property.findOne({slug: slug}).exec(); 
+	console.log(req.params.slug);
+	var properties = await Property.find({slug: req.params.slug}).exec(); 
 	properties.forEach(function(property) {
 		
 	if(property==null || property.length==0){
@@ -802,6 +849,8 @@ exports.showPropertyDetailPage = async function(req, res) {
 		backURL=req.header('Referer') || '/search';
 		res.redirect(backURL);
 	}else {
+		console.log("Starts");
+		console.log(property.status);
 		if(property.status != 1){
 			if(req.session.user){
 				if(req.session.user._id!=property.user){				
@@ -815,6 +864,7 @@ exports.showPropertyDetailPage = async function(req, res) {
 				res.redirect(backURL);			
 			}
 		}
+
 		propertyDetails.id = req.query.id; 
 		propertyDetails.property_name = property.property_name;
 		propertyDetails.address1 = property.address1;
@@ -843,7 +893,7 @@ exports.showPropertyDetailPage = async function(req, res) {
 				}			
 			});
 		}
-		Category.find({}, function(err, category) {
+	Category.find({}, function(err, category) {
 		if (err){
 			req.flash('error', 'Could not find Category for selected location');
 			res.redirect('/admin/locations');
@@ -877,7 +927,10 @@ exports.showPropertyDetailPage = async function(req, res) {
 
 					usersList[user.id]=user;
 				});
+				
+				console.log(users.user_type);
 				propertyDetails.property_images = property.property_images;
+				//propertyDetails.category_name = categories[property.category_id].category_name;
 				propertyDetails.category_name = getCategoryName(property.category_id,categories);
 				propertyDetails.user_type = users.user_type;
 				propertyDetails.user_status = users.status;
@@ -908,23 +961,23 @@ exports.showPropertyDetailPage = async function(req, res) {
 				});
 				propertyDetails.avg_review_rating = avg_review_rating / reviewList.length;
 				propertyDetails.review_types = review_types;
-				res.render('listing/propertyDetail.ejs', {
-						error : req.flash("error"),
-						success: req.flash("success"),
-						session: req.session,
-						page: page,
-						keyword: keyword,
-						filters: filter,
-						property: propertyDetails,
-						categories: categories,
-						counter:counter,
-						claimStatus: claimStatus,
-						otherClaimStatus: otherClaimStatus,
-						claimId:claimId,
-						perPage:perPage
-					});
+			res.render('listing/propertyDetail.ejs', {
+					error : req.flash("error"),
+					success: req.flash("success"),
+					session: req.session,
+					page: page,
+					keyword: keyword,
+					filters: filter,
+					property: propertyDetails,
+					categories: categories,
+					counter:counter,
+					claimStatus: claimStatus,
+					otherClaimStatus: otherClaimStatus,
+					claimId:claimId,
+					perPage:perPage
 				});
 			});
+		});
 		});
 		});
 	});
@@ -933,7 +986,6 @@ exports.showPropertyDetailPage = async function(req, res) {
 }
 
 exports.showSearchPage = async function(req, res) {
-	console.log('showSearchPage');
 	var keyword='';
 	if(req.query.keyword){		
 		keyword = req.query.keyword.trim().toLowerCase();	

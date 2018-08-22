@@ -11,6 +11,7 @@ var Claims 		= models.Claim;
 var FlaggedReview= models.Flag;
 var fs  		= require('fs');
 var randomstring= require("randomstring");
+var slugify = require('slugify');
 
 exports.isLoggedIn = function(req, res, next){
 	if (req.session.user && req.session.user.user_type==2) { // req.session.passport._id
@@ -185,6 +186,7 @@ exports.showMyListingPage = async function(req, res) {
 		propertyItem.post_code = property.post_code;		
 		propertyItem.average_rating =  property.average_rating;		
 		propertyItem.review_count = property.reviews.count;
+		propertyItem.slug = property.slug;
 		propertyItem.is_claimed = checkIsClaimedProperty(property.id, claimDataProperies);
 		searchedProperties.push(propertyItem);
     });
@@ -483,7 +485,8 @@ exports.storePropertyListing = async function(req, res) {
 		address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),
 		area: new RegExp('^' +req.body.area.trim() + '$', 'i'),
 		post_code: new RegExp('^' +req.body.postcode.trim() + '$', 'i')}).exec();
-
+		var slug = slugify(req.body.property_name.trim());
+		slug = slug+"-"+randomstring.generate(5);
 	if(getProperty.length>0){
 		req.flash('error','Error : something is wrong while store Location');
 		res.redirect('/errorpage');
@@ -540,6 +543,8 @@ exports.storePropertyListing = async function(req, res) {
 			newProperty.property_name = req.body.property_name.trim();
 		    newProperty.address1 = req.body.address1.trim();
 		    newProperty.address2 = req.body.address2.trim();
+		    newProperty.slug = slug;
+		    newProperty.business_key = randomstring.generate(12);
 		    newProperty.area = req.body.area.trim();
 		    newProperty.post_code = req.body.postcode;
 			newProperty.category = req.body.categories;
