@@ -14,3 +14,15 @@
 .cont-pad{
 	padding: 1.25rem 1.25rem;
 }
+
+.pagination-section {
+    text-align: center;
+    margin: 10px;
+    float: right;
+}
+.card {
+    margin-bottom: 0px;
+}
+.table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,.05);
+}

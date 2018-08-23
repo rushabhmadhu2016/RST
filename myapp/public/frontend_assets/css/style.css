@@ -3423,8 +3423,10 @@ ul li.share_twitter a{
     background-color: #024c7b;
     box-shadow: none;
 }
-.membership_list{
-    padding: 10px;
+.pagination-section {
+    text-align: center;
+    margin: 10px;
+    float: right;
 }
 @media(max-width: 576px){
     #get-started .col-1, #get-started .col-2{
