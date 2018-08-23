@@ -7,6 +7,13 @@
   <script src="../assets/js/app.js"></script>
   <script src="../global_assets/js/demo_pages/datatables_responsive.js"></script>
   <script src="../global_assets/js/demo_pages/form_multiselect.js"></script>
+  <script type="text/javascript">
+     $(document).ready(function() {
+      $('.multiselect-nonselected-text').multiselect({
+              nonSelectedText: 'asd'
+          });
+     });
+  </script>
   <script src="../global_assets/js/demo_pages/form_checkboxes_radios.js"></script>
 <% include template/subheader %>
 <!-- Page header -->
@@ -56,7 +63,7 @@
                   Deactivated
                 </label>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-3">
                       <select name="category_filter" id="category_filter" class="form-control multiselect-nonselected-text" multiple="multiple" data-fouc>
                         <% categories.forEach((category) => { %>
                       <option value="<%=category.id%>" 
@@ -64,10 +71,9 @@
                     <% }) %>
                       </select>
               </div>
-              <div class="col-md-2">
-                <div>
+              <div class="col-md-3">
                   <button type="submit" class="btn btn-primary btn-sm" id="filterApplyBtn">Apply <i class="icon-filter4 ml-2"></i></button>
-                </div>
+                  <button type="reset" class="btn btn-sm bg-slate" id="resetApplyBtn">Reset <i class="icon-reset ml-2"></i></button>
               </div>
           </div>
         </form>
@@ -122,9 +128,6 @@
 
                     <a href="javascript:void(0)" class="list-icons-item text-success-600" data-popup="tooltip" title="Approve Location" data-container="body" onclick="confirmmessage('Are you sure you want to approve this location?','/admin/approve-location/?id=<%=property.id%>')">
                       <i class="icon-checkmark-circle"></i>
-                    </a>
-                    <a href="javascript:void(0)" class="list-icons-item text-danger-600" data-popup="tooltip" title="Reject Location" data-container="body" onclick="confirmmessage('Are you sure you want to reject this location?','/admin/approve-location/?id=<%=property.id%>')">
-                      <i class="icon-cancel-circle2"></i>
                     </a>
                          <% }else if(property.status==1) { %>
 

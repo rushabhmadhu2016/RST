@@ -13,6 +13,7 @@
           return 'selected';
         }
     }
+    console.log(properties);
   %>
 
     <!-- Masthead -->
@@ -32,12 +33,16 @@
           <input type="text" class="form-control" id="property_name" placeholder="Enter Location Name *" name="property_name" value="<%=properties.property_name%>">
         </div>
         <div class="form-group form-group-material">
-          <label class="control-label animate" for="location1">Address *</label>
+          <label class="control-label animate" for="location1">Address 1*</label>
           <input type="text" class="form-control" id="location1" placeholder="Address *" name="address1" value="<%=properties.address1%>">
         </div>
         <div class="form-group form-group-material">
-            <label class="control-label animate" for="location2">Area *</label>
-            <input type="text" class="form-control" id="location2" placeholder="Area *" name="address2" value="<%=properties.address2%>">
+            <label class="control-label animate" for="location2">Address 2*</label>
+            <input type="text" class="form-control" id="location2" placeholder="Address 2*" name="address2" value="<%=properties.address2%>">
+        </div>
+        <div class="form-group form-group-material">
+            <label class="control-label animate" for="location3">Area *</label>
+            <input type="text" class="form-control" id="location3" placeholder="Area *" name="area" value="<%=properties.area%>">
         </div>
         <div class="form-group form-group-material">
           <label class="control-label animate" for="postcode">Post Code *</label>

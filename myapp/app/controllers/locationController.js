@@ -164,14 +164,31 @@ exports.rejectLocation = function(req, res) {
   		}
   		else 
   		{  
+    	    var property_user = p.user;
     	    p.status = parseInt(2);
 		    p.save(function(err) {
 		    if (err){
 	    	    req.flash('error', 'Could not find location');
 		    }
 		    else{
-    			req.flash('success', 'Location deactivated successfully.');
-				res.redirect('/admin/locations');	
+		    	User.findOne({_id:property_user}, function(err, userdata){
+		    		if(!userdata){
+		    			req.flash('error', 'Error in fetching userdetail');
+    					res.redirect('/admin/locations');
+		    		}else{
+
+		    			var sendmail = {
+		            		receiver_name: userdata.first_name,
+		            		receiver_email: userdata.mail,
+		            		email_type: 7
+		            	}
+
+            			dynamicmail.sendMail(sendmail);
+    					
+    					req.flash('success', 'Location deactivated successfully.');
+						res.redirect('/admin/locations');	
+		    		}
+		    	});
 			}
 		    });
   		}
@@ -214,7 +231,16 @@ exports.approveLocation = function(req, res) {
 		            			dynamicmail.sendMail(sendmail);
 		            			
 					    		req.flash('success', 'Location approved successfully.');
-					    	}else{		    		
+					    	}else{
+					    		
+					    		var sendmail = {
+				            		receiver_name: userdata.first_name,
+				            		receiver_email: userdata.mail,
+				            		email_type: 8
+				            	}
+
+		            			dynamicmail.sendMail(sendmail);
+
 			    				req.flash('success', 'Location activated successfully.');
 					    	}
 							res.redirect('/admin/locations');	

@@ -73,6 +73,7 @@ var categorySchema = mongoose.Schema({
 	status: Number,
 	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }], 
+	created_by: {type: Number, default: 0},
 	created_date: String,
 	updated_date: String	
 });
@@ -90,6 +91,8 @@ var propertySchema = mongoose.Schema({
 	category_id: [Number],
 	property_desc: String,
 	property_images: String,
+	slug : String,
+	user_id: Number,
 	business_key: String,
 	user: { type: Schema.Types.ObjectId, ref: 'User' },
 	bounty: [{ type: Schema.Types.ObjectId, ref: 'Bounty' }],
@@ -248,6 +251,7 @@ var membershipSchema = mongoose.Schema({
 	membership_title: String,
 	membership_cost: String,
 	status: Number,
+	token_limit: Number,
 	created_date: String,
 	updated_date: String
 });

@@ -4,7 +4,7 @@
   <script src="../global_assets/js/plugins/forms/selects/select2.min.js"></script>
 
   <script src="../assets/js/app.js"></script>
-  <script src="../global_assets/js/demo_pages/datatables_responsive.js"></script>
+  <!-- <script src="../global_assets/js/demo_pages/datatables_responsive.js"></script> -->
 <% include template/subheader %>
   <!-- Page header -->
   <div class="page-header page-header-light">
@@ -93,6 +93,28 @@
     </div>
   </div>
   <!-- /content area -->
-<% include template/subfooter%>   
+<% include template/subfooter%>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $.extend( $.fn.dataTable.defaults, {
+        autoWidth: false,
+        responsive: true,
+        columnDefs: [{ 
+            orderable: false,
+            width: 100
+            //targets: [ 5 ]
+        }],
+        dom: '<"datatable-header"fl><"datatable-scroll-wrap"t><"datatable-footer"ip>',
+        language: {
+            search: '<span>Filter:</span> _INPUT_',
+            searchPlaceholder: 'Type to filter...',
+            lengthMenu: '<span>Show:</span> _MENU_',
+            paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+        }
+    });
+
+      $('.datatable-responsive').DataTable({});
+  });
+</script>   
 <% include template/footer%>
       

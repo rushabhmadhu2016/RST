@@ -11,6 +11,7 @@ var Claims 		= models.Claim;
 var FlaggedReview= models.Flag;
 var fs  		= require('fs');
 var randomstring= require("randomstring");
+var slugify = require('slugify');
 
 exports.isLoggedIn = function(req, res, next){
 	if (req.session.user && req.session.user.user_type==2) { // req.session.passport._id
@@ -185,6 +186,7 @@ exports.showMyListingPage = async function(req, res) {
 		propertyItem.post_code = property.post_code;		
 		propertyItem.average_rating =  property.average_rating;		
 		propertyItem.review_count = property.reviews.count;
+		propertyItem.slug = property.slug;
 		propertyItem.is_claimed = checkIsClaimedProperty(property.id, claimDataProperies);
 		searchedProperties.push(propertyItem);
     });
@@ -381,15 +383,24 @@ exports.showCreateListingPage = function(req, res) {
 }
 
 exports.deletePropertyListingPage = function(req,res){		
-	var id = req.param('property');	
-	console.log("deleted");
-
-	Properties.findOne({id:id,user_id: req.session.user.id}, function(err, property) {
-		var del_images = property.property_images.split(",");
-		
-		Properties.deleteOne({ 'id' :  id}, function(err){
-		console.log('Location deleted');
-
+	var id = parseInt(req.query.property);
+	console.log("PropertyId"+id);
+	var userId = req.session.user._id;
+	console.log("UserId"+userId);
+	Property.findOne({id:id,user: userId}, function(err, property) {
+		if(err){
+			console.log(err);
+			req.flash('success', 'Location deleted failed.');
+     		res.redirect('/myListing');
+		}
+		if(property==null){
+			console.log(err);
+			req.flash('success', 'Location deleted failed.');
+     		res.redirect('/myListing');	
+		}
+		console.log(property);
+		var del_images = property.property_images.split(",");		
+		Property.deleteOne({ 'id' :  id}, function(err){
 		if((property.property_images.length)!=0){
 			for (var i = 0; i < del_images.length; i++) {
 				console.log("Image Name :"+del_images[i]);
@@ -415,8 +426,7 @@ exports.deletePropertyListingPage = function(req,res){
 					});
 				}
 			}
-		}
-		
+		}		
 
 		Claims.deleteMany({ 'property_id' :  id}, function(err){
 			if(err){
@@ -425,7 +435,7 @@ exports.deletePropertyListingPage = function(req,res){
 			console.log('Claims deleted');			
 		});
 
-		Reviews.deleteMany({ 'property_id' :  id}, function(err){
+		Review.deleteMany({ 'property_id' :  id}, function(err){
 			if(err){
 				console.log('err');
 			}
@@ -438,7 +448,6 @@ exports.deletePropertyListingPage = function(req,res){
 			}
 			console.log('Review deleted');			
 		});
-
 	 	req.flash('success', 'Location deleted successfully');
      	res.redirect('/myListing');
 	});	
@@ -483,10 +492,11 @@ exports.storePropertyListing = async function(req, res) {
 		address2: new RegExp('^' +req.body.address2.trim() + '$', 'i'),
 		area: new RegExp('^' +req.body.area.trim() + '$', 'i'),
 		post_code: new RegExp('^' +req.body.postcode.trim() + '$', 'i')}).exec();
-
+		var slug = slugify(req.body.property_name.trim());
+		slug = slug+"-"+randomstring.generate(5);
 	if(getProperty.length>0){
-		req.flash('error','Error : something is wrong while store Location');
-		res.redirect('/errorpage');
+		req.flash('error','Error : This location is already exist');
+		res.redirect('/addListing');
 
 		uploaded = req.files.map(function(value) {
 			return value.filename;
@@ -540,6 +550,8 @@ exports.storePropertyListing = async function(req, res) {
 			newProperty.property_name = req.body.property_name.trim();
 		    newProperty.address1 = req.body.address1.trim();
 		    newProperty.address2 = req.body.address2.trim();
+		    newProperty.slug = slug;
+		    newProperty.business_key = randomstring.generate(12);
 		    newProperty.area = req.body.area.trim();
 		    newProperty.post_code = req.body.postcode;
 			newProperty.category = req.body.categories;

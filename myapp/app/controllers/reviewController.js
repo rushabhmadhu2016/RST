@@ -237,7 +237,7 @@ exports.getAllFlaggedReviews = async function(req, res){
 	}
 	console.log("welcome");
 	flaggedReviews =  await FlaggedReview.find().populate({'path':'user',
-      model: 'User',select: 'first_name last_name mail id'}).populate({'path':'property', model:'Property', select:'property_name id'}).populate({path:'review',model:'Review',select:'id review_rating user_location ip_address'});
+      model: 'User',select: 'first_name last_name mail id'}).populate({'path':'property', model:'Property', select:'property_name id'}).populate({path:'review',model:'Review',select:'id review_rating review_content user_location ip_address'});
 	let properties = await Property.find();
 	flaggedReviews.forEach(function(freview){
 			var freviewObj = {};
@@ -248,12 +248,13 @@ exports.getAllFlaggedReviews = async function(req, res){
 			freviewObj.property_name = freview.property.property_name;
 			freviewObj.customer = freview.user.first_name+" "+freview.user.last_name;
 			freviewObj.mail = freview.user.mail;
-			freviewObj.rating = freview.review_rating;
+			freviewObj.rating = freview.review.review_rating;
 			freviewObj.review_text = freview.review.review_content;
 			freviewObj.user_location = freview.review.user_location;						
 			freviewObj.ip_address = freview.review.ip_address;
 			flaggedReviewList[freview.review_id]=freviewObj;
 		});
+	console.log(flaggedReviewList);
 		res.render('admin/allFlaggedReviews.ejs', {
 			error : req.flash("error"),
 			success: req.flash("success"),

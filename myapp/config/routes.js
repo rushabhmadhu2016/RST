@@ -97,7 +97,7 @@ module.exports = function (app, passport) {
     app.get('/home', HomeController.isLoggedIn, HomeController.showHomePage);
     app.get('/search', HomeController.showSearchPage);
     app.get('/property/property-details',HomeController.isLoggedIn, HomeController.showPropertyDetailPage);
-    app.get('/location/location-details',HomeController.isLoggedIn, HomeController.showPropertyDetailPage);
+    app.get('/location/location-details', HomeController.showPropertyDetailPage);
     /*Front side Operations Routes*/
     app.get('/MyProfile', HomeController.isLoggedIn, HomeController.showProfilePage);
     app.get('/api/MyProfile', HomeController.showProfilePage);
@@ -133,6 +133,7 @@ module.exports = function (app, passport) {
     app.get('/blogs', BlogsController.showBlogsPage);
     app.get('/blog', BlogsController.showSingleBlogPage);
     app.post('/checkforemail', HomeController.checkForEmailPage);
+    app.post('/category/store', HomeController.isLoggedIn, CategoryController.storeUserCategoryPage);
     
     app.get('/errorpage',function(req,res){
         res.render('errorpage',{
@@ -171,7 +172,9 @@ module.exports = function (app, passport) {
     app.post('/admin/category/update', AdminHomeController.loggedIn, CategoryController.updateCategoryPage);
     app.post('/admin/updateCategory', AdminHomeController.loggedIn, CategoryController.updateCategoryPage);
     app.get('/admin/editcategory', AdminHomeController.loggedIn, CategoryController.editCategoryPage);
-    app.get('/admin/deletecategory', AdminHomeController.loggedIn, CategoryController.deleteCategoryPage);    
+    app.get('/admin/deletecategory', AdminHomeController.loggedIn, CategoryController.deleteCategoryPage);
+    app.get('/admin/acceptcategory', AdminHomeController.loggedIn, CategoryController.acceptCategoryPage);
+    app.get('/admin/rejectcategory', AdminHomeController.loggedIn, CategoryController.rejectCategoryPage);    
     app.get('/admin/locations', LocationController.allProperties);
     app.get('/admin/approve-location', AdminHomeController.loggedIn, LocationController.approveLocation);
     app.get('/admin/reject-location',AdminHomeController.loggedIn, LocationController.rejectLocation);
@@ -210,10 +213,11 @@ module.exports = function (app, passport) {
 
     /*Newly Added routes*/
     app.get('/user/:userid/profile', HomeController.showUserProfile);
-    app.get('/business-memberships', BusinessController.getMembershipData);
-    app.get('/business-plans/:plan_id/purchase', BusinessController.purchaseMembershipPlan);
-    app.get('/buy-token', BusinessController.buyTokens);
-
+    app.get('/business-memberships', HomeController.isLoggedIn, BusinessController.getMembershipData);
+    app.get('/business-plans/:plan_id/purchase',HomeController.isLoggedIn, BusinessController.purchaseMembershipPlan);
+    app.get('/buy-token',HomeController.isLoggedIn, BusinessController.buyTokens);
+    app.get('/location/:slug/details', HomeController.showPropertyDetailPage);
+    app.get('/user-memberships', HomeController.isLoggedIn, HomeController.showUserMembership);
 }
 /*    
 app.post('/admin/login', function (req, res) {

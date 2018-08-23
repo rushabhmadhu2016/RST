@@ -22,7 +22,7 @@
                     <li class="nav-item dropdown show">
                         <a href="JavaScript:void(0);"  class="navbar-right dropdown-toggle"  role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Location</a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                          <a class="dropdown-item" href="../Mylisting">My Locations</a>
+                          <a class="dropdown-item" href="../Mylisting">My Locations</a>                          
                         </div>
                         </li>
                     <% } %>
@@ -32,11 +32,13 @@
                      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item" href="../MyProfile">My Profile</a>
                         <a class="dropdown-item" href="../changepassword">Change Password</a>
-                         <% if(session.user.user_type==2){ 
+                        <% if(session.user.user_type==2){ 
                       if(session.user.status==2) {%>
                         <a class="dropdown-item" href="../business-memberships"> Featured Membership</a>
                         <a class="dropdown-item" href="../buy-token">Buy Token</a>
-                        <% } } %>
+                        <% } }else{ %>
+                        <a class="dropdown-item" href="../user-memberships">Membership</a>
+                        <% } %>
                       </div> 
                 </li>
             <% } %>

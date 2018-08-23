@@ -50,6 +50,7 @@
                           <%} }%>
                         
                       </select>
+                      <span>Category not exist.add new from <a href="javascript:void(0)" class="add-category-link">here</a></span>
                     </div>
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 float-left">
@@ -78,17 +79,22 @@
               </div>
             </div>
           </div>
+            <% include ../frontend/template/addcategorymodal %>  
         </div>
       </div>
     </section>
-	<!-- Footer -->
+  <!-- Footer -->
    <% include ../frontend/template/subfooter %>
    <script src="/js/plugins/select2/select2.min.js"></script>
    <script src="/js/validation/createlistingvalidation.js"></script>
+   <script src="/js/validation/addusercategoryvalidation.js"></script>
   </body>
 </html>
 <script>
 $(document).ready(function(){
+  $('.add-category-link').on('click',function(){
+    $('#addCategoryModel').modal();
+  });
     $("#btnsubmit").show();
     $('.multiselect').select2({
       placeholder: 'Select Category',
