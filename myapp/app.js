@@ -39,11 +39,11 @@ app.use(cookieParser()); // read cookies (needed for auth)
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'app/views'));
 app.set('view engine', 'ejs');
-
+app.set('base_url','http://127.0.0.1:8084');
 app.use(session({
     secret: 'revstance',
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true   
 }));
 
 app.use(passport.initialize());
@@ -75,4 +75,30 @@ app.use(function (req, res, next) {
 app.use(function (req, res, next) {
     res.status(500).render('404', {title: "Sorry, page not found"});
 });
+
+app.locals = {
+  version: '0.0.2',
+  name: 'Revstance',
+  codename: 'Innvonix Technology',
+  web: {
+    name: 'Revstance',
+    logo: 'images/logo.svg',
+    url: 'https://revstance.com',
+    secure: true,
+    divider: ' • '
+  },
+  meta: {
+    keyword: 'Review the world around you!',
+    description: 'Revstance is an online platform that allows you to rate and review restaurants, cafes, bars and anything else that has a physical location...',
+    author: 'revstance',
+  },
+  base_url: 'http://127.0.0.1:8084',
+  dev: {
+    name: 'Developers',
+    url: 'https://innvonix.com',
+    secure: false,
+    errors: '/errors/'
+  }
+};
+
 exports = module.exports = app;
