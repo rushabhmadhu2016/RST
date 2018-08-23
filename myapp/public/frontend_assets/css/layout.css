@@ -1,0 +1,9 @@
+.container-padding{
+	padding-right: 50px;
+	padding-left: 50px;
+}
+.navbar .feed {
+    color: #fff;
+   	margin: 10px 40px 10px 10px;
+    font-size: 30px;
+}
