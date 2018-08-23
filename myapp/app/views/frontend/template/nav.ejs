@@ -1,7 +1,7 @@
     <header>
      <nav id="navbar" class="navbar navbar-expand-lg navbar-light fixed-top">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/"><img src="<%-base_url%>/frontend_assets/img/revstance-logo.png" alt="revstance"></a>   
+      <div class="container container-padding">
+        <a class="navbar-brand" href="/"><img src="<%-base_url%>/frontend_assets/img/logo_revstance.png" alt="revstance"></a>  
            <ul class="navbar-nav">
             <% if(!session.user){%>
                 <li class="nav-item">
@@ -42,6 +42,9 @@
                       </div> 
                 </li>
             <% } %>
+                <li class="nav-item">
+                  <i class="fa fa-feed feed"></i>
+                </li>
                 <li class="nav-item">
                     <form id="logout-form" action="<%-base_url%>/logout" style="display: none;"></form>
 

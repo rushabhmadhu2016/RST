@@ -145,7 +145,6 @@ footer.footer {
 }
 .navbar .login-btn{
     border: 1px solid #fff;
-    border-radius: 25px;
     color: #fff;
     padding: 5px 40px 5px 40px;
     margin-right:40px;
@@ -3212,7 +3211,7 @@ p.content-add {
 
 #banner{
   height: 100vh;
-  background: url('../img/banner-new.png');
+  background: url('../img/revstance_banner.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -3223,7 +3222,7 @@ p.content-add {
 }
 #banner .row form.banner-form{
     border: 1px solid #fff;
-    border-radius:  50px;
+    border-radius:  5px;
     padding: 2px 8px;
     background: #fff;
 }
@@ -3335,7 +3334,6 @@ a.btn-gradient{
   text-transform: uppercase;
   position: relative;
   min-height: 50px;
-  border-radius: 50px;
   transition: all 0.5s;
   background: #002b5c;
   background: -moz-linear-gradient(left, #002b5c 0%, #00bce4 100%);
@@ -3446,7 +3444,7 @@ ul li.share_twitter a{
     }
     #banner .row form.banner-form .form-row .search-input{
         border: 1px solid #fff;
-        border-radius: 50px;
+        border-radius: 5px;
         padding: 2px 8px;
         background: #fff;
         width: 100%;
