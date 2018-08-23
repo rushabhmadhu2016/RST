@@ -30,7 +30,7 @@ var userSchema = mongoose.Schema({
 	token_balance: { type: Number, default: 0 },
 	point_balance: { type: Number, default: 0 },
 	badges: [String],
-	membership: [{ type: Schema.Types.ObjectId, ref: 'Membership' }], 
+	membership: { type: Schema.Types.ObjectId, ref: 'Membership' }, 
 	transaction: [{ type: Schema.Types.ObjectId, ref: 'Transaction' }], 
 	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }], 
 	category: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
@@ -192,8 +192,8 @@ var Flag = mongoose.model('Flag', flaggedReviewSchema);
 //Review Schema
 var reviewSchema = mongoose.Schema({	
 	id: Number,
-	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }],
+	user: { type: Schema.Types.ObjectId, ref: 'User' },
+	property: { type: Schema.Types.ObjectId, ref: 'Property' },
 	review_content: String,
 	review_media: String,
 	review_rating: Number,
@@ -213,7 +213,7 @@ var Review = mongoose.model('Review', reviewSchema);
 var transactionsSchema = mongoose.Schema ({
 	id: Number,
 	type: Number, //Point/Token
-	product: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
+	product: { type: Schema.Types.ObjectId, ref: 'Product' },
 	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 	amount: Number,
 	operation: String, //minus,plus
@@ -227,19 +227,19 @@ var Transactions = mongoose.model('Transaction', transactionsSchema);
 //followers Schema
 var followersSchema = mongoose.Schema({
 	id: Number,
-	follower_user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-	following_user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	follower_user: { type: Schema.Types.ObjectId, ref: 'User' },
+	following_user: { type: Schema.Types.ObjectId, ref: 'User' },
 	status: Number,	
 	created_date: String,
 	updated_date: String
 });
-var Followers = mongoose.model('Followers', followersSchema);
+var Followers = mongoose.model('Follower', followersSchema);
 
 var likeSchema = mongoose.Schema({	
 	id: Number,
-	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }],
-	review: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
+	user:{ type: Schema.Types.ObjectId, ref: 'User' },
+	property: { type: Schema.Types.ObjectId, ref: 'Property' },
+	review: { type: Schema.Types.ObjectId, ref: 'Review' },
 	status: Number,
 	created_date: String
 });
@@ -260,8 +260,8 @@ var Membership = mongoose.model('Membership', membershipSchema);
 // membershipRenewal Schema
 var membershipRenewalSchema = mongoose.Schema({
 	id: Number,
-	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-	membership: [{ type: Schema.Types.ObjectId, ref: 'Membership' }],
+	user: { type: Schema.Types.ObjectId, ref: 'User' },
+	membership: { type: Schema.Types.ObjectId, ref: 'Membership' },
 	request_date: Number,
 	effective_date: String,
 	description: String,
@@ -274,21 +274,21 @@ var MembershipRenewal = mongoose.model('MembershipRenewal', membershipRenewalSch
 //ProductReview Schema
 var productReviewSchema = mongoose.Schema ({
 	id: Number,
-	product: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
-	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	product: { type: Schema.Types.ObjectId, ref: 'Product' },
+	user: { type: Schema.Types.ObjectId, ref: 'User' },
 	product_review_title: String,
 	product_review_description: String,
 	status: Number,
 	created_date: String,
 	updated_date: String
 });
-var ProductReviews = mongoose.model('ProductReviews', productReviewSchema);
+var ProductReviews = mongoose.model('ProductReview', productReviewSchema);
 
 //ReportLocation Schema
 var ReportLocationSchema = mongoose.Schema({	
 	id: Number,
-	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }],
+	user: { type: Schema.Types.ObjectId, ref: 'User' },
+	property: { type: Schema.Types.ObjectId, ref: 'Property' },
 	description: String,
 	status: Number,
 	created_date: String,
@@ -299,8 +299,8 @@ var ReportLocation = mongoose.model('ReportLocation', ReportLocationSchema);
 //ReportUser Schema
 var reportUserSchema = mongoose.Schema({	
 	id: Number,
-	reporter_user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-	spam_user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	reporter_user: { type: Schema.Types.ObjectId, ref: 'User' },
+	spam_user: { type: Schema.Types.ObjectId, ref: 'User' },
 	description: String,
 	status: Number,
 	created_date: String,
@@ -311,7 +311,7 @@ var ReportUser = mongoose.model('ReportUser', reportUserSchema);
 //ReportUser Schema
 var tokenLogSchema = mongoose.Schema({	
 	id: Number,
-	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	user: { type: Schema.Types.ObjectId, ref: 'User' },
 	token_amount: Number,
 	operation: Number,
 	description: String,
@@ -325,8 +325,10 @@ var TokenLog = mongoose.model('TokenLog', tokenLogSchema);
 //pointLogSchema Schema
 var recentActivitySchema = mongoose.Schema({	
 	id: Number,
-	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	user: { type: Schema.Types.ObjectId, ref: 'User' },
 	description: String,
+	property: { type: Schema.Types.ObjectId, ref: 'Property' },
+	target_user: { type: Schema.Types.ObjectId, ref: 'User' },
 	status: Number,
 	created_date: String,
 	updated_date: String
@@ -336,7 +338,7 @@ var RecentActivity = mongoose.model('RecentActivity', recentActivitySchema);
 //pointLogSchema Schema
 var paymentHistorySchema = mongoose.Schema({	
 	id: Number,
-	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	user: { type: Schema.Types.ObjectId, ref: 'User' },
 	amount: Number,
 	currency: Number,
 	tx_id: String,
