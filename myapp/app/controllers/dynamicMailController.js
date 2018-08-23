@@ -77,6 +77,16 @@ exports.sendMail = function(data) {
 				    	var mail_content = emailData.email_message;
 				    	email_body = mail_content.replace('{user_name}',data.receiver_name);
 				        break;
+				    case 7:
+				    	console.log('Location Deactivate Mail on Admin deactivate');
+				    	var mail_content = emailData.email_message;
+				    	email_body = mail_content.replace('{user_name}',data.receiver_name);
+				        break;
+				    case 8:
+				    	console.log('Location Activate Mail on Admin Activate');
+				    	var mail_content = emailData.email_message;
+				    	email_body = mail_content.replace('{user_name}',data.receiver_name);
+				        break;
 				    default:
 				    	console.log('default switch case');
 				        break;

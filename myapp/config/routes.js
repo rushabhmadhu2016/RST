@@ -133,6 +133,7 @@ module.exports = function (app, passport) {
     app.get('/blogs', BlogsController.showBlogsPage);
     app.get('/blog', BlogsController.showSingleBlogPage);
     app.post('/checkforemail', HomeController.checkForEmailPage);
+    app.post('/category/store', HomeController.isLoggedIn, CategoryController.storeUserCategoryPage);
     
     app.get('/errorpage',function(req,res){
         res.render('errorpage',{
@@ -171,7 +172,9 @@ module.exports = function (app, passport) {
     app.post('/admin/category/update', AdminHomeController.loggedIn, CategoryController.updateCategoryPage);
     app.post('/admin/updateCategory', AdminHomeController.loggedIn, CategoryController.updateCategoryPage);
     app.get('/admin/editcategory', AdminHomeController.loggedIn, CategoryController.editCategoryPage);
-    app.get('/admin/deletecategory', AdminHomeController.loggedIn, CategoryController.deleteCategoryPage);    
+    app.get('/admin/deletecategory', AdminHomeController.loggedIn, CategoryController.deleteCategoryPage);
+    app.get('/admin/acceptcategory', AdminHomeController.loggedIn, CategoryController.acceptCategoryPage);
+    app.get('/admin/rejectcategory', AdminHomeController.loggedIn, CategoryController.rejectCategoryPage);    
     app.get('/admin/locations', LocationController.allProperties);
     app.get('/admin/approve-location', AdminHomeController.loggedIn, LocationController.approveLocation);
     app.get('/admin/reject-location',AdminHomeController.loggedIn, LocationController.rejectLocation);

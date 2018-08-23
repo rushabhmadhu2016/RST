@@ -73,7 +73,7 @@ var categorySchema = mongoose.Schema({
 	status: Number,
 	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 	property: [{ type: Schema.Types.ObjectId, ref: 'Property' }], 
-	created_by: Number,
+	created_by: {type: Number, default: 0},
 	created_date: String,
 	updated_date: String	
 });

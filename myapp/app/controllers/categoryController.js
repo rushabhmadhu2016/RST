@@ -90,7 +90,7 @@ exports.storeCategoryPage = function(req, res) {
 					//var day =dateFormat(Date.now(), "yyyy-mm-dd HH:MM:ss");
 					var day = getDate();
 					newCategory.category_name = cat_name;
-				    newCategory.status = parseInt(0);
+				    newCategory.status = parseInt(1);
 				    newCategory.created_date = day;
 				    newCategory.updated_date = day;
 				    if(categorydata.length > 0){
@@ -102,6 +102,42 @@ exports.storeCategoryPage = function(req, res) {
 			        if (err)  return (err);			       
 			        	req.flash('success', 'Category added successfully.');
 			        	res.redirect('/admin/categories');
+			    	});
+		    	  }); 
+		    	}
+			}        	
+		});
+}
+/*Store New Category From User Side*/
+exports.storeUserCategoryPage = function(req, res) {
+		cat_name = (req.body.category_name).toLowerCase();
+		Category.findOne({ 'category_name' :  cat_name}, function(err, category_name) {
+
+			if(err){
+				res.send({'status' : 'false', 'message' : 'something is wrong while adding category', 'data': null});
+			}
+			else{
+				if (category_name) {
+					res.send({'status' : 'false', 'message' : 'Category Already Exists', 'data': null});
+		    	} else {
+		    		Category.find().sort([['id', 'descending']]).limit(1).exec(function(err, categorydata) {
+
+		    		var newCategory = new Category();
+					//var day =dateFormat(Date.now(), "yyyy-mm-dd HH:MM:ss");
+					var day = getDate();
+					newCategory.category_name = cat_name;
+				    newCategory.status = parseInt(0);
+				    newCategory.created_date = day;
+				    newCategory.created_by = req.session.user.id;
+				    newCategory.updated_date = day;
+				    if(categorydata.length > 0){
+				    	newCategory.id = categorydata[0].id+1;
+				    }else{
+				    	newCategory.id = 1;
+				    }
+				    newCategory.save(function(err) {
+			        if (err)  return (err);	
+			        	res.send({'status' : 'true', 'message' : 'Category Added Successfully. it will be display after admin approval', 'data': null});
 			    	});
 		    	  }); 
 		    	}
@@ -164,6 +200,53 @@ exports.updateCategoryPage = function(req, res) {
         	}
         }    		      
 	}); 	
+}
+
+exports.acceptCategoryPage = function(req,res) {
+	cat_id = req.query.id;
+
+	Category.findOne({id:cat_id}, function(err, category) {
+ 		if(err){
+ 			req.flash('error', 'Error : something is wrong while fetching category list');
+			res.redirect('/errorpage');
+		}
+		else{
+			if (category){
+				category.status = 1;
+				category.save(function(err) {
+	                if (err){
+	                	req.flash('error', 'Error : something is wrong while accepting category request');
+						res.redirect('/errorpage');
+	           		}
+            		else
+            		{
+            			req.flash('success', 'Category request accepted.');
+	         			res.redirect('/admin/categories');
+                	}
+                });
+			}
+		}
+	});
+
+}
+
+exports.rejectCategoryPage = function(req,res) {
+	cat_id = req.query.id;
+
+	Category.findOne({id:cat_id}, function(err, category) {
+ 		if(err){
+ 			req.flash('error', 'Error : something is wrong while fetching category list');
+			res.redirect('/errorpage');
+		}
+		else{
+			if (category){
+	            Category.deleteOne({ 'id' :  cat_id}, function(err){
+				 	req.flash('success', 'Category request rejected successfully');
+		         	res.redirect('/admin/categories');
+				});
+			}
+		}
+	});
 }
 
 function getDate(){ var d = new Date(); return d.getFullYear()+ '-'+addZero(d.getMonth())+'-'+addZero(d.getDate())+' '+addZero(d.getHours())+':'+addZero(d.getMinutes())+':'+addZero(d.getSeconds()); } 

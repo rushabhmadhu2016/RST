@@ -2,7 +2,8 @@
 <script src="../global_assets/js/plugins/tables/datatables/datatables.min.js"></script>
   <script src="../global_assets/js/plugins/tables/datatables/extensions/responsive.min.js"></script>
   <script src="../global_assets/js/plugins/forms/selects/select2.min.js"></script>
-
+  <script src="../global_assets/js/plugins/forms/styling/uniform.min.js"></script>
+  <script src="../global_assets/js/plugins/forms/selects/bootstrap_multiselect.js"></script>
   <script src="../assets/js/app.js"></script>
   <script src="../global_assets/js/demo_pages/datatables_responsive.js"></script>
 <% include template/subheader %>
@@ -33,6 +34,25 @@
   <div class="content">
     <% include template/flashmessage %>
     <div class="card">
+      <div class="card-body">
+        <form name="location_filters" id="location_filters">
+          <div class="row">
+              <div class="col-md-4">
+                  <select name="category_filter" id="category_filter" class="form-control multiselect-nonselected-text" multiple="multiple" data-fouc>
+                    <% categories.forEach((category) => { %>
+                  <option value="<%=category.id%>" 
+                    <% if(filters.category_filter && filters.category_filter==category.id){ %> selected <% } %> > <%=category.category_name%> </option>
+                <% }) %>
+                  </select>
+              </div>
+              <div class="col-md-2">
+                <div>
+                  <button type="submit" class="btn btn-primary btn-sm" id="filterApplyBtn">Apply <i class="icon-filter4 ml-2"></i></button>
+                </div>
+              </div>
+          </div>
+        </form>
+      </div>
           <table class="table datatable-responsive">
             <thead>
               <tr>
@@ -68,11 +88,19 @@
                               <td><%=catname %></td>
                               <td><a href="userdetails?id=<%=property.exiting_owner_id%>"> <%=property.exiting_owner %></a></td>
                               <td><a href="business-detail?id=<%=property.new_owner_id%>"> <%=property.new_owner_name %></a></td>
-                              <td> 
-                              <a type="button" class="btn btn-success btn-sm" data-href="/admin/propertydetail?id=<%=property.id%>" data-id="<%=property.id%>" onclick="approveClaim(<%=property.id%>)">Accept</a>
-                                <a type="button" class="btn btn-success btn-sm" data-href="/admin/propertydetail?id=<%=property.id%>" data-id="<%=property.id%>" onclick="ignoreClaim(<%=property.id%>)">Ignore</a>
-                              <a type="button" class="btn btn-primary btn-sm" href="/admin/location-detail?id=<%=property.property_id%>">View</a>
-                            </td>
+                              <td>
+                                <div class="list-icons">
+                                  <a href="/admin/location-detail?id=<%=property.property_id%>" class="list-icons-item text-primary-600" data-popup="tooltip" title="View" data-container="body">
+                                    <i class="icon-eye8"></i>
+                                  </a>
+                                  <a href="javascript:void(0)" class="list-icons-item text-success-600" data-popup="tooltip" title="Accept Claim" data-container="body" onclick="confirmmessage('Are you sure you want to accept this claim? ','/admin/approve-claim/?id=<%=property.id%>')">
+                                    <i class="icon-checkmark-circle2"></i>
+                                  </a>
+                                  <a href="javascript:void(0)" class="list-icons-item text-danger-600" data-popup="tooltip" title="Ignore Claim" data-container="body" onclick="confirmmessage('Are you sure you want to ignore this claim? ','/admin/ignore-claim/?id=<%=property.id%>')">
+                                    <i class="icon-reload-alt"></i>
+                                  </a>
+                                </div>
+                              </td>
                           </tr>
                         <%} } else{ %> 
                             <tr>
@@ -91,11 +119,20 @@
                               %>
                               <td><%=catname %></td>
                               %>
-                              <td><a href="userdetails?id=<%=property.exiting_owner_id%>"> <%=property.exiting_owner %>111</a></td>
+                              <td><a href="userdetails?id=<%=property.exiting_owner_id%>"> <%=property.exiting_owner %></a></td>
                               <td><a href="business-detail?id=<%=property.new_owner_id%>"> <%=property.new_owner_name %></a></td>
-                              <td><a type="button" class="btn btn-success btn-sm" data-href="/admin/propertydetail?id=<%=property.id%>" data-id="<%=property.id%>" onclick="approveClaim(<%=property.id%>)">Accept</a>
-                                <a type="button" class="btn btn-success btn-sm" data-href="/admin/propertydetail?id=<%=property.id%>" data-id="<%=property.id%>" onclick="ignoreClaim(<%=property.id%>)">Ignore</a>
-                                <a type="button" class="btn btn-primary btn-sm" href="/admin/location-detail?id=<%=property.property_id%>">View</a>
+                              <td>
+                                <div class="list-icons">
+                                  <a href="/admin/location-detail?id=<%=property.property_id%>" class="list-icons-item text-primary-600" data-popup="tooltip" title="View" data-container="body">
+                                    <i class="icon-eye8"></i>
+                                  </a>
+                                  <a href="javascript:void(0)" class="list-icons-item text-success-600" data-popup="tooltip" title="Accept Claim" data-container="body" onclick="confirmmessage('Are you sure you want to accept this claim? ','/admin/approve-claim/?id=<%=property.id%>')">
+                                    <i class="icon-checkmark-circle2"></i>
+                                  </a>
+                                  <a href="javascript:void(0)" class="list-icons-item text-danger-600" data-popup="tooltip" title="Ignore Claim" data-container="body" onclick="confirmmessage('Are you sure you want to ignore this claim? ','/admin/ignore-claim/?id=<%=property.id%>')">
+                                    <i class="icon-reload-alt"></i>
+                                  </a>
+                                </div>
                               </td>
                             </tr>
                         <% } }) } %>
@@ -106,7 +143,10 @@
   <!-- /content area -->
 <% include template/subfooter%>   
   <script type="text/javascript">
-    $(document).ready(function(){      
+    $(document).ready(function(){
+      $('.multiselect-nonselected-text').multiselect({
+        nonSelectedText: 'Select Category'
+      });
       $("#category_filter").change(function(){       
         $("#location_filters").submit();
       });

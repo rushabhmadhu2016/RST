@@ -174,10 +174,18 @@ exports.allBusinessUsers = function(req,res){
 
 /* Get All Category List from Admin Side*/
 exports.allCategories = function(req,res){
-	Category.find({}, function(err, users) {
-	    var categoryList = [];
-	    users.forEach(function(user) {
-	      categoryList.push(user);
+	Category.find({}, function(err, categorydata) {
+	    var categoryList = [];	    
+	    categorydata.forEach(function(category) {
+	      categoryList.push(category);
+	      var cat_owner = parseInt(category.created_by);
+	      if(cat_owner==0){
+
+	      }else{
+	      	User.findOne({'id':cat_owner},function(err,users){
+	      		console.log(users.first_name);
+	      	});
+	      }
 	    });
 		res.render('admin/allCategories.ejs', {
 			error : req.flash("error"),
