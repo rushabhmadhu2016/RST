@@ -209,8 +209,8 @@ module.exports = function (app, passport) {
     app.post('/admin/review/cancelFlaggedReview', ReviewController.cancelFlaggedReview);
     app.post('/admin/review/removeReviewReply', ReviewController.removeReviewReply);
     app.post('/admin/setprofesstionalbadge', AdminHomeController.loggedIn, HomeController.setProfesstionalBadge);    
-    app.get('/admin/token-transfer', AdminHomeController.loggedIn, AdminHomeController.transferToken);
-    app.post('/admin/transfer-token', AdminHomeController.loggedIn, AdminHomeController.transferTokenSave);
+    /*app.get('/admin/token-transfer', AdminHomeController.loggedIn, AdminHomeController.transferToken);
+    app.post('/admin/transfer-token', AdminHomeController.loggedIn, AdminHomeController.transferTokenSave);*/
 
     /*Newly Added routes*/
     app.get('/user/:userid/profile', HomeController.showUserProfile);

@@ -164,7 +164,7 @@ exports.showMyListingPage = async function(req, res) {
 	}); 
 	
 	//Get Properties with User, Category and Reviews
-	let properties = await Property.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user:req.session.user._id}, categoriesListToSearch]}).limit(perPage).skip(perPage * page)
+	let properties = await Property.find({$and: [{$or: [ {property_name: { "$regex": keyword, "$options": "i" }},{ address1:{ "$regex": keyword, "$options": "i" } }, { address2:{ "$regex": keyword, "$options": "i" } },{post_code: { "$regex": keyword, "$options": "i" }}]}, {user:req.session.user._id}, categoriesListToSearch, {status:1}]}).limit(perPage).skip(perPage * page)
     .sort({ property_name: 'asc'}).populate({path: 'user',
       model: 'User',select: 'first_name last_name mail'}).populate({path: 'category',
       model: 'Category',select: 'category_name id'}).populate({path: 'category',
@@ -448,6 +448,8 @@ exports.deletePropertyListingPage = function(req,res){
 			}
 			console.log('Review deleted');			
 		});
+
+		User.findOne()
 	 	req.flash('success', 'Location deleted successfully');
      	res.redirect('/myListing');
 	});	
@@ -574,6 +576,7 @@ exports.storePropertyListing = async function(req, res) {
 					}
 					else{
 					 	User.findOne({id:req.session.user.id}, function (err, updatePropertyData) {
+					 		
 							updatePropertyData.property = newProperty._id;
 		    				updatePropertyData.category = newProperty.category;
 		  
