@@ -1,0 +1,138 @@
+.user_profile_page .profile
+{
+	width: 181px;
+    height: 150px;
+	border-radius: 25px;
+}
+/*slider*/
+.divider {border: 1px solid #ccc;}
+img {width:100%;}
+
+     .swiper-container {
+      width: 100%;
+      height: 100%;
+    }
+    .swiper-slide {
+      text-align: center;
+      font-size: 18px;
+      background: #fff;
+      /* Center slide text vertically */
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+/*end*/
+.user_profile_page .Influencer
+{
+	/*color: black;
+	background-color: #717171;*/
+}
+.user_profile_page ul.inf li
+{
+	display: inline-block;
+	margin-left: 10px;
+}
+.user_profile_page ul.inf
+{
+	margin-left: 0;
+	margin-left: -47px;
+}
+.user_profile_page .point
+{
+	color: #6196ed;
+}
+.user_profile_page .demo_btn
+{
+	
+    text-transform: uppercase;
+    background: transparent;
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 1px;
+    display: inline-block;
+    padding: 6px 20px;
+    border-radius: 50px;
+    transition: 0.5s;
+    margin: 10px;
+    border: 2px solid #6d6f6bb8;
+    color: black;
+}
+.user_profile_page .media-body
+{
+	margin-left: 20px;
+}
+.user_profile_page  .followers
+{
+	margin-top: 50px;
+}
+.user_profile_page .user_name
+{
+	margin-left: 20px;
+}
+.user_profile_page #myCarousel
+{
+	margin-top: 50px;
+}
+.user_profile_page .carousel .carousel-inner {
+     box-shadow: 0px 0px 0px 0px !important; 
+    
+    width: 100%;
+    max-height: 350px !important;
+}
+.user_profile_page .table_info
+{
+	margin-top: 50px;
+}
+.user_profile_page .card
+{
+	margin-top: 50px;
+}
+.user_profile_page .view
+{
+	margin-top: 50px;
+	
+}
+.borderless td, .borderless th {
+    border: none;
+}
+.carousel-item > div {
+  float: left;
+}
+.carousel-by-item [class*="cloneditem-"] {
+  display: none;
+}
+@media (min-width:320px) 
+{
+	.user_profile_page .user_name
+	{
+		margin-top: 10px;
+	}
+	.user_profile_page  .followers
+	{
+	margin-top: 0px;
+	}
+}
+
+@media (min-width:801px)
+{
+	.user_profile_page  .followers
+	{
+	margin-top: 110px;
+	}
+}
+@media (min-width:1025px)
+{
+	.user_profile_page  .followers
+	{
+	margin-top: 50px;
+	}
+}
