@@ -223,7 +223,7 @@ var transactionsSchema = mongoose.Schema ({
 	created_date: String,
 	updated_date: String
 });
-var Transactions = mongoose.model('Transaction', transactionsSchema);
+var Transaction = mongoose.model('Transaction', transactionsSchema);
 
 //followers Schema
 var followersSchema = mongoose.Schema({
@@ -234,7 +234,7 @@ var followersSchema = mongoose.Schema({
 	created_date: String,
 	updated_date: String
 });
-var Followers = mongoose.model('Follower', followersSchema);
+var Follower = mongoose.model('Follower', followersSchema);
 
 var likeSchema = mongoose.Schema({	
 	id: Number,

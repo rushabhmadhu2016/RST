@@ -63,6 +63,66 @@ exports.allUsers = async function(req,res) {
 		});
 }
 
+
+/*Transfer Token - Developer: Rushabh Madhu*/
+exports.transferToken = async function(req, res, next)
+{	let userTypes = [1,2];
+	let users = await User.find({$and: [{'user_type': {$in: userTypes } },{status:1}]});
+	res.render('admin/token_transfer.ejs', {
+		error : req.flash("error"),
+		success: req.flash("success"),
+		users: users,
+	});
+}
+
+exports.transferTokenSave = function(req, res, next)
+{
+	let user = '';
+	let amount = '';
+
+	if(req.body.amount){
+		amount =req.body.amount;
+	}
+	if(req.body.user){
+		user =req.body.user;
+	}	
+	var transaction = new Transaction();
+	transaction.id=parseInt(1);
+	transaction.amount=amount;
+	transaction.type=parseInt(1);
+	transaction.user=user;
+	transaction.operation='plus';
+	transaction.description ="Transfered by admin";
+	transaction.status=parseInt(1),
+	transaction.created_date = getDate();
+	transaction.from = '5aaa709f8b4aac13863123e1';
+	transaction.save(function(err){
+		if(err){
+			req.flash('error', 'Token transfer failed.');
+			res.redirect('/admin/token-transfer');			
+		}
+		User.findOne({_id:user}, function(err, p) {
+			if(err){
+				req.flash('error', 'Token transfer failed.');
+				res.redirect('/admin/token-transfer');		
+			}
+			console.log(p);
+			p.token_balance=parseInt(p.token_balance)+parseInt(amount);
+			p.save(function(err) {
+		      if (err){
+	    	 	req.flash('error', 'Token transfer failed.');
+				res.redirect('/admin/token-transfer');		
+		    }
+		    else
+		    {
+    			req.flash('success', 'Token transfer successfully');
+				res.redirect('/admin/token-transfer');
+		    }
+    		});
+		});		
+	});
+}
+
 /* Get Properties for Admin Side Location Page*/
 exports.allProperties = function(req,res){
 	var categoryList = [];
