@@ -214,6 +214,13 @@ exports.approveLocation = function(req, res) {
 			    }
 			    else{
 			    	User.findOne({_id:property_user}, function(err, userdata){
+			    		var user_token = userdata.token_balance;
+			    		userdata.token_balance = userdata.token_balance + 1;
+			    		userdata.save(function(err){
+			    			if (err){
+			    				req.flash('error', 'could not find user details');
+		    	    			res.redirect('/errorpage');
+			    			}else {
 			    		console.log(userdata);
 
 			    		if(!userdata){
@@ -245,13 +252,14 @@ exports.approveLocation = function(req, res) {
 					    	}
 							res.redirect('/admin/locations');	
 			    		}
+			    		}
+			    	});
 			    	})
 				}
 		    });
   		}
 	});
 }
-
 exports.allProperties = async function (req, res) {
 	let page=0;
 	let skip=0;
