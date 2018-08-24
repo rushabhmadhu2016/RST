@@ -8,6 +8,7 @@ var LocationController = require('../app/controllers/locationController.js');
 var FrontListingController = require('../app/controllers/frontListingController.js');
 var ClaimController = require('../app/controllers/claimController.js');
 var apiController = require('../app/controllers/apiController.js');
+var BlogController = require('../app/controllers/blogController.js');
 var BlogsController = require('../app/controllers/blogsController.js');
 var EmailController = require('../app/controllers/emailController.js');
 
@@ -209,9 +210,9 @@ module.exports = function (app, passport) {
     app.post('/admin/review/cancelFlaggedReview', ReviewController.cancelFlaggedReview);
     app.post('/admin/review/removeReviewReply', ReviewController.removeReviewReply);
     app.post('/admin/setprofesstionalbadge', AdminHomeController.loggedIn, HomeController.setProfesstionalBadge);    
+
     app.get('/admin/token-transfer', AdminHomeController.loggedIn, AdminHomeController.transferToken);
     app.post('/admin/transfer-token', AdminHomeController.loggedIn, AdminHomeController.transferTokenSave);
-
     /*Newly Added routes*/
     app.get('/user/:userid/profile', HomeController.showUserProfile);
     app.get('/business-memberships', HomeController.isLoggedIn, BusinessController.getMembershipData);

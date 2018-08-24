@@ -214,7 +214,8 @@ var transactionsSchema = mongoose.Schema ({
 	id: Number,
 	type: Number, //Point/Token
 	product: { type: Schema.Types.ObjectId, ref: 'Product' },
-	user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+	user: { type: Schema.Types.ObjectId, ref: 'User' },
+	from: { type: Schema.Types.ObjectId, ref: 'User' },
 	amount: Number,
 	operation: String, //minus,plus
 	description: String, 
@@ -361,8 +362,8 @@ module.exports = {
     FeaturedListing: FeaturedListing,
     Flag: Flag,
     Review: Review,
-    Transactions: Transactions,
-    Followers: Followers,
+    Transaction: Transaction,
+    Follower: Follower,
     Like: Like,
     Membership: Membership,
     MembershipRenewal: MembershipRenewal,

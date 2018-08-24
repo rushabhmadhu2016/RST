@@ -1,0 +1,71 @@
+<% include template/head %>
+  <script src="<%-base_url%>/global_assets/js/plugins/forms/selects/select2.min.js"></script>
+  <script src="<%-base_url%>/assets/js/app.js"></script>
+  <script src="../../../../global_assets/js/plugins/extensions/jquery_ui/interactions.min.js"></script>
+  <script src="../../../../global_assets/js/plugins/forms/selects/select2.min.js"></script>
+  <script src="../../../../global_assets/js/demo_pages/form_select2.js"></script>
+<% include template/subheader %>
+  <!-- Page header -->
+  <div class="page-header page-header-light">
+    <div class="page-header-content header-elements-md-inline">
+      <div class="page-title d-flex">
+        <h4> <span class="font-weight-semibold">Transfer token</span></h4>
+        <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+      </div>
+
+      <div class="header-elements d-none">
+      </div>
+    </div>
+
+    <div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
+      <div class="d-flex">
+        <div class="breadcrumb">
+          <a href="home" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Home</a>
+          <span class="breadcrumb-item active"><i class="icon-users4 mr-2"></i>Token transfer</span>          
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /page header -->
+  <!-- Content area -->
+  <div class="content">
+    <% include template/flashmessage %>  
+    <div class="card">
+      <form class="form-inline" action="<%-base_url%>/admin/transfer-token" method="post">
+          <div class="form-group">
+            <label for="username">Select User</label>
+                <select class="form-control select-search" data-fouc name="user" id="username">
+                  <% 
+                  users.forEach(function(user){
+                  %>
+                  <option value="<%-user._id%>">
+                    <%
+                    var str
+                    if(user.user_type==1){
+                      str=user.first_name+' '+user.last_name+' (User)'; 
+                    }else{
+                      str=user.first_name+' '+user.last_name+' (Business)';
+                    }
+                    %>
+                    <%-str%>                  
+                  </option> 
+                  <% 
+                  });
+                  %>
+                </select>
+          </div>
+          <div class="form-group">          
+            <label for="pwd" class="mr-sm-2">How many SST ?</label>
+              <input type="text" name="amount" class="form-control mb-2" id="amount" placeholder="SST Token Amount">
+            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+          </form> 
+    </div>
+  </div>
+  <script type="text/javascript">
+    $(document).ready(function(){
+     
+    });
+  </script>
+  <!-- /content area -->
+<% include template/subfooter%>   
+<% include template/footer%>
