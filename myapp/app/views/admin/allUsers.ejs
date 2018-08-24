@@ -10,7 +10,7 @@
   <div class="page-header page-header-light">
     <div class="page-header-content header-elements-md-inline">
       <div class="page-title d-flex">
-        <h4> <span class="font-weight-semibold">Admin</span> - Users</h4>
+        <h4> <span class="font-weight-semibold">Users</span></h4>
         <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
       </div>
 
@@ -33,27 +33,32 @@
   <div class="content">
     <% include template/flashmessage %>
     <div class="card">
-      <div class="row">
-        <form method="get" name="search_form" id="search_form" class="form-inline">
-          <input type="hidden" name="page" value="0" />
-          <input type="hidden" name="ordered_column" id="ordered_column" value="<%-ordered_column%>" />
-          <input type="hidden" name="ordered_sort" id="ordered_sort" value="<%-ordered_sort%>" />
-          <label for="keyword"> Search :</label>
-          <input type="text" name="keyword" value="<%-keyword%>" id="keyword" placeholder="Search keyword" class="form-control"/> <input type="submit" value="Search" class="btn btn-primary" />
+      <div class="card-body">
+        <form method="get" name="search_form" id="search_form">
+          <div class="row">
+            <div class="col-md-3">
+              <input type="hidden" name="page" value="0" />
+              <input type="hidden" name="ordered_column" id="ordered_column" value="<%-ordered_column%>" />
+              <input type="hidden" name="ordered_sort" id="ordered_sort" value="<%-ordered_sort%>" />
+                <input type="text" name="keyword" value="<%-keyword%>" id="keyword" placeholder="Search user" class="form-control"/> 
+            </div>
+            <div class="col-md-9">
+              <button type="submit" class="btn btn-primary btn-sm">Search <i class="icon-search4 ml-2"></i></button>
+              <button type="reset" class="btn btn-sm bg-slate" id="resetApplyBtn">Reset <i class="icon-reset ml-2"></i></button>
+            </div>
+          </div>
         </form>
       </div>
-    </div>
-    <div class="card">
           <table class="table table-hover table-bordered">
             <thead>
               <tr>
-                  <th>Sr. No</th>
-                  <th class="filter-class first_name" data-order="0" data-column="first_name">First Name</th>
-                  <th class="filter-class last_name" data-order="0" data-column="last_name">Last Name</th>
-                  <th class="filter-class mail" data-order="0" data-column="mail">Email</th>
-                  <th class="filter-class city" data-order="0" data-column="city">City</th>
-                  <th class="filter-class status" data-order="0" data-column="status">Status</th>
-                  <th class="filter-class" data-order="0">Actions</th>
+                  <th>#</th>
+                  <th class="filter-class first_name" data-order="<%= (ordered_column=='first_name') ? ordered_sort : -1 %>" data-column="first_name">First Name</th>
+                  <th class="filter-class last_name" data-order="<%= (ordered_column=='last_name') ? ordered_sort : -1 %>" data-column="last_name">Last Name</th>
+                  <th class="filter-class mail" data-order="<%= (ordered_column=='mail') ? ordered_sort : -1 %>" data-column="mail">Email</th>
+                  <th class="filter-class city" data-order="<%= (ordered_column=='city') ? ordered_sort : -1 %>" data-column="city">City</th>
+                  <th class="filter-class status" data-order="<%= (ordered_column=='status') ? ordered_sort : -1 %>" data-column="status">Status</th>
+                  <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -124,28 +129,33 @@
   </div>
   <script type="text/javascript">
     $(document).ready(function(){
-      console.log($("#ordered_column").val());
-      console.log($("#ordered_sort").val());
-      if($('#ordered_sort').val()==1){
-        $("."+$("#ordered_column").val()).css('font-weight','bold');
-      }else{
-        $("."+$("#ordered_column").val()).css('font-weight','normal');
-      }
       $(".page-item a").click(function(){
         console.log($(this).data('page'));
         $("#page").val($(this).data('page'));
         $("#pagination-form").submit();
       });
+      $("#resetApplyBtn").click(function(){
+        $("#keyword").val('');
+        $("#page").val('');
+        $("#search_form").submit();
+      });
+      
+      /*if($('#ordered_sort').val()==1){
+        $("."+$("#ordered_column").val()).css('font-weight','bold');
+      }else{
+        $("."+$("#ordered_column").val()).css('font-weight','normal');
+      }
+
       $(".filter-class").click(function(){
         var order = $(this).data('order');
-        order = (order==1) ? 0 : 1;
+        order = (order==1) ? -1 : 1;
         $(this).data('order',order);
         var column_order = $(this).data('order');
         var column_name = $(this).data('column');
         $('#ordered_column').val(column_name);
         $('#ordered_sort').val(column_order);
         $('#search_form').submit();
-      })
+      })*/
     });
   </script>
   <!-- /content area -->

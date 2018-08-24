@@ -43,8 +43,8 @@ exports.allUsers = async function(req,res) {
 	if(req.query.ordered_sort){
 		ordered_sort=req.query.ordered_sort;
 	}
-	let users = await User.find({$or: [ {first_name: { "$regex": keyword, "$options": "i" }},{ last_name:{ "$regex": keyword, "$options": "i" } }, { mail:{ "$regex": keyword, "$options": "i" } },{city: { "$regex": keyword, "$options": "i" }}]}).skip(skip).limit(perpage).sort(ordered_column);
-	total_count = await User.find({$or: [ {first_name: { "$regex": keyword, "$options": "i" }},{ last_name:{ "$regex": keyword, "$options": "i" } }, { mail:{ "$regex": keyword, "$options": "i" } },{city: { "$regex": keyword, "$options": "i" }}]}).count();
+	let users = await User.find({$and: [{$or: [ {first_name: { "$regex": keyword, "$options": "i" }},{ last_name:{ "$regex": keyword, "$options": "i" } }, { mail:{ "$regex": keyword, "$options": "i" } },{city: { "$regex": keyword, "$options": "i" }}]},{user_type:1}]}).skip(skip).limit(perpage).sort(ordered_column).exec();
+	total_count = await User.find({$and: [{$or: [ {first_name: { "$regex": keyword, "$options": "i" }},{ last_name:{ "$regex": keyword, "$options": "i" } }, { mail:{ "$regex": keyword, "$options": "i" } },{city: { "$regex": keyword, "$options": "i" }}]},{user_type:1}]}).count();
 	page_count = Math.ceil(total_count/perpage);	
 	    users.forEach(function(user) {
 	      usersList.push(user);
@@ -179,10 +179,35 @@ exports.getBusinessUserDetails = function(req,res){
 	});
 }
 
-exports.allBusinessUsers = function(req,res){
-	User.find({user_type:2}, function(err, users) {
-	    var usersList = [];
-		var i=0;
+exports.allBusinessUsers = async function(req,res){
+	let page=0;
+	let skip=0;
+	let perpage=10;
+	let usersList = [];
+	let total_count = 0;	
+	let keyword = '';
+	let ordered_column='first_name';
+	let ordered_sort = 0;
+	if(req.query.page){
+		page=parseInt(req.query.page);
+		if(page<0)page=0;
+		skip=page*perpage;
+	}	
+	if(req.query.keyword){
+		keyword = req.query.keyword.trim().toLowerCase();			
+	}
+	if(req.query.ordered_column){
+		ordered_column=req.query.ordered_column;
+	}
+	if(req.query.ordered_sort){
+		ordered_sort=req.query.ordered_sort;
+	}
+
+	let users = await User.find({$and: [{$or: [ {first_name: { "$regex": keyword, "$options": "i" }},{ last_name:{ "$regex": keyword, "$options": "i" } }, { mail:{ "$regex": keyword, "$options": "i" } },{city: { "$regex": keyword, "$options": "i" }}]},{user_type:2}]}).skip(skip).limit(perpage).sort(ordered_column).exec();
+
+	total_count = await User.find({$and: [{$or: [ {first_name: { "$regex": keyword, "$options": "i" }},{ last_name:{ "$regex": keyword, "$options": "i" } }, { mail:{ "$regex": keyword, "$options": "i" } },{city: { "$regex": keyword, "$options": "i" }}]},{user_type:2}]}).count();
+	page_count = Math.ceil(total_count/perpage);	
+	
 	    users.forEach(function(user) {
 	      usersList.push(user);
 	    });
@@ -190,14 +215,46 @@ exports.allBusinessUsers = function(req,res){
 			error : req.flash("error"),
 			success: req.flash("success"),
 			users: usersList,
+			page: page,
+			perpage:perpage,
+			total_count: total_count,
+			total_pages: page_count,
+			keyword: keyword,
+			ordered_sort: ordered_sort,
+			ordered_column: ordered_column,
 		});
-	});
 }
 
 /* Get All Category List from Admin Side*/
-exports.allCategories = function(req,res){
-	Category.find({}, function(err, categorydata) {
-	    var categoryList = [];	    
+exports.allCategories = async function(req,res){
+	let page=0;
+    let skip=0;
+    let perpage=10;
+    let usersList = [];
+    let total_count = 0;    
+    let keyword = '';
+    let ordered_column='blog_title';
+    let ordered_sort = 0;
+    let categoryList = [];
+    if(req.query.page){
+        page=parseInt(req.query.page);
+        if(page<0)page=0;
+        skip=page*perpage;
+    }   
+    if(req.query.keyword){
+        keyword = req.query.keyword.trim().toLowerCase();           
+    }
+    if(req.query.ordered_column){
+        ordered_column=req.query.ordered_column;
+    }
+    if(req.query.ordered_sort){
+        ordered_sort=req.query.ordered_sort;
+    }
+
+	let categorydata = await Category.find({$or: [ {category_name: { "$regex": keyword, "$options": "i" }}]}).populate({path:'user',model:'User'}).skip(skip).limit(perpage).sort(ordered_column).exec();
+	total_count = await Category.find({$or: [ {category_name: { "$regex": keyword, "$options": "i" }}]}).populate({path:'user',model:'User'}).skip(skip).limit(perpage).sort(ordered_column).count();
+	page_count = Math.ceil(total_count/perpage);
+
 	    categorydata.forEach(function(category) {
 	      categoryList.push(category);
 	      var cat_owner = parseInt(category.created_by);
@@ -213,8 +270,14 @@ exports.allCategories = function(req,res){
 			error : req.flash("error"),
 			success: req.flash("success"),
 			categories: categoryList,
+			page: page,
+			perpage:perpage,
+			total_count: total_count,
+			total_pages: page_count,
+			keyword: keyword,
+			ordered_sort: ordered_sort,
+			ordered_column: ordered_column,
 		});
-	});
 }
 
 /* Admin Side Counts on Dashboard Page*/

@@ -16,8 +16,33 @@ exports.addemailPage = function(req,res){
     });
 }
 
-exports.showemails = function(req,res){
-    Email.find({}, function(err, emails) {
+exports.showemails = async function(req,res){
+    let page=0;
+    let skip=0;
+    let perpage=10;
+    let usersList = [];
+    let total_count = 0;    
+    let keyword = '';
+    let ordered_column='email_name';
+    let ordered_sort = 0;
+    if(req.query.page){
+        page=parseInt(req.query.page);
+        if(page<0)page=0;
+        skip=page*perpage;
+    }   
+    if(req.query.keyword){
+        keyword = req.query.keyword.trim().toLowerCase();           
+    }
+    if(req.query.ordered_column){
+        ordered_column=req.query.ordered_column;
+    }
+    if(req.query.ordered_sort){
+        ordered_sort=req.query.ordered_sort;
+    }
+
+    let emailsList = await Email.find({$or: [ {email_type: { "$regex": keyword, "$options": "i" }},{ email_name:{ "$regex": keyword, "$options": "i" } }, { email_subject:{ "$regex": keyword, "$options": "i" } }]}).skip(skip).limit(perpage).sort(ordered_column).exec();
+    total_count = await Email.find({$or: [ {email_type: { "$regex": keyword, "$options": "i" }},{ email_name:{ "$regex": keyword, "$options": "i" } }, { email_subject:{ "$regex": keyword, "$options": "i" } }]}).skip(skip).limit(perpage).sort(ordered_column).count();
+    page_count = Math.ceil(total_count/perpage);
         /*var emailList = [];      
         emails.forEach(function(email) {
           emailList.push(emails);
@@ -25,9 +50,15 @@ exports.showemails = function(req,res){
         res.render('admin/emails.ejs', {
             error : req.flash("error"),
             success: req.flash("success"),
-            emailsList: emails,
+            emailsList: emailsList,
+            page: page,
+            perpage:perpage,
+            total_count: total_count,
+            total_pages: page_count,
+            keyword: keyword,
+            ordered_sort: ordered_sort,
+            ordered_column: ordered_column,
         });
-    });
 }
 
 exports.editemailPage = function(req, res) {

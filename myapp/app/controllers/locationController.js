@@ -253,12 +253,39 @@ exports.approveLocation = function(req, res) {
 }
 
 exports.allProperties = async function (req, res) {
-    let categoryList = [];
-    let propertyList = [];
-    let usersIds = [];
-    let category_filter = {};
+	let page=0;
+	let skip=0;
+	let perpage=10;
+	let usersList = [];
+	let total_count = 0;	
+	let keyword = '';
+	let ordered_column='first_name';
+	let ordered_sort = 0;
+	let categoryList = [];
 	let filters = {};
-	let status = [];	
+	let status = [];
+	let category_filter = {};
+
+	if(req.query.page){
+		page=parseInt(req.query.page);
+		if(page<0)page=0;
+		skip=page*perpage;
+	}	
+	if(req.query.keyword){
+		keyword = req.query.keyword.trim().toLowerCase();			
+	}
+	if(req.query.ordered_column){
+		ordered_column=req.query.ordered_column;
+	}
+	if(req.query.ordered_sort){
+		ordered_sort=req.query.ordered_sort;
+	}
+
+    
+    //let propertyList = [];
+    //let usersIds = [];
+    
+		
 	if(req.query.filter1){ status.push(0);  filters.filter1=req.query.filter1;}
 	if(req.query.filter2){ status.push(1);	filters.filter2=req.query.filter2;}
 	if(req.query.filter3){ status.push(2);	filters.filter3=req.query.filter3;}
@@ -276,12 +303,17 @@ exports.allProperties = async function (req, res) {
 	if(Object.keys(filters).length>0 && filters.category_filter){
 		category_filter.id=filters.category_filter;
 	}
-	console.log(status);
 
 	console.log("welcome to allProperties");
  	let properties = await Property.find({'status':{$in:status}}).populate({path: 'user',
       model: 'User',select: 'first_name last_name mail contact_number'}).populate({path: 'category',
       model: 'Category',select: 'category_name id'}).exec();
+
+    total_count = await Property.find({'status':{$in:status}}).populate({path: 'user',
+      model: 'User',select: 'first_name last_name mail contact_number'}).populate({path: 'category',
+      model: 'Category',select: 'category_name id'}).count();
+
+    page_count = Math.ceil(total_count/perpage);
 
     //Get Categories Data
     var categories = await Category.find();
@@ -294,7 +326,14 @@ exports.allProperties = async function (req, res) {
         success: req.flash("success"),
         categories: categoryList,        
         properties: properties,
-        filters: filters
+        filters: filters,
+        page: page,
+		perpage:perpage,
+		total_count: total_count,
+		total_pages: page_count,
+		keyword: keyword,
+		ordered_sort: ordered_sort,
+		ordered_column: ordered_column,
     }); 
 }
 

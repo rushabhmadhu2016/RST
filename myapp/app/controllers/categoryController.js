@@ -79,7 +79,7 @@ exports.storeCategoryPage = function(req, res) {
 				res.redirect('/errorpage');
 			}
 			else{
-				if (category_name) {
+				if (category_name.length > 0) {
 	        		console.log('category already exitst');
 			        req.flash('error', 'Category already exist');
 					res.redirect('/admin/categories');
@@ -91,6 +91,8 @@ exports.storeCategoryPage = function(req, res) {
 					var day = getDate();
 					newCategory.category_name = cat_name;
 				    newCategory.status = parseInt(1);
+				    newCategory.user = req.session.user._id;
+				    newCategory.created_by = req.session.user.id;
 				    newCategory.created_date = day;
 				    newCategory.updated_date = day;
 				    if(categorydata.length > 0){
@@ -128,8 +130,10 @@ exports.storeUserCategoryPage = function(req, res) {
 					newCategory.category_name = cat_name;
 				    newCategory.status = parseInt(0);
 				    newCategory.created_date = day;
+				    newCategory.user = req.session.user._id;
 				    newCategory.created_by = req.session.user.id;
 				    newCategory.updated_date = day;
+				    console.log(req.session.user._id);
 				    if(categorydata.length > 0){
 				    	newCategory.id = categorydata[0].id+1;
 				    }else{
@@ -152,10 +156,10 @@ exports.updateCategoryPage = function(req, res) {
 			req.flash('error', 'Error : something is wrong while updating category');
 			res.redirect('/errorpage');
 		}
-		else{
-			console.log('test');
+		else{			
 			if (!p){
-            req.flash('error', 'Category Not Found..');
+	            req.flash('error', 'Category Not Found..');
+	            res.redirect('/errorpage');
         	}
 	        else 
 	        {   

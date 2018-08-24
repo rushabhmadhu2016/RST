@@ -8,7 +8,6 @@ var LocationController = require('../app/controllers/locationController.js');
 var FrontListingController = require('../app/controllers/frontListingController.js');
 var ClaimController = require('../app/controllers/claimController.js');
 var apiController = require('../app/controllers/apiController.js');
-var BlogController = require('../app/controllers/blogController.js');
 var BlogsController = require('../app/controllers/blogsController.js');
 var EmailController = require('../app/controllers/emailController.js');
 

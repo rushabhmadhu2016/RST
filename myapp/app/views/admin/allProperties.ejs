@@ -5,22 +5,14 @@
   <script src="../global_assets/js/plugins/forms/styling/uniform.min.js"></script>
   <script src="../global_assets/js/plugins/forms/selects/bootstrap_multiselect.js"></script>
   <script src="../assets/js/app.js"></script>
-  <script src="../global_assets/js/demo_pages/datatables_responsive.js"></script>
   <script src="../global_assets/js/demo_pages/form_multiselect.js"></script>
-  <script type="text/javascript">
-     $(document).ready(function() {
-      $('.multiselect-nonselected-text').multiselect({
-              nonSelectedText: 'asd'
-          });
-     });
-  </script>
   <script src="../global_assets/js/demo_pages/form_checkboxes_radios.js"></script>
 <% include template/subheader %>
 <!-- Page header -->
   <div class="page-header page-header-light">
     <div class="page-header-content header-elements-md-inline">
       <div class="page-title d-flex">
-        <h4> <span class="font-weight-semibold">Admin</span> - All Locations</h4>
+        <h4> <span class="font-weight-semibold">All Locations</span></h4>
         <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
       </div>
 
@@ -43,33 +35,25 @@
     <% include template/flashmessage %>
     <div class="card">
       <div class="card-body">
-        <form name="location_filters" id="location_filters">
+        <form method="get" name="search_form" id="search_form">
           <div class="row">
-              <div class="form-check col-md-2">
+              <div class="form-check-inline">
                 <label class="form-check-label" for="filter1">
                   <input type="checkbox" name="filter1" id="filter1" <% if(filters.filter1){ %> checked <% } %> class="form-check-input-styled-info" data-fouc>
                   Pending
                 </label>
               </div>
-              <div class="form-check col-md-2">
+              <div class="form-check-inline">
                 <label class="form-check-label" for="filter2">
                   <input type="checkbox" name="filter2" id="filter2" <% if(filters.filter2){ %> checked <% } %> class="form-check-input-styled-success" data-fouc>
                   Activated
                 </label>
               </div>
-              <div class="form-check col-md-2">
+              <div class="form-check-inline">
                 <label class="form-check-label" for="filter3">
                   <input type="checkbox" name="filter3" id="filter3" <% if(filters.filter3){ %> checked <% } %> class="form-check-input-styled-danger" data-fouc>
                   Deactivated
                 </label>
-              </div>
-              <div class="col-md-3">
-                      <select name="category_filter" id="category_filter" class="form-control multiselect-nonselected-text" multiple="multiple" data-fouc>
-                        <% categories.forEach((category) => { %>
-                      <option value="<%=category.id%>" 
-                        <% if(filters.category_filter && filters.category_filter==category.id){ %> selected <% } %> > <%=category.category_name%> </option>
-                    <% }) %>
-                      </select>
               </div>
               <div class="col-md-3">
                   <button type="submit" class="btn btn-primary btn-sm" id="filterApplyBtn">Apply <i class="icon-filter4 ml-2"></i></button>
@@ -81,7 +65,7 @@
           <table class="table datatable-responsive">
             <thead>
               <tr>
-                <th>Sr. No</th>
+                <th>#</th>
                 <th>Business Name</th>
                 <th>Category</th>
                 <th>Contact Number</th>
@@ -97,7 +81,7 @@
                 if (properties) {
                       properties.forEach((property) => { %>
               <tr>
-                <td><%= i++ %></td>
+                <td><%-(page*perpage)+i %><%i++%></td>
                 <td><%= property.property_name%></td>
                 <%
                  var categoryList = [];
@@ -148,7 +132,57 @@
             </tbody>
           </table>
     </div>
+    <% if(page<total_pages){ %>
+    <form method="get" id="pagination-form">
+      <input type="hidden" name="page" value="<%-page%>" id="page"/>
+          <nav aria-label="footer" class="pagination-section">
+            <ul class="pagination">
+              <li class="page-item <% if(page==0){%>disabled<% } %>">
+                <a class="page-link" href="javascript:void(0)" data-page="<%-page-1%>">Previous</a>
+              </li>
+              <% var i=0;
+              for(i=0;i<total_pages;i++){ %>
+              <li class="page-item <% if(i==page){%>active<% } %>"><a class="page-link" href="javascript:void(0)" data-page="<%-i %>"><%-i+1 %></a></li>
+              <% } %>              
+              <li class="page-item <% if(page==(total_pages-1)){%>disabled<% } %>">
+                <a class="page-link" href="javascript:void(0)" data-page="<%-page+1%>">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </form>
+        <% } %>
   </div>
   <!-- /content area -->
-<% include template/subfooter%>   
+<% include template/subfooter%>
+<script type="text/javascript">
+    $(document).ready(function(){
+      $(".page-item a").click(function(){
+        console.log($(this).data('page'));
+        $("#page").val($(this).data('page'));
+        $("#pagination-form").submit();
+      });
+      $("#resetApplyBtn").click(function(){        
+        $('input:checkbox').attr('checked',false);
+        $("#page").val('');
+        window.location.assign('locations')
+        //$("#search_form").submit();
+      });
+
+      /*if($('#ordered_sort').val()==1){
+        $("."+$("#ordered_column").val()).css('font-weight','bold');
+      }else{
+        $("."+$("#ordered_column").val()).css('font-weight','normal');
+      }
+      $(".filter-class").click(function(){
+        var order = $(this).data('order');
+        order = (order==1) ? -1 : 1;
+        $(this).data('order',order);
+        var column_order = $(this).data('order');
+        var column_name = $(this).data('column');
+        $('#ordered_column').val(column_name);
+        $('#ordered_sort').val(column_order);
+        $('#search_form').submit();
+      })*/
+    });
+  </script>  
 <% include template/footer%>

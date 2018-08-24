@@ -5,7 +5,7 @@
   <div class="page-header page-header-light">
     <div class="page-header-content header-elements-md-inline">
       <div class="page-title d-flex">
-        <h4> <span class="font-weight-semibold">Admin</span> - <%=(categories!='') ? 'Edit Category' : 'Add New Category';%></h4>
+        <h4> <span class="font-weight-semibold"><%=(categories!='') ? 'Edit Category' : 'Add New Category';%></span></h4>
         <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
       </div>
 
@@ -48,6 +48,7 @@
                           </div>
                         </div>
                         <div class="text-right">
+                          <input type="hidden" name="category_id" value="<%if(categories!=''){%><%=categories.id%><%}%>">
                           <button type="submit" class="btn btn-primary"><%=(categories!='') ? 'Update Category' : 'Add Category';%><i class="icon-paperplane ml-2"></i></button>
                           <a href="/admin/categories" class="btn btn-primary"><i class="icon-arrow-left7 position-left"></i> Back to Listing</a>
                         </div>
