@@ -222,22 +222,40 @@ exports.manageLike = function(req, res){
 		res.send({success:false});
 	}	
 }
-exports.getAllFlaggedReviews = async function(req, res){	
-	var propertyIds = [];
-	var propertyList=[];
-	var userList=[];
-	var userIds = [];
-	var reviewIds = [];
-	var reviewList = [];
+exports.getAllFlaggedReviews = async function(req, res){
+	let page=0;
+	let skip=0;
+	let perpage=10;
 	var flaggedReviewList = [];
-	var flaggedReviewsIds = [];
+	let total_count = 0;	
+	let keyword = '';
+	let ordered_column='first_name';
+	let ordered_sort = 0;
+	if(req.query.page){
+		page=parseInt(req.query.page);
+		if(page<0)page=0;
+		skip=page*perpage;
+	}	
+	if(req.query.keyword){
+		keyword = req.query.keyword.trim().toLowerCase();			
+	}
+	if(req.query.ordered_column){
+		ordered_column=req.query.ordered_column;
+	}
+	if(req.query.ordered_sort){
+		ordered_sort=req.query.ordered_sort;
+	}
+
 	var filters = {};
 	if(req.query.property_id){
 		filters.property_id=req.query.property_id;
 	}
 	console.log("welcome");
 	flaggedReviews =  await FlaggedReview.find().populate({'path':'user',
-      model: 'User',select: 'first_name last_name mail id'}).populate({'path':'property', model:'Property', select:'property_name id'}).populate({path:'review',model:'Review',select:'id review_rating review_content user_location ip_address'});
+      model: 'User',select: 'first_name last_name mail id'}).populate({'path':'property', model:'Property', select:'property_name id'}).populate({path:'review',model:'Review',select:'id review_rating review_content user_location ip_address'}).skip(skip).limit(perpage).sort(ordered_column).exec();
+	total_count = await FlaggedReview.find().populate({'path':'user',
+      model: 'User',select: 'first_name last_name mail id'}).populate({'path':'property', model:'Property', select:'property_name id'}).populate({path:'review',model:'Review',select:'id review_rating review_content user_location ip_address'}).count();
+	page_count = Math.ceil(total_count/perpage);	
 	let properties = await Property.find();
 	flaggedReviews.forEach(function(freview){
 			var freviewObj = {};
@@ -261,6 +279,13 @@ exports.getAllFlaggedReviews = async function(req, res){
 			flagged_reviews: flaggedReviewList,
 			properties:properties,
 			filters: filters,
+			page: page,
+			perpage:perpage,
+			total_count: total_count,
+			total_pages: page_count,
+			keyword: keyword,
+			ordered_sort: ordered_sort,
+			ordered_column: ordered_column,
 		});
 }
 

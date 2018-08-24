@@ -41,7 +41,7 @@ exports.showemails = async function(req,res){
     }
 
     let emailsList = await Email.find({$or: [ {email_type: { "$regex": keyword, "$options": "i" }},{ email_name:{ "$regex": keyword, "$options": "i" } }, { email_subject:{ "$regex": keyword, "$options": "i" } }]}).skip(skip).limit(perpage).sort(ordered_column).exec();
-    total_count = await Email.find({$or: [ {email_type: { "$regex": keyword, "$options": "i" }},{ email_name:{ "$regex": keyword, "$options": "i" } }, { email_subject:{ "$regex": keyword, "$options": "i" } }]}).skip(skip).limit(perpage).sort(ordered_column).count();
+    total_count = await Email.find({$or: [ {email_type: { "$regex": keyword, "$options": "i" }},{ email_name:{ "$regex": keyword, "$options": "i" } }, { email_subject:{ "$regex": keyword, "$options": "i" } }]}).count();
     page_count = Math.ceil(total_count/perpage);
         /*var emailList = [];      
         emails.forEach(function(email) {

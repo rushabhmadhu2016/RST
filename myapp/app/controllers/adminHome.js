@@ -312,7 +312,7 @@ exports.allCategories = async function(req,res){
     }
 
 	let categorydata = await Category.find({$or: [ {category_name: { "$regex": keyword, "$options": "i" }}]}).populate({path:'user',model:'User'}).skip(skip).limit(perpage).sort(ordered_column).exec();
-	total_count = await Category.find({$or: [ {category_name: { "$regex": keyword, "$options": "i" }}]}).populate({path:'user',model:'User'}).skip(skip).limit(perpage).sort(ordered_column).count();
+	total_count = await Category.find({$or: [ {category_name: { "$regex": keyword, "$options": "i" }}]}).populate({path:'user',model:'User'}).count();
 	page_count = Math.ceil(total_count/perpage);
 
 	    categorydata.forEach(function(category) {

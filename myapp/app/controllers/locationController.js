@@ -307,7 +307,7 @@ exports.allProperties = async function (req, res) {
 	console.log("welcome to allProperties");
  	let properties = await Property.find({'status':{$in:status}}).populate({path: 'user',
       model: 'User',select: 'first_name last_name mail contact_number'}).populate({path: 'category',
-      model: 'Category',select: 'category_name id'}).exec();
+      model: 'Category',select: 'category_name id'}).skip(skip).limit(perpage).sort(ordered_column).exec();
 
     total_count = await Property.find({'status':{$in:status}}).populate({path: 'user',
       model: 'User',select: 'first_name last_name mail contact_number'}).populate({path: 'category',

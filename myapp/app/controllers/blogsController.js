@@ -41,7 +41,7 @@ exports.allblogs = async function(req,res){
     }
 
     let blogs = await Blog.find({$or: [ {blog_title: { "$regex": keyword, "$options": "i" }}]}).skip(skip).limit(perpage).sort(ordered_column).exec();
-    total_count = await Blog.find({$or: [ {blog_title: { "$regex": keyword, "$options": "i" }}]}).skip(skip).limit(perpage).sort(ordered_column).count();
+    total_count = await Blog.find({$or: [ {blog_title: { "$regex": keyword, "$options": "i" }}]}).count();
     page_count = Math.ceil(total_count/perpage);
 
         var blogList = [];      
